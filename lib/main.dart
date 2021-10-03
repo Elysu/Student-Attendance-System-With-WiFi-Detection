@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/class_tabs/class_history.dart';
-import 'package:student_attendance_fyp/class_tabs/ongoing_class.dart';
-import 'package:student_attendance_fyp/class_tabs/upcoming_class.dart';
+import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
+import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
+import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -30,9 +30,9 @@ class Home extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            OngoingClass(),
-            UpcomingClass(),
-            ClassHistory()
+            OngoingClassView(),
+            UpcomingClassView(),
+            ClassHistoryView()
           ],
         ),
         floatingActionButton: FloatingActionButton(

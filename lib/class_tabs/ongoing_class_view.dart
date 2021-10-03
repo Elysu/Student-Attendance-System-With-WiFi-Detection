@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/class_data_models/ongoing_class_model.dart';
+import 'package:student_attendance_fyp/class_data_models/ongoing_class.dart';
 import 'package:intl/intl.dart';
 
-class OngoingClass extends StatelessWidget {
-  OngoingClass({Key? key}) : super(key: key);
+class OngoingClassView extends StatelessWidget {
+  OngoingClassView({Key? key}) : super(key: key);
 
-  final List<OngoingClassModel> classList = [
-    OngoingClassModel("Human Computer Interaction", "123", DateTime.now(), DateTime.now()),
-    OngoingClassModel("Network Security", "123", DateTime.now(), DateTime.now()),
-    OngoingClassModel("Software Engineering", "123", DateTime.now(), DateTime.now()),
-    OngoingClassModel("IT Ethnic", "123", DateTime.now(), DateTime.now())
+  final List<OngoingClass> classList = [
+    OngoingClass("Human Computer Interaction", "123", DateTime.now(), DateTime.now()),
+    OngoingClass("Network Security", "123", DateTime.now(), DateTime.now()),
+    OngoingClass("Software Engineering", "123", DateTime.now(), DateTime.now()),
+    OngoingClass("IT Ethnic", "123", DateTime.now(), DateTime.now())
   ];
 
   @override
