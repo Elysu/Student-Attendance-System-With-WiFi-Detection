@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-Widget buildOngoingClass(BuildContext context, int index, classList) {
+Widget buildClassList(BuildContext context, int index, List classList) {
   final classes = classList[index];
   return Card(
       child: Padding(

@@ -10,6 +10,7 @@ void main() {
   ));
 }
 
+//this is just TabBar so stateless is fine
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,16 +29,17 @@ class Home extends StatelessWidget {
             ],
           ),
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){},
+          child: Icon(Icons.add),
+          backgroundColor: Colors.blue[500],
+        ),
         body: TabBarView(
           children: <Widget>[
             OngoingClassView(),
             UpcomingClassView(),
             ClassHistoryView()
           ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: const Text("YOLO"),
         ),
         drawer: Drawer(
           child: Center(

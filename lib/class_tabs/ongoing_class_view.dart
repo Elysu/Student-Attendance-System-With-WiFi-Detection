@@ -3,9 +3,14 @@ import 'package:student_attendance_fyp/class_data_models/ongoing_class.dart';
 import 'package:student_attendance_fyp/class_listview.dart';
 import 'package:intl/intl.dart';
 
-class OngoingClassView extends StatelessWidget {
+class OngoingClassView extends StatefulWidget {
   OngoingClassView({Key? key}) : super(key: key);
 
+  @override
+  State<OngoingClassView> createState() => _OngoingClassViewState();
+}
+
+class _OngoingClassViewState extends State<OngoingClassView> {
   final List<OngoingClass> classList = [
     OngoingClass("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now().add(const Duration(hours: 2))),
     OngoingClass("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now().add(const Duration(hours: 2))),
@@ -20,7 +25,7 @@ class OngoingClassView extends StatelessWidget {
       width: double.infinity,
       child: ListView.builder(
         itemCount: classList.length,
-        itemBuilder: (BuildContext context, int index) => buildOngoingClass(context, index, classList)
+        itemBuilder: (BuildContext context, int index) => buildClassList(context, index, classList)
       ),
     );
   }
