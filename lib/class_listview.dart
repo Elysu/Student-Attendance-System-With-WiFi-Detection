@@ -18,7 +18,7 @@ class ClassList_ListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
             children: <Widget>[
               Padding(
