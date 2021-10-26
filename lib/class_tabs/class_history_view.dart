@@ -11,10 +11,10 @@ class ClassHistoryView extends StatefulWidget {
 
 class _ClassHistoryViewState extends State<ClassHistoryView> {
   final List<ClassDataList> classList = [
-    ClassHistory("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true),
-    ClassHistory("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), false),
-    ClassHistory("Software Engineering", "123", "B405", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true),
-    ClassHistory("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true)
+    ClassHistory("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), 2),
+    ClassHistory("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), 1),
+    ClassHistory("Software Engineering", "123", "B405", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), 1),
+    ClassHistory("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), 0)
   ];
 
   @override
