@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/class_data_models/class_data_list.dart';
+import 'package:student_attendance_fyp/class_listview.dart';
 
-class ClassHistoryView extends StatelessWidget {
+class ClassHistoryView extends StatefulWidget {
   const ClassHistoryView({Key? key}) : super(key: key);
+
+  @override
+  State<ClassHistoryView> createState() => _ClassHistoryViewState();
+}
+
+class _ClassHistoryViewState extends State<ClassHistoryView> {
+  final List<ClassDataList> classList = [
+    ClassHistory("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true),
+    ClassHistory("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), false),
+    ClassHistory("Software Engineering", "123", "B405", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true),
+    ClassHistory("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now().add(const Duration(hours: 2)), true)
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      child: Text("Third"),
+      child: ListView.builder(
+          itemCount: classList.length,
+          itemBuilder: (BuildContext context, int index) => buildClassHistory(context, index, classList)
+      ),
     );
   }
 }
