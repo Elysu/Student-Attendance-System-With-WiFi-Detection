@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/class_data_models/class_data_list.dart';
-import 'package:student_attendance_fyp/class_listview.dart';
+import 'package:student_attendance_fyp/screens/home/class_listview.dart';
 
 class OngoingClassView extends StatefulWidget {
   OngoingClassView({Key? key}) : super(key: key);

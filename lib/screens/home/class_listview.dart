@@ -25,7 +25,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseName, style: TextStyle(fontSize: 20)),
+                    Text(classes.courseName, style: TextStyle(fontSize: 20))
                   ],
                 ),
               ),
@@ -118,7 +118,7 @@ class ClassHistory_ListView extends StatelessWidget {
                   children: <Widget>[
                     const Text("Attendance: "),
                     Text(
-                      classes.attendance == 1 ? 'Present' : classes.attendance == 2 ? 'Late' : 'Absent',
+                      classes.attendance == 1 ? 'PRESENT' : classes.attendance == 2 ? 'LATE' : 'ABSENT',
                       style: TextStyle(
                         color: classes.attendance == 1 ? Colors.green : classes.attendance == 2 ? Colors.orange[700] : Colors.red
                       ),
