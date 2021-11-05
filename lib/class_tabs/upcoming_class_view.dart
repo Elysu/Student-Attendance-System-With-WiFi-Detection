@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/class_data_models/class_data_list.dart';
+import 'package:student_attendance_fyp/models/class_data_list.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
 
 class UpcomingClassView extends StatefulWidget {
