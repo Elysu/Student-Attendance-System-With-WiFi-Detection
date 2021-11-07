@@ -20,6 +20,7 @@ class Main extends StatelessWidget {
     return StreamProvider<UserModel?>.value(
       value: AuthService().user,
       initialData: null,
+      catchError: (User, UserModel) => null,
       child: MaterialApp(
         home: Wrapper(),
       ),

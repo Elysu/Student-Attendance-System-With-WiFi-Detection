@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
+import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 
 //this is just TabBar so stateless is fine
 class Home extends StatelessWidget {
@@ -34,11 +35,7 @@ class Home extends StatelessWidget {
             ClassHistoryView()
           ],
         ),
-        drawer: Drawer(
-          child: Center(
-            child: Text("yo"),
-          ),
-        ),
+        drawer: NavigationDrawerWidget()
       ),
     );
   }
