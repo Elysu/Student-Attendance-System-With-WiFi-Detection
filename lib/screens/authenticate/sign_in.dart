@@ -10,10 +10,12 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   // text field state
   String email = '';
   String password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +27,15 @@ class _SignInState extends State<SignIn> {
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
         child: Form(
+          // validate form via _formKey (access validation techniques and state)
+          key: _formKey,
           child: Column(
             children: <Widget>[
               // email field
               SizedBox(height: 20),
               TextFormField(
+                // if isValid then value is null
+                validator: (value) => value!.isEmpty ? "Enter an email." : null,
                 onChanged: (value) {
                   setState(() => email = value);
                 },
@@ -38,6 +44,8 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: 20),
               TextFormField(
                 obscureText: true,
+                // if isValid then value is null
+                validator: (value) => value!.length < 12 ? "Password cannot be shorter than 12 characters." : null,
                 onChanged: (value) {
                   setState(() => password = value);
                 },
@@ -46,10 +54,21 @@ class _SignInState extends State<SignIn> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
-                  print(email);
-                  print(password);
+                  // if everything is valid
+                  if (_formKey.currentState!.validate()) {
+                    dynamic result = await _auth.signInEmailPassword(email, password);
+
+                    if (result == null) {
+                      setState(() => error = 'Invalid email or password.');
+                    }
+                  }
                 },
                 child: Text("LOGIN"),
+              ),
+              SizedBox(height: 20,),
+              Text(
+                error,
+                style: TextStyle(color: Colors.red, fontSize: 14)
               )
             ],
           ),
