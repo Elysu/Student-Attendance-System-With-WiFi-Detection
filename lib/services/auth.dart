@@ -10,7 +10,7 @@ class AuthService {
   }
 
   // auth change user stream
-  //map the user from firebase to our UserModel from the stream to determine if user object is null or has value
+  // map the user from firebase to our UserModel from the stream to determine if user object is null or has value
   Stream<UserModel?> get user {
     return _auth.authStateChanges()
         .map((User? user) => _userFromFirebase(user!));
