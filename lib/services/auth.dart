@@ -14,6 +14,7 @@ class AuthService {
   Stream<UserModel?> get user {
     return _auth.authStateChanges()
         .map((User? user) => _userFromFirebase(user!));
+    //.map() is to pass the user from firebase to our own user custom model
   }
 
   // sign in anonymously
