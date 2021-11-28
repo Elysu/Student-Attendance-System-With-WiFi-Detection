@@ -1,12 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseService _dbService = DatabaseService();
+  UserModel userModel = UserModel();
+  bool isTeacher = false;
+
+  void teacher(User user) async {
+    await _dbService.getUserTeacher(user.uid).then((value){
+      print("1. $value");
+      isTeacher = value;
+      userModel.setTeacher = value;
+    });
+    print("2. Actual isTeacher is $isTeacher");
+    userModel.setUID = user.uid;
+    print("3. Model isTeacher is ${userModel.getTeacher}");
+  }
 
   // use user data model to create user object based on firebase User
   UserModel? _userFromFirebase(User user) {
-    return user != null ? UserModel(uid: user.uid) : null;
+    if (user != null) {
+      teacher(user);
+      return UserModel();
+    } else {
+      return null;
+    }
   }
 
   // auth change user stream
@@ -34,6 +56,10 @@ class AuthService {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User? user = result.user;
+
+      // create a new document for the user with the uid
+      // await DatabaseService(uid: user!.uid).updateUserData('1850232', 'Lee Sang Kit', 'HCI,PHP,C#,Networking', '132,BIBGGE122,BIBDD-233,WDIW-123', '666348384');
+
       return _userFromFirebase(user!);
     } catch(e) {
       print(e.toString());

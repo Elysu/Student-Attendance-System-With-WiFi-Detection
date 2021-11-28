@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 
 //this is just TabBar so stateless is fine
@@ -24,7 +25,9 @@ class Home extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            print(UserModel().getTeacher);
+          },
           child: Icon(Icons.add),
           backgroundColor: Colors.blue[500],
         ),
