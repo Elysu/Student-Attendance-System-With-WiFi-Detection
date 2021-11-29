@@ -10,22 +10,15 @@ class AuthService {
   UserModel userModel = UserModel();
   bool isTeacher = false;
 
-  void teacher(User user) async {
-    await _dbService.getUserTeacher(user.uid).then((value){
-      print("1. $value");
-      isTeacher = value;
-      userModel.setTeacher = value;
-    });
-    print("2. Actual isTeacher is $isTeacher");
-    userModel.setUID = user.uid;
-    print("3. Model isTeacher is ${userModel.getTeacher}");
+  void getAndSetUserDataIntoModel(User user) async {
+    await _dbService.getUserData(user.uid);
   }
 
   // use user data model to create user object based on firebase User
   UserModel? _userFromFirebase(User user) {
     if (user != null) {
-      teacher(user);
-      return UserModel();
+      getAndSetUserDataIntoModel(user);
+      return userModel;
     } else {
       return null;
     }

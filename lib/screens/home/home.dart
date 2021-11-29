@@ -26,7 +26,15 @@ class Home extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: (){
-            print(UserModel().getTeacher);
+            UserModel userModel = UserModel();
+
+            print('User ID: ${userModel.getUID}');
+            print('Device ID: ${userModel.getDeviceID}');
+            print('Email: ${userModel.getEmail}');
+            print('ID: ${userModel.getID}');
+            print('Name: ${userModel.getName}');
+            print('isTeacher: ${userModel.getTeacher}');
+            print('Subjects: ${userModel.getSubjects}');
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.blue[500],

@@ -23,25 +23,10 @@ class DatabaseService {
   // get users stream
 
 
-  // get current user isTeacher to determine if current user is teacher
-  Future getUserTeacher(String uid) async {
+  // get current user data and set it into UserModel
+  Future getUserData(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    return data['isTeacher'];
+    UserModel().setData(uid, data['deviceID'], data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
   }
-
-  /*
-   bool isTeacher(String uid) {
-    bool teacher = true;
-
-    // userCollection.doc(uid).get().then((value){
-    //   teacher = value.data()!['isTeacher'];
-    //   print(teacher);
-    // });
-
-    Map<String, dynamic> data = userCollection.doc(uid).get();
-
-    return teacher;
-  }
-  */
 }

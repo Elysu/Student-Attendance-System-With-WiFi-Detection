@@ -1,28 +1,47 @@
 class UserModel {
   static String? uid;
+  static String? deviceID;
+  static String? email;
+  static String? id;
+  static String? name;
   static bool? isTeacher;
+  static List<String>? subjects;
 
   String get getUID {
     return uid!;
+  }
+
+  String get getDeviceID {
+    return deviceID!;
+  }
+
+  String get getEmail {
+    return email!;
+  }
+
+  String get getID {
+    return id!;
+  }
+
+  String get getName {
+    return name!;
   }
 
   bool get getTeacher {
     return isTeacher!;
   }
 
-  set setUID(String userID) {
-    if (userID is Null) {
-      throw new ArgumentError();
-    }
-
-    uid = userID;
+  List<String> get getSubjects {
+    return subjects!;
   }
 
-  set setTeacher(bool teacher) {
-    if (teacher is Null) {
-      throw new ArgumentError();
-    }
-
-    isTeacher = teacher;
+  void setData(String strUID, String strDeviceID, String strEmail, String strID, String strName, bool boolIsTeacher, dynamic listSubjects) {
+    uid = strUID;
+    deviceID = strDeviceID;
+    email = strEmail;
+    id = strID;
+    name = strName;
+    isTeacher = boolIsTeacher;
+    subjects = List.from(listSubjects);
   }
 }
