@@ -5,6 +5,8 @@ class DatabaseService {
   // collection reference
   // user collection
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
+  final CollectionReference classCollection = FirebaseFirestore.instance.collection('class');
+  UserModel userModel = UserModel();
 
   /*
   Future updateUserData (String stuID, String stuName, String stuSubject, String stuSubCode, String stuDeviceID) async {
@@ -28,5 +30,38 @@ class DatabaseService {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
     UserModel().setData(uid, data['deviceID'], data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
+  }
+
+  // get class history doc ID (filtered with user's subject)
+  Future getClassHistoryDocID() async {
+    List<String>? docs = [];
+    await classCollection.where('c_sub-code', whereIn: userModel.getSubjects).get().then((QuerySnapshot snapshot){
+      snapshot.docs.forEach((DocumentSnapshot c) {
+        docs.add(c.id);
+        print(c.data());
+      });
+    });
+    return docs;
+  }
+  // get class history data
+  Future getClassHistoryData(String docID) async {
+    DocumentSnapshot snapshot = await classCollection.doc(docID).get();
+    print("TEST CLASS HISTORY SNAPSHOT MAP DATA BITCH: ${snapshot.data()}");
+    var data = snapshot.data() as Map;
+    return data;
+  }
+  // check if student's UID has a document in attendance subcollection
+  Future<int> attendanceExists(String uid, String docID) async {
+    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
+    if (snapshot.exists) {
+      var data = snapshot.data() as Map;
+      if (data['isLate'] == true) {
+        return 2;
+      } else {
+        return 1;
+      }
+    } else {
+      return 1;
+    }
   }
 }

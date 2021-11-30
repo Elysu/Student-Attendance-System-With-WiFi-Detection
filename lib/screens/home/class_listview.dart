@@ -41,7 +41,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Time: ${DateFormat('jm').format(classes.startDate).toString()} - ${DateFormat('jm').format(classes.endDate).toString()}"),
+                    Text("Time: ${classes.startDate} - ${classes.endDate}"),
                   ],
                 ),
               ),
@@ -100,7 +100,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Time: ${DateFormat('jm').format(classes.startDate).toString()} - ${DateFormat('jm').format(classes.endDate).toString()}"),
+                    Text("Time: ${classes.startDate} - ${classes.endDate}"),
                   ],
                 ),
               ),

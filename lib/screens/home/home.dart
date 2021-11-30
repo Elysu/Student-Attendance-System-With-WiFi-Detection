@@ -3,6 +3,7 @@ import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 
 //this is just TabBar so stateless is fine
@@ -27,14 +28,14 @@ class Home extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: (){
             UserModel userModel = UserModel();
-
-            print('User ID: ${userModel.getUID}');
-            print('Device ID: ${userModel.getDeviceID}');
-            print('Email: ${userModel.getEmail}');
-            print('ID: ${userModel.getID}');
-            print('Name: ${userModel.getName}');
-            print('isTeacher: ${userModel.getTeacher}');
-            print('Subjects: ${userModel.getSubjects}');
+            DatabaseService().getClassHistoryDocID();
+            // print('User ID: ${userModel.getUID}');
+            // print('Device ID: ${userModel.getDeviceID}');
+            // print('Email: ${userModel.getEmail}');
+            // print('ID: ${userModel.getID}');
+            // print('Name: ${userModel.getName}');
+            // print('isTeacher: ${userModel.getTeacher}');
+            // print('Subjects: ${userModel.getSubjects}');
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.blue[500],
