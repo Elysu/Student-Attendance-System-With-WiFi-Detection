@@ -22,8 +22,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? Loading() : Scaffold(
-      backgroundColor: Color(0xffe0e0e0),
+    return loading ? const Loading() : Scaffold(
+      backgroundColor: const Color(0xffe0e0e0),
       appBar: AppBar(
         title: const Text("Login to Student Attendance System"),
         centerTitle: true,

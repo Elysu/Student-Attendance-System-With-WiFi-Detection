@@ -25,7 +25,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseName, style: TextStyle(fontSize: 20))
+                    Text(classes.courseName, style: const TextStyle(fontSize: 20))
                   ],
                 ),
               ),
@@ -84,7 +84,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseName, style: TextStyle(fontSize: 20)),
+                    Text(classes.courseName, style: const TextStyle(fontSize: 20)),
                   ],
                 ),
               ),

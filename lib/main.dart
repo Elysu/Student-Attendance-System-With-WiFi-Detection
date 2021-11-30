@@ -9,7 +9,7 @@ import 'package:student_attendance_fyp/services/auth.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(Main());
+  runApp(const Main());
 }
 
 class Main extends StatelessWidget {
@@ -21,7 +21,7 @@ class Main extends StatelessWidget {
       value: AuthService().user,
       initialData: null,
       catchError: (User, UserModel) => null,
-      child: MaterialApp(
+      child: const MaterialApp(
         home: Wrapper(),
       ),
     );

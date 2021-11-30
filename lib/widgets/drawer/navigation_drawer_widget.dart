@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
@@ -16,7 +17,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.blue[500]
               ),
-              child: Text("Drawer Header", style: TextStyle(color: Colors.white)),
+              child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
             ),
             buildMenuItem(text: "Logout", icon: Icons.logout),
           ],

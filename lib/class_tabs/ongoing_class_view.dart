@@ -3,7 +3,7 @@ import 'package:student_attendance_fyp/models/class_data_list.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
 
 class OngoingClassView extends StatefulWidget {
-  OngoingClassView({Key? key}) : super(key: key);
+  const OngoingClassView({Key? key}) : super(key: key);
 
   @override
   State<OngoingClassView> createState() => _OngoingClassViewState();
