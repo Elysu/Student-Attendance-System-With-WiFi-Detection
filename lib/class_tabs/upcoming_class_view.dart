@@ -10,12 +10,12 @@ class UpcomingClassView extends StatefulWidget {
   State<UpcomingClassView> createState() => _UpcomingClassViewState();
 }
 
-class _UpcomingClassViewState extends State<UpcomingClassView> {
+class _UpcomingClassViewState extends State<UpcomingClassView> with AutomaticKeepAliveClientMixin {
   final List<ClassDataList> classList = [
-    ClassDataList("Human Computer Interaction", "123", "B2", Timestamp.now(), Timestamp.now()),
-    ClassDataList("Network Security", "BIBGE2113", "B3", Timestamp.now(), Timestamp.now()),
-    ClassDataList("Software Engineering", "123", "B405", Timestamp.now(), Timestamp.now()),
-    ClassDataList("IT Ethnic", "123", "A305", Timestamp.now(), Timestamp.now())
+    ClassDataList("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now()),
+    ClassDataList("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now()),
+    ClassDataList("Software Engineering", "123", "B405", DateTime.now(), DateTime.now()),
+    ClassDataList("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now())
   ];
 
   @override
@@ -29,4 +29,7 @@ class _UpcomingClassViewState extends State<UpcomingClassView> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

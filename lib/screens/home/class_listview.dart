@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:student_attendance_fyp/services/database.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 
-Widget buildClassList(BuildContext context, int index, List classList) {
+Widget buildClassList(BuildContext context, int index, List<dynamic> classList) {
   final classes = classList[index];
   return ClassList_ListView(classes: classes);
 }
 
-class ClassList_ListView extends StatelessWidget {
+class ClassList_ListView extends StatefulWidget {
   const ClassList_ListView({
     Key? key,
     required this.classes,
@@ -14,6 +17,11 @@ class ClassList_ListView extends StatelessWidget {
 
   final classes;
 
+  @override
+  State<ClassList_ListView> createState() => _ClassList_ListViewState();
+}
+
+class _ClassList_ListViewState extends State<ClassList_ListView> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -25,7 +33,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseName, style: const TextStyle(fontSize: 20))
+                    Text(widget.classes.courseName, style: const TextStyle(fontSize: 20))
                   ],
                 ),
               ),
@@ -33,7 +41,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseCode),
+                    Text(widget.classes.courseCode),
                   ],
                 ),
               ),
@@ -41,7 +49,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Time: ${classes.startDate} - ${classes.endDate}"),
+                    Text("Time: ${DateFormat('jm').format(widget.classes.startDate).toString()} - ${DateFormat('jm').format(widget.classes.endDate).toString()}"),
                   ],
                 ),
               ),
@@ -49,7 +57,7 @@ class ClassList_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Classroom: ${classes.classroom}"),
+                    Text("Classroom: ${widget.classes.classroom}"),
                   ],
                 ),
               ),
@@ -60,22 +68,14 @@ class ClassList_ListView extends StatelessWidget {
   }
 }
 
-Widget buildClassHistory(BuildContext context, int index, List classList) {
-  final classes = classList[index];
-  return ClassHistory_ListView(classes: classes);
-}
+Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID) {
+  Timestamp tStart = classes['c_datetimeStart'];
+  Timestamp tEnd = classes['c_datetimeEnd'];
+  DateTime dStart = tStart.toDate();
+  DateTime dEnd = tEnd.toDate();
+  Future<int> attendance = checkAttendace(docID);
 
-class ClassHistory_ListView extends StatelessWidget {
-  const ClassHistory_ListView({
-    Key? key,
-    required this.classes,
-  }) : super(key: key);
-
-  final classes;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
+  return Card(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
@@ -84,7 +84,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseName, style: const TextStyle(fontSize: 20)),
+                    Text(classes['c_sub-name'], style: const TextStyle(fontSize: 20)),
                   ],
                 ),
               ),
@@ -92,7 +92,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes.courseCode),
+                    Text(classes['c_sub-code']),
                   ],
                 ),
               ),
@@ -100,7 +100,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Time: ${classes.startDate} - ${classes.endDate}"),
+                    Text("Time: ${DateFormat('jm').format(dStart).toString()} - ${DateFormat('jm').format(dEnd).toString()}"),
                   ],
                 ),
               ),
@@ -108,7 +108,7 @@ class ClassHistory_ListView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Classroom: ${classes.classroom}"),
+                    Text("Classroom: ${classes['classroom']}"),
                   ],
                 ),
               ),
@@ -118,9 +118,9 @@ class ClassHistory_ListView extends StatelessWidget {
                   children: <Widget>[
                     const Text("Attendance: "),
                     Text(
-                      classes.attendance == 1 ? 'PRESENT' : classes.attendance == 2 ? 'LATE' : 'ABSENT',
+                      attendance == 1 ? 'PRESENT' : attendance == 2 ? 'LATE' : 'ABSENT',
                       style: TextStyle(
-                        color: classes.attendance == 1 ? Colors.green : classes.attendance == 2 ? Colors.orange[700] : Colors.red
+                        color: attendance == 1 ? Colors.green : attendance == 2 ? Colors.orange[700] : Colors.red
                       ),
                     ),
                   ],
@@ -130,5 +130,9 @@ class ClassHistory_ListView extends StatelessWidget {
           ),
         )
     );
-  }
+}
+
+Future<int> checkAttendace(String docID) async {
+  print("The attendance is ${await DatabaseService().attendanceExists(UserModel().getUID, docID)}");
+  return await DatabaseService().attendanceExists(UserModel().getUID, docID);
 }

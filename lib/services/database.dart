@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
 class DatabaseService {
@@ -38,18 +39,19 @@ class DatabaseService {
     await classCollection.where('c_sub-code', whereIn: userModel.getSubjects).get().then((QuerySnapshot snapshot){
       snapshot.docs.forEach((DocumentSnapshot c) {
         docs.add(c.id);
-        print(c.data());
       });
     });
     return docs;
   }
   // get class history data
-  Future getClassHistoryData(String docID) async {
-    DocumentSnapshot snapshot = await classCollection.doc(docID).get();
-    print("TEST CLASS HISTORY SNAPSHOT MAP DATA BITCH: ${snapshot.data()}");
-    var data = snapshot.data() as Map;
-    return data;
+  Stream<QuerySnapshot> getClassHistoryData(BuildContext context) async* {
+    yield* classCollection.where('c_sub-code', whereIn: userModel.getSubjects).snapshots();
   }
+  // Future getClassHistoryData(String docID) async {
+  //   DocumentSnapshot snapshot = await classCollection.doc(docID).get();
+  //   print("1.");
+  //   return snapshot.data() as Map;
+  // }
   // check if student's UID has a document in attendance subcollection
   Future<int> attendanceExists(String uid, String docID) async {
     DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
@@ -61,7 +63,7 @@ class DatabaseService {
         return 1;
       }
     } else {
-      return 1;
+      return 0;
     }
   }
 }
