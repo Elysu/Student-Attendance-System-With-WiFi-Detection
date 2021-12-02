@@ -4,7 +4,6 @@ import 'package:student_attendance_fyp/models/class_data_list.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
 import 'package:student_attendance_fyp/services/database.dart';
-import 'package:provider/provider.dart';
 
 class ClassHistoryView extends StatefulWidget {
   const ClassHistoryView({Key? key}) : super(key: key);
@@ -50,7 +49,10 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
           if (!snapshot.hasData) return const Text("Loading...");
           return ListView.builder(
             itemCount: snapshot.data!.docs.length,
-            itemBuilder: (BuildContext context, int index) => buildClassHistory(context, snapshot.data!.docs[index], snapshot.data!.docs[index].id)
+            itemBuilder: (BuildContext context, int index) {
+              Future<int> attendance = dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id);
+              return buildClassHistory(context, snapshot.data!.docs[index], snapshot.data!.docs[index].id, attendance);
+            }
           );
         }
       ),

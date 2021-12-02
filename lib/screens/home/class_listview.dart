@@ -68,14 +68,25 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
   }
 }
 
-Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID) {
-  Timestamp tStart = classes['c_datetimeStart'];
-  Timestamp tEnd = classes['c_datetimeEnd'];
-  DateTime dStart = tStart.toDate();
-  DateTime dEnd = tEnd.toDate();
-  Future<int> attendance = checkAttendace(docID);
+class ClassListHistory_ListView extends StatefulWidget {
+  const ClassListHistory_ListView({ Key? key, required this.classes, required this.docID, required this.attendance }) : super(key: key);
+  final classes;
+  final docID;
+  final attendance;
 
-  return Card(
+  @override
+  _ClassListHistory_ListViewState createState() => _ClassListHistory_ListViewState();
+}
+
+class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
+  @override
+  Widget build(BuildContext context) {
+    Timestamp tStart = widget.classes['c_datetimeStart'];
+    Timestamp tEnd = widget.classes['c_datetimeEnd'];
+    DateTime dStart = tStart.toDate();
+    DateTime dEnd = tEnd.toDate();
+
+    return Card(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
           child: Column(
@@ -84,7 +95,7 @@ Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String 
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes['c_sub-name'], style: const TextStyle(fontSize: 20)),
+                    Text(widget.classes['c_sub-name'], style: const TextStyle(fontSize: 20)),
                   ],
                 ),
               ),
@@ -92,7 +103,7 @@ Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String 
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(classes['c_sub-code']),
+                    Text(widget.classes['c_sub-code']),
                   ],
                 ),
               ),
@@ -108,7 +119,7 @@ Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String 
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Classroom: ${classes['classroom']}"),
+                    Text("Classroom: ${widget.classes['classroom']}"),
                   ],
                 ),
               ),
@@ -118,9 +129,9 @@ Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String 
                   children: <Widget>[
                     const Text("Attendance: "),
                     Text(
-                      attendance == 1 ? 'PRESENT' : attendance == 2 ? 'LATE' : 'ABSENT',
+                      widget.attendance == 1 ? 'PRESENT' : widget.attendance == 2 ? 'LATE' : 'ABSENT',
                       style: TextStyle(
-                        color: attendance == 1 ? Colors.green : attendance == 2 ? Colors.orange[700] : Colors.red
+                        color: widget.attendance == 1 ? Colors.green : widget.attendance == 2 ? Colors.orange[700] : Colors.red
                       ),
                     ),
                   ],
@@ -130,9 +141,16 @@ Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String 
           ),
         )
     );
+  }
 }
 
-Future<int> checkAttendace(String docID) async {
-  print("The attendance is ${await DatabaseService().attendanceExists(UserModel().getUID, docID)}");
-  return await DatabaseService().attendanceExists(UserModel().getUID, docID);
+Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID, dynamic attendance) {
+  print("checkAttendance XDXDXD: $attendance");
+  return ClassListHistory_ListView(classes: classes, docID: docID, attendance: attendance);
 }
+
+// Future<int> checkAttendance(String docID) async {
+//   print("The attendance is ${await DatabaseService().attendanceExists(UserModel().getUID, docID)}");
+//   int attendance = await DatabaseService().attendanceExists(UserModel().getUID, docID);
+//   return attendance;
+// }
