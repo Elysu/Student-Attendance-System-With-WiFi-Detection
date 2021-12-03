@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/add_student/student_list.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
@@ -18,18 +19,35 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
-          buildMenuItem(text: "Logout", icon: Icons.logout),
+          isTeacher(context),
+          buildMenuItem(context, text: "Logout", icon: Icons.logout),
         ],
       ),
     );
   }
 
-  Widget buildMenuItem({ required String text, required IconData icon }) {
+  Widget isTeacher(BuildContext context) {
+    if (UserModel().getTeacher) {
+      return buildMenuItem(context, text: "Student List", icon: Icons.person_add);
+    }
+    return Container();
+  }
+
+  Widget buildMenuItem(BuildContext context, { required String text, required IconData icon }) {
     return ListTile(
       leading: Icon(icon),
       title: Text(text),
       onTap: () async {
-        await _auth.userSignOut();
+        switch (text) {
+          case "Logout":
+            await _auth.userSignOut();
+            break;
+          case "Student List":
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const StudentList())
+            );
+        }
       },
     );
   }

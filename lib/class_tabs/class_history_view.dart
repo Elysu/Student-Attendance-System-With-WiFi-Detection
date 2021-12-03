@@ -37,7 +37,7 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
     }
   }
   */
-
+  
   @override
   Widget build(BuildContext context) {
     return SizedBox(

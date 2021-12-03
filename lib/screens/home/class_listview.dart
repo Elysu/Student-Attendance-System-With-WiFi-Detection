@@ -68,6 +68,11 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
   }
 }
 
+Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID, dynamic attendance) {
+  print("checkAttendance XDXDXD: $attendance");
+  return ClassListHistory_ListView(classes: classes, docID: docID, attendance: attendance);
+}
+
 class ClassListHistory_ListView extends StatefulWidget {
   const ClassListHistory_ListView({ Key? key, required this.classes, required this.docID, required this.attendance }) : super(key: key);
   final classes;
@@ -142,11 +147,6 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
         )
     );
   }
-}
-
-Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID, dynamic attendance) {
-  print("checkAttendance XDXDXD: $attendance");
-  return ClassListHistory_ListView(classes: classes, docID: docID, attendance: attendance);
 }
 
 // Future<int> checkAttendance(String docID) async {

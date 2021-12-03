@@ -33,6 +33,12 @@ class DatabaseService {
     UserModel().setData(uid, data['deviceID'], data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
   }
 
+  // get all students document as a list
+  Future getStudents() async {
+    var data = await userCollection.where('isTeacher', isNotEqualTo: true).get();
+    return data.docs;
+  }
+
   // get class history doc ID (filtered with user's subject)
   Future getClassHistoryDocID() async {
     List<String>? docs = [];

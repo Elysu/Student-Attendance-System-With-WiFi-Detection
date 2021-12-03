@@ -29,13 +29,13 @@ class Home extends StatelessWidget {
           onPressed: (){
             UserModel userModel = UserModel();
             DatabaseService().getClassHistoryDocID();
-            // print('User ID: ${userModel.getUID}');
-            // print('Device ID: ${userModel.getDeviceID}');
-            // print('Email: ${userModel.getEmail}');
-            // print('ID: ${userModel.getID}');
-            // print('Name: ${userModel.getName}');
-            // print('isTeacher: ${userModel.getTeacher}');
-            // print('Subjects: ${userModel.getSubjects}');
+            print('User ID: ${userModel.getUID}');
+            print('Device ID: ${userModel.getDeviceID}');
+            print('Email: ${userModel.getEmail}');
+            print('ID: ${userModel.getID}');
+            print('Name: ${userModel.getName}');
+            print('isTeacher: ${userModel.getTeacher}');
+            print('Subjects: ${userModel.getSubjects}');
           },
           child: Icon(Icons.add),
           backgroundColor: Colors.blue[500],
