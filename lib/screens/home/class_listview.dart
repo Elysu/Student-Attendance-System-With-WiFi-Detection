@@ -67,7 +67,6 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
 }
 
 Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID, dynamic attendance) {
-  print("checkAttendance XDXDXD: $attendance");
   return ClassListHistory_ListView(classes: classes, docID: docID, attendance: attendance);
 }
 
@@ -146,9 +145,3 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     );
   }
 }
-
-// Future<int> checkAttendance(String docID) async {
-//   print("The attendance is ${await DatabaseService().attendanceExists(UserModel().getUID, docID)}");
-//   int attendance = await DatabaseService().attendanceExists(UserModel().getUID, docID);
-//   return attendance;
-// }

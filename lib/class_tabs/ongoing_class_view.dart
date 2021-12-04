@@ -31,5 +31,11 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   bool get wantKeepAlive => true;
 }

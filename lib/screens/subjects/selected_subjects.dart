@@ -15,7 +15,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = "";
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'Subjects List' );
+  Widget _appBarTitle = const Text( 'Class Subjects' );
 
   Future? resultsLoaded;
   List _allResults = [];
@@ -90,7 +90,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        _appBarTitle = const Text( 'Subjects List' );
+        _appBarTitle = const Text( 'Class Subjects' );
         _searchController.clear();
       }
     });

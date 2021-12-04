@@ -50,27 +50,24 @@ class DatabaseService {
     });
     return docs;
   }
+  
   // get class history data
-  Stream<QuerySnapshot> getClassHistoryData(BuildContext context) async* {
+  Stream<QuerySnapshot> getClassHistoryData() async* {
     yield* classCollection.where('c_sub-code', whereIn: userModel.getSubjects).snapshots();
   }
-  // Future getClassHistoryData(String docID) async {
-  //   DocumentSnapshot snapshot = await classCollection.doc(docID).get();
-  //   print("1.");
-  //   return snapshot.data() as Map;
-  // }
+
   // check if student's UID has a document in attendance subcollection
-  Future<int> attendanceExists(String uid, String docID) async {
+  Stream<int> attendanceExists(String uid, String docID) async* {
     DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
     if (snapshot.exists) {
       var data = snapshot.data() as Map;
       if (data['isLate'] == true) {
-        return 2;
+        yield 2;
       } else {
-        return 1;
+        yield 1;
       }
     } else {
-      return 0;
+      yield 0;
     }
   }
 }
