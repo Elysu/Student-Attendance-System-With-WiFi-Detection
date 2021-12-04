@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/add_student/student_list.dart';
+import 'package:student_attendance_fyp/screens/subjects/selected_subjects.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
@@ -19,6 +20,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
+          buildMenuItem(context, text: "Subjects", icon: Icons.subject),
           isTeacher(context),
           buildMenuItem(context, text: "Logout", icon: Icons.logout),
         ],
@@ -47,6 +49,13 @@ class NavigationDrawerWidget extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (context) => const StudentList())
             );
+            break;
+          case "Subjects":
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SelectedSubjects())
+            );
+            break;
         }
       },
     );

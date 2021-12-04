@@ -1,20 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
-class StudentList extends StatefulWidget {
-  const StudentList({ Key? key }) : super(key: key);
+class SelectedSubjects extends StatefulWidget {
+  const SelectedSubjects({ Key? key }) : super(key: key);
 
   @override
-  _StudentListState createState() => _StudentListState();
+  _SelectedSubjectsState createState() => _SelectedSubjectsState();
 }
 
-class _StudentListState extends State<StudentList> {
+class _SelectedSubjectsState extends State<SelectedSubjects> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
   String _searchText = "";
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'Students List' );
+  Widget _appBarTitle = const Text( 'Subjects List' );
 
   Future? resultsLoaded;
   List _allResults = [];
@@ -37,7 +38,7 @@ class _StudentListState extends State<StudentList> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    resultsLoaded = getStudents();
+    resultsLoaded = getSubjects();
   }
 
   _onSearchChanged() {
@@ -51,10 +52,10 @@ class _StudentListState extends State<StudentList> {
       // we have a search parameter
       for(int i=0; i<_allResults.length; i++) {
         DocumentSnapshot ds = _allResults[i];
-        var name = ds['name'].toString().toLowerCase();
-        var id = ds['id'].toString().toLowerCase();
+        var subName = ds['sub_name'].toString().toLowerCase();
+        var subCode = ds['sub_code'].toString().toLowerCase();
 
-        if(name.contains(_searchController.text.toLowerCase()) || id.contains(_searchController.text.toLowerCase())) {
+        if(subName.contains(_searchController.text.toLowerCase()) || subCode.contains(_searchController.text.toLowerCase())) {
           showResults.add(_allResults[i]);
         }
       }
@@ -67,8 +68,8 @@ class _StudentListState extends State<StudentList> {
   }
 
   // get all students documents first
-  getStudents() async {
-    var data = await dbService.userCollection.where('isTeacher', isNotEqualTo: true).get();
+  getSubjects() async {
+    var data = await dbService.subjectCollection.where('sub_code', whereIn: UserModel().getSubjects).get();
     setState(() {
       _allResults = data.docs;
     });
@@ -89,7 +90,7 @@ class _StudentListState extends State<StudentList> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        _appBarTitle = const Text( 'Students List' );
+        _appBarTitle = const Text( 'Subjects List' );
         _searchController.clear();
       }
     });
@@ -112,8 +113,8 @@ class _StudentListState extends State<StudentList> {
         itemCount: _resultsList.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            title: Text(_resultsList[index]["name"]),
-            subtitle: Text("Student ID: ${_resultsList[index]["id"]}"),
+            title: Text(_resultsList[index]["sub_name"]),
+            subtitle: Text(_resultsList[index]["sub_code"]),
           );
         },
         separatorBuilder: (context, index) {
@@ -123,28 +124,6 @@ class _StudentListState extends State<StudentList> {
           );
         },
       ),
-      // StreamBuilder<QuerySnapshot>(
-      //   stream: dbService.getStudents(),
-      //   builder: (context, snapshot) {
-      //     if (!snapshot.hasData) return const Text("Loading...");
-      //     return ListView.separated(
-      //       itemCount: snapshot.data!.docs.length,
-      //       itemBuilder: (BuildContext context, int index) {
-      //         DocumentSnapshot ds = snapshot.data!.docs[index];
-      //         return ListTile(
-      //           title: Text(ds['name']),
-      //           subtitle: Text("Student ID: ${ds['id']}"),
-      //         );
-      //       },
-      //       separatorBuilder: (context, index) {
-      //         return const Divider(
-      //           height: 0,
-      //           color: Colors.black38,
-      //         );
-      //       },
-      //     );
-      //   },
-      // ),
       resizeToAvoidBottomInset: false
     );
   }
