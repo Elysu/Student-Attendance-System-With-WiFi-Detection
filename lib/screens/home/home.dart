@@ -37,10 +37,10 @@ class Home extends StatelessWidget {
             print('isTeacher: ${userModel.getTeacher}');
             print('Subjects: ${userModel.getSubjects}');
           },
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           backgroundColor: Colors.blue[500],
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: <Widget>[
             OngoingClassView(),
             UpcomingClassView(),

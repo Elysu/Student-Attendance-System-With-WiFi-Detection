@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:student_attendance_fyp/services/database.dart';
-import 'package:student_attendance_fyp/models/user_model.dart';
 
 Widget buildClassList(BuildContext context, int index, List<dynamic> classList) {
   final classes = classList[index];

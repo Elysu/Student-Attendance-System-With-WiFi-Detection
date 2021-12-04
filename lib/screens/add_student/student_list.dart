@@ -123,6 +123,10 @@ class _StudentListState extends State<StudentList> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.person_add),
+      ),
       // StreamBuilder<QuerySnapshot>(
       //   stream: dbService.getStudents(),
       //   builder: (context, snapshot) {

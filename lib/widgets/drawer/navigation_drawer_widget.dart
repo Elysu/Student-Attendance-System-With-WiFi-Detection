@@ -30,7 +30,7 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   Widget isTeacher(BuildContext context) {
     if (UserModel().getTeacher) {
-      return buildMenuItem(context, text: "Student List", icon: Icons.person_add);
+      return buildMenuItem(context, text: "Student List", icon: Icons.person);
     }
     return Container();
   }
