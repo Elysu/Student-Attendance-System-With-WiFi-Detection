@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/screens/students/add_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class StudentList extends StatefulWidget {
@@ -108,47 +109,35 @@ class _StudentListState extends State<StudentList> {
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: _resultsList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(_resultsList[index]["name"]),
-            subtitle: Text("Student ID: ${_resultsList[index]["id"]}"),
-          );
+      body: GestureDetector(
+        onTap: () {
+          
         },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+        child: ListView.separated(
+          itemCount: _resultsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(_resultsList[index]["name"]),
+              subtitle: Text("Student ID: ${_resultsList[index]["id"]}"),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddStudent())
+          );
+        },
         child: const Icon(Icons.person_add),
       ),
-      // StreamBuilder<QuerySnapshot>(
-      //   stream: dbService.getStudents(),
-      //   builder: (context, snapshot) {
-      //     if (!snapshot.hasData) return const Text("Loading...");
-      //     return ListView.separated(
-      //       itemCount: snapshot.data!.docs.length,
-      //       itemBuilder: (BuildContext context, int index) {
-      //         DocumentSnapshot ds = snapshot.data!.docs[index];
-      //         return ListTile(
-      //           title: Text(ds['name']),
-      //           subtitle: Text("Student ID: ${ds['id']}"),
-      //         );
-      //       },
-      //       separatorBuilder: (context, index) {
-      //         return const Divider(
-      //           height: 0,
-      //           color: Colors.black38,
-      //         );
-      //       },
-      //     );
-      //   },
-      // ),
       resizeToAvoidBottomInset: false
     );
   }

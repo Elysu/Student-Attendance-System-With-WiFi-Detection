@@ -13,7 +13,6 @@ class SelectedSubjects extends StatefulWidget {
 class _SelectedSubjectsState extends State<SelectedSubjects> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
-  String _searchText = "";
   Icon _searchIcon = const Icon(Icons.search);
   Widget _appBarTitle = const Text( 'Class Subjects' );
 
