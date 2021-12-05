@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/models/class_data_list.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class UpcomingClassView extends StatefulWidget {
   const UpcomingClassView({Key? key}) : super(key: key);
@@ -11,21 +11,31 @@ class UpcomingClassView extends StatefulWidget {
 }
 
 class _UpcomingClassViewState extends State<UpcomingClassView> with AutomaticKeepAliveClientMixin {
-  final List<ClassDataList> classList = [
-    ClassDataList("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now()),
-    ClassDataList("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now()),
-    ClassDataList("Software Engineering", "123", "B405", DateTime.now(), DateTime.now()),
-    ClassDataList("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now())
-  ];
+  DatabaseService dbService = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: double.infinity,
       width: double.infinity,
-      child: ListView.builder(
-          itemCount: classList.length,
-          itemBuilder: (BuildContext context, int index) => buildClassList(context, index, classList)
+      child: StreamBuilder<QuerySnapshot>(
+        stream: dbService.getUpcomingClassData(context),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Text("Loading...");
+          }
+          
+          if (snapshot.data!.docs.isEmpty) {
+            return const Text("No upcoming class at the moment.");
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return buildClassList(context, snapshot.data!.docs[index]);
+              }
+            );
+          }
+        }
       ),
     );
   }

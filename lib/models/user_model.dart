@@ -5,7 +5,7 @@ class UserModel {
   static String? id;
   static String? name;
   static bool? isTeacher;
-  static List<String>? subjects;
+  static List<String> subjects = [];
 
   String get getUID {
     return uid!;
@@ -32,7 +32,7 @@ class UserModel {
   }
 
   List<String> get getSubjects {
-    return subjects!;
+    return subjects;
   }
 
   void setData(String strUID, String strDeviceID, String strEmail, String strID, String strName, bool boolIsTeacher, dynamic listSubjects) {

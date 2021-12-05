@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
 class DatabaseService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   // collection reference
   // user collection
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
@@ -40,23 +43,47 @@ class DatabaseService {
     return data.docs;
   }
 
-  // get class history doc ID (filtered with user's subject)
-  Future getClassHistoryDocID() async {
-    List<String>? docs = [];
-    await classCollection.where('c_sub-code', whereIn: userModel.getSubjects).get().then((QuerySnapshot snapshot){
-      snapshot.docs.forEach((DocumentSnapshot c) {
-        docs.add(c.id);
-      });
-    });
-    return docs;
+  // get ongoing class
+  Stream<QuerySnapshot> getOngoingClassData(BuildContext context) async* {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    yield* classCollection
+    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_ongoing', isEqualTo: true)
+    .orderBy("c_datetimeStart", descending: false)
+    .snapshots();
   }
-  
+
+  // get upcoming class
+  Stream<QuerySnapshot> getUpcomingClassData(BuildContext context) async* {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    yield* classCollection
+    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_datetimeStart', isGreaterThan: DateTime.now())
+    .where('c_ongoing', isEqualTo: false)
+    .orderBy("c_datetimeStart", descending: false)
+    .snapshots();
+  }
+
+
   // get class history data
-  Stream<QuerySnapshot> getClassHistoryData() async* {
-    yield* classCollection.where('c_sub-code', whereIn: userModel.getSubjects).snapshots();
+  Stream<QuerySnapshot> getClassHistoryData(BuildContext context) async* {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    yield* classCollection
+    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_datetimeEnd', isLessThan: DateTime.now())
+    .where('c_ongoing', isEqualTo: false)
+    .orderBy("c_datetimeEnd", descending: true)
+    .snapshots();
   }
 
   // check if student's UID has a document in attendance subcollection
+  // 0 = absent, 1 = present, 2 = late
   Stream<int> attendanceExists(String uid, String docID) async* {
     DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
     if (snapshot.exists) {

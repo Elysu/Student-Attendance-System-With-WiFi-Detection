@@ -2,18 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-Widget buildClassList(BuildContext context, int index, List<dynamic> classList) {
-  final classes = classList[index];
-  return ClassList_ListView(classes: classes);
+Widget buildClassList(BuildContext context, DocumentSnapshot classes, [dynamic attendance]) {
+  return ClassList_ListView(classes: classes, attendance: attendance);
 }
 
 class ClassList_ListView extends StatefulWidget {
-  const ClassList_ListView({
-    Key? key,
-    required this.classes,
-  }) : super(key: key);
+  const ClassList_ListView({ Key? key, required this.classes, this.attendance }) : super(key: key);
 
   final classes;
+  final attendance;
 
   @override
   State<ClassList_ListView> createState() => _ClassList_ListViewState();
@@ -22,6 +19,47 @@ class ClassList_ListView extends StatefulWidget {
 class _ClassList_ListViewState extends State<ClassList_ListView> {
   @override
   Widget build(BuildContext context) {
+    Timestamp tStart = widget.classes['c_datetimeStart'];
+    Timestamp tEnd = widget.classes['c_datetimeEnd'];
+    DateTime dStart = tStart.toDate();
+    DateTime dEnd = tEnd.toDate();
+    String attendance = "";
+    Color? attendanceColor;
+
+    switch (widget.attendance) {
+      case 0:
+        attendance = "ATTENDACE NOT TAKEN YET";
+        attendanceColor = Colors.red;
+        break;
+      case 1:
+        attendance = "PRESENT";
+        attendanceColor = Colors.green;
+        break;
+      case 2:
+        attendance = "LATE";
+        attendanceColor = Colors.orange;
+        break;
+    }
+
+  Widget checkUpcomingOrOngoing() {
+    if (attendance != "") {
+      return Padding(
+                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                child: Row(
+                  children: <Widget>[
+                    const Text("Attendance: "),
+                    Text(
+                      attendance,
+                      style: TextStyle(color: attendanceColor),
+                    ),
+                  ],
+                ),
+              );
+    } else {
+      return Container();
+    }
+  }
+
     return Card(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
@@ -31,7 +69,7 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(widget.classes.courseName, style: const TextStyle(fontSize: 20))
+                    Text(widget.classes['c_sub-name'], style: const TextStyle(fontSize: 20))
                   ],
                 ),
               ),
@@ -39,7 +77,7 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text(widget.classes.courseCode),
+                    Text(widget.classes['c_sub-code']),
                   ],
                 ),
               ),
@@ -47,7 +85,7 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Time: ${DateFormat('jm').format(widget.classes.startDate).toString()} - ${DateFormat('jm').format(widget.classes.endDate).toString()}"),
+                    Text("Date: ${DateFormat('d').format(dStart).toString()}/${DateFormat('yM').format(dStart).toString()}"),
                   ],
                 ),
               ),
@@ -55,10 +93,19 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Classroom: ${widget.classes.classroom}"),
+                    Text("Time: ${DateFormat('jm').format(dStart).toString()} - ${DateFormat('jm').format(dEnd).toString()}"),
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                child: Row(
+                  children: <Widget>[
+                    Text("Classroom: ${widget.classes['classroom']}"),
+                  ],
+                ),
+              ),
+              checkUpcomingOrOngoing()
             ],
           ),
         )
@@ -66,14 +113,13 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
   }
 }
 
-Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, String docID, dynamic attendance) {
-  return ClassListHistory_ListView(classes: classes, docID: docID, attendance: attendance);
+Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, dynamic attendance) {
+  return ClassListHistory_ListView(classes: classes, attendance: attendance);
 }
 
 class ClassListHistory_ListView extends StatefulWidget {
-  const ClassListHistory_ListView({ Key? key, required this.classes, required this.docID, required this.attendance }) : super(key: key);
+  const ClassListHistory_ListView({ Key? key, required this.classes, required this.attendance }) : super(key: key);
   final classes;
-  final docID;
   final attendance;
 
   @override
@@ -87,6 +133,23 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     Timestamp tEnd = widget.classes['c_datetimeEnd'];
     DateTime dStart = tStart.toDate();
     DateTime dEnd = tEnd.toDate();
+    String attendance = "";
+    Color? attendanceColor;
+
+    switch (widget.attendance) {
+      case 0:
+        attendance = "ABSENT";
+        attendanceColor = Colors.red;
+        break;
+      case 1:
+        attendance = "PRESENT";
+        attendanceColor = Colors.green;
+        break;
+      case 2:
+        attendance = "LATE";
+        attendanceColor = Colors.orange;
+        break;
+    }
 
     return Card(
         child: Padding(
@@ -113,6 +176,14 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
+                    Text("Date: ${DateFormat('d').format(dStart).toString()}/${DateFormat('yM').format(dStart).toString()}"),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                child: Row(
+                  children: <Widget>[
                     Text("Time: ${DateFormat('jm').format(dStart).toString()} - ${DateFormat('jm').format(dEnd).toString()}"),
                   ],
                 ),
@@ -131,10 +202,8 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                   children: <Widget>[
                     const Text("Attendance: "),
                     Text(
-                      widget.attendance == 1 ? 'PRESENT' : widget.attendance == 2 ? 'LATE' : 'ABSENT',
-                      style: TextStyle(
-                        color: widget.attendance == 1 ? Colors.green : widget.attendance == 2 ? Colors.orange[700] : Colors.red
-                      ),
+                      attendance,
+                      style: TextStyle(color: attendanceColor),
                     ),
                   ],
                 ),

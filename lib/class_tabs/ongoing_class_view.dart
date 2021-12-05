@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/models/class_data_list.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class OngoingClassView extends StatefulWidget {
   const OngoingClassView({Key? key}) : super(key: key);
@@ -11,29 +12,42 @@ class OngoingClassView extends StatefulWidget {
 }
 
 class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepAliveClientMixin {
-  final List<ClassDataList> classList = [
-    ClassDataList("Human Computer Interaction", "123", "B2", DateTime.now(), DateTime.now()),
-    ClassDataList("Network Security", "BIBGE2113", "B3", DateTime.now(), DateTime.now()),
-    ClassDataList("Software Engineering", "123", "B405", DateTime.now(), DateTime.now()),
-    ClassDataList("IT Ethnic", "123", "A305", DateTime.now(), DateTime.now())
-  ];
+  DatabaseService dbService = DatabaseService();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: double.infinity,
       width: double.infinity,
-      child: ListView.builder(
-        itemCount: classList.length,
-        itemBuilder: (BuildContext context, int index) => buildClassList(context, index, classList)
+      child: StreamBuilder<QuerySnapshot>(
+        stream: dbService.getOngoingClassData(context),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Text("Loading...");
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return Container(child: const Text("No ongoing class at the moment."));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return StreamBuilder(
+                stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
+                builder: (context, AsyncSnapshot<int> s) {
+                  if (s.hasData) {
+                    return buildClassList(context, snapshot.data!.docs[index], s.data);
+                  } else {
+                    return Container();
+                  }
+                }
+              );
+              }
+            );
+          }
+        }
       ),
     );
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
   }
 
   @override

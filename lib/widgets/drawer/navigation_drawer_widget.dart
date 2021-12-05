@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
-import 'package:student_attendance_fyp/screens/add_student/student_list.dart';
+import 'package:student_attendance_fyp/screens/students/student_list.dart';
 import 'package:student_attendance_fyp/screens/subjects/selected_subjects.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 
@@ -31,8 +31,9 @@ class NavigationDrawerWidget extends StatelessWidget {
   Widget isTeacher(BuildContext context) {
     if (UserModel().getTeacher) {
       return buildMenuItem(context, text: "Student List", icon: Icons.person);
+    } else {
+      return Container();
     }
-    return Container();
   }
 
   Widget buildMenuItem(BuildContext context, { required String text, required IconData icon }) {
