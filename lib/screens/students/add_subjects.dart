@@ -28,7 +28,9 @@ class _AddSubjectsState extends State<AddSubjects> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getSubjectDetailsAndSetIntoList().whenComplete((){});
+    getSubjectDetailsAndSetIntoList().whenComplete(() {
+      setState((){});
+    });
   }
 
   @override
