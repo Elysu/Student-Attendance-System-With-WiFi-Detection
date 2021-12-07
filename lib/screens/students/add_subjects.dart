@@ -14,6 +14,7 @@ class _AddSubjectsState extends State<AddSubjects> {
   List docs = [];
   List subjects = [];
   List<CheckBoxState> selectedItems = [];
+  bool loading = true;
   
   Future getSubjectDetailsAndSetIntoList() async {
     docs = await dbService.getSubjects();
@@ -29,13 +30,14 @@ class _AddSubjectsState extends State<AddSubjects> {
     // TODO: implement initState
     super.initState();
     getSubjectDetailsAndSetIntoList().whenComplete(() {
-      setState((){});
+      setState((){
+        loading = false;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Subjects from DB are $subjects");
     print(selectedItems.toString());
 
     return Scaffold(
@@ -46,7 +48,11 @@ class _AddSubjectsState extends State<AddSubjects> {
       body: ListView.separated(
         itemCount: subjects.length,
         itemBuilder: (BuildContext context, int index) {
-          return buildSingleCheckbox(subjects[index], index);
+          if (loading) {
+            return const Text("Loading");
+          } else {
+            return buildSingleCheckbox(subjects[index], index);
+          }
         },
         separatorBuilder: (context, index) {
           return const Divider(
