@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
 class DatabaseService {
@@ -41,6 +40,24 @@ class DatabaseService {
   Future getStudents() async {
     var data = await userCollection.where('isTeacher', isNotEqualTo: true).get();
     return data.docs;
+  }
+
+  // get all subjects document as a list
+  Future getSubjects() async {
+    List docs = [];
+    await subjectCollection.get().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        docs.add(doc.id);
+      }
+    });
+    print(docs);
+    return docs;
+  }
+  // get subject details based on single document
+  Future getSubjectDetails(String subjectID) async {
+    DocumentSnapshot snapshot = await subjectCollection.doc(subjectID).get();
+    var data = snapshot.data() as Map;
+    return data;
   }
 
   // get ongoing class

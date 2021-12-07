@@ -4,9 +4,23 @@ import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
+import 'package:student_attendance_fyp/services/network_info.dart';
 
 //this is just TabBar so stateless is fine
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  var wifiBSSID;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -25,8 +39,12 @@ class Home extends StatelessWidget {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: (){
+          onPressed: () async {
             UserModel userModel = UserModel();
+            NetInfo netInfo = NetInfo();
+            var bssid = await netInfo.getBSSID();
+
+            print("MAC ADDRESS: ${bssid}");
             print('User ID: ${userModel.getUID}');
             print('Device ID: ${userModel.getDeviceID}');
             print('Email: ${userModel.getEmail}');
