@@ -5,7 +5,7 @@ import 'package:student_attendance_fyp/services/database.dart';
 class AddSubjects extends StatefulWidget {
   const AddSubjects({ Key? key, required this.selectedList }) : super(key: key);
 
-  final List selectedList;
+  final List<CheckBoxState> selectedList;
 
   @override
   _AddSubjectsState createState() => _AddSubjectsState();
@@ -14,8 +14,8 @@ class AddSubjects extends StatefulWidget {
 class _AddSubjectsState extends State<AddSubjects> {
   DatabaseService dbService = DatabaseService();
   List docs = [];
-  List subjects = [];
-  List selectedItems = [];
+  List<CheckBoxState> subjects = [];
+  List<CheckBoxState> selectedItems = [];
   bool loading = true;
   
   Future getSubjectDetailsAndSetIntoList() async {
@@ -23,7 +23,8 @@ class _AddSubjectsState extends State<AddSubjects> {
 
     for (int i=0; i<docs.length; i++) {
       Map data = await dbService.getSubjectDetails(docs[i].toString());
-      bool value = widget.selectedList.contains(data['sub_code']);
+      bool value = widget.selectedList.map((e) => e.subCode).contains(data['sub_code']);
+      print("bool value is: $value");
       subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code'], value: value));
     }
   }
@@ -49,6 +50,7 @@ class _AddSubjectsState extends State<AddSubjects> {
   @override
   Widget build(BuildContext context) {
     print(selectedItems);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Subjects"),
@@ -85,13 +87,13 @@ class _AddSubjectsState extends State<AddSubjects> {
             child: ElevatedButton.icon(
               onPressed: selectedItems.isEmpty ? 
               () {
-                Navigator.pop(context, []);
+                Navigator.pop(context, List<CheckBoxState>.empty());
               } :
               () {
                 Navigator.pop(context, selectedItems);
               },
-              icon: const Icon(Icons.check_outlined),
-              label: Text("${selectedItems.length} subjects selected"),
+              icon: selectedItems.isEmpty ? const Icon(Icons.arrow_back) : const Icon(Icons.check_outlined),
+              label: selectedItems.isEmpty ? const Text("Back") : Text("${selectedItems.length} subjects selected"),
             ),
           )
         ],
@@ -101,16 +103,16 @@ class _AddSubjectsState extends State<AddSubjects> {
 
   Widget buildSingleCheckbox(CheckBoxState checkbox, int index) {
     return CheckboxListTile(
-      title: Text(checkbox.title!),
+      title: Text(checkbox.title),
       subtitle: Text(checkbox.subCode),
       value: checkbox.value,
       onChanged: (value) {
         setState(() {
           checkbox.value = value!;
           if (value) {
-            selectedItems.add(checkbox.subCode);
+            selectedItems.add(checkbox);
           } else {
-            selectedItems.removeWhere((element) => element == checkbox.subCode);
+            selectedItems.removeWhere((element) => element.subCode == checkbox.subCode);
           }
         });
       }

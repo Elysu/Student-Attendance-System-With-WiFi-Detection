@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 
 class AddStudent extends StatefulWidget {
@@ -15,7 +16,7 @@ class _AddStudentState extends State<AddStudent> {
   String name = '';
   String id = '';
   String error = '';
-  List selectedItems = [];
+  List<CheckBoxState> selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +112,7 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(height: 10),
                 Container(
                   width: double.infinity,
-                  padding: selectedItems.isEmpty ? const EdgeInsets.all(30) : const EdgeInsets.all(0),
+                  padding: selectedItems.isEmpty ? const EdgeInsets.all(20) : const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                   ),
@@ -122,8 +123,8 @@ class _AddStudentState extends State<AddStudent> {
                     itemCount: selectedItems.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        title: Text(selectedItems[index]),
-                        subtitle: Text(selectedItems[index]),
+                        title: Text(selectedItems[index].title),
+                        subtitle: Text(selectedItems[index].subCode),
                         trailing: IconButton(
                           onPressed: (){
                             setState(() {
@@ -152,7 +153,7 @@ class _AddStudentState extends State<AddStudent> {
   }
 
   void _navigateAddSubjects(BuildContext context) async {
-    final result;
+    final List<CheckBoxState>? result;
 
     if (selectedItems.isEmpty) {
       result = await Navigator.push(
@@ -168,7 +169,7 @@ class _AddStudentState extends State<AddStudent> {
     
     if (result != null) {
       setState(() {
-        selectedItems = result;
+        selectedItems = result!;
       });
     }
   }
