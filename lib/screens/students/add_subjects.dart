@@ -24,7 +24,6 @@ class _AddSubjectsState extends State<AddSubjects> {
     for (int i=0; i<docs.length; i++) {
       Map data = await dbService.getSubjectDetails(docs[i].toString());
       bool value = widget.selectedList.map((e) => e.subCode).contains(data['sub_code']);
-      print("bool value is: $value");
       subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code'], value: value));
     }
   }
@@ -33,8 +32,6 @@ class _AddSubjectsState extends State<AddSubjects> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    print("SELECTED LIST FROM ADD STUDENT IS ${widget.selectedList}");
 
     for(var i in widget.selectedList) {
       selectedItems.add(i);
@@ -49,8 +46,6 @@ class _AddSubjectsState extends State<AddSubjects> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectedItems);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Subjects"),

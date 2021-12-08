@@ -20,7 +20,6 @@ class _AddStudentState extends State<AddStudent> {
 
   @override
   Widget build(BuildContext context) {
-    print("Selected Subjects in Add student screen are $selectedItems");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Student"),
