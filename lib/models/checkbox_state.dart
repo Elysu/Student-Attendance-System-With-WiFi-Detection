@@ -3,7 +3,7 @@ class CheckBoxState {
   final String subCode;
   bool value;
 
-  CheckBoxState({ this.title, required this.subCode, this.value = false });
+  CheckBoxState({ this.title, required this.subCode, required this.value });
 
   String toString() {
     return '{subCode: $subCode, value: $value}';

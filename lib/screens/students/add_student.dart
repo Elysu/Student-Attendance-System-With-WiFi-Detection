@@ -15,9 +15,11 @@ class _AddStudentState extends State<AddStudent> {
   String name = '';
   String id = '';
   String error = '';
+  List selectedItems = [];
 
   @override
   Widget build(BuildContext context) {
+    print("Selected Subjects in Add student screen are $selectedItems");
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Student"),
@@ -97,10 +99,7 @@ class _AddStudentState extends State<AddStudent> {
                     const Text("Selected Subjects:"),
                     ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddSubjects())
-                        );
+                        _navigateAddSubjects(context);
                       },
                       icon: const Icon(Icons.add),
                       label: const Text('Add Subjects')
@@ -112,11 +111,37 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(height: 10),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(30),
+                  padding: selectedItems.isEmpty ? const EdgeInsets.all(30) : const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                   ),
-                  child: const Center(child: Text("No subjects selected")),
+                  child: selectedItems.isEmpty
+                  ? const Center(child: Text("No subject selected"))
+                  : ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: selectedItems.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(selectedItems[index]),
+                        subtitle: Text(selectedItems[index]),
+                        trailing: IconButton(
+                          onPressed: (){
+                            setState(() {
+                              selectedItems.removeAt(index);
+                            });
+                          },
+                          icon: const Icon(Icons.remove_circle),
+                          color: Colors.red,
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider(
+                        height: 0,
+                        color: Colors.black38,
+                      );
+                    }
+                  )
                 )
               ],
             ),
@@ -124,5 +149,27 @@ class _AddStudentState extends State<AddStudent> {
         ),
       ),
     );
+  }
+
+  void _navigateAddSubjects(BuildContext context) async {
+    final result;
+
+    if (selectedItems.isEmpty) {
+      result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: []))
+      );
+    } else {
+      result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems))
+      );
+    }
+    
+    if (result != null) {
+      setState(() {
+        selectedItems = result;
+      });
+    }
   }
 }

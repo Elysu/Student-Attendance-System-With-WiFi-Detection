@@ -3,7 +3,9 @@ import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class AddSubjects extends StatefulWidget {
-  const AddSubjects({ Key? key }) : super(key: key);
+  const AddSubjects({ Key? key, required this.selectedList }) : super(key: key);
+
+  final List selectedList;
 
   @override
   _AddSubjectsState createState() => _AddSubjectsState();
@@ -13,7 +15,7 @@ class _AddSubjectsState extends State<AddSubjects> {
   DatabaseService dbService = DatabaseService();
   List docs = [];
   List subjects = [];
-  List<CheckBoxState> selectedItems = [];
+  List selectedItems = [];
   bool loading = true;
   
   Future getSubjectDetailsAndSetIntoList() async {
@@ -21,7 +23,8 @@ class _AddSubjectsState extends State<AddSubjects> {
 
     for (int i=0; i<docs.length; i++) {
       Map data = await dbService.getSubjectDetails(docs[i].toString());
-      subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code']));
+      bool value = widget.selectedList.contains(data['sub_code']);
+      subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code'], value: value));
     }
   }
 
@@ -29,6 +32,13 @@ class _AddSubjectsState extends State<AddSubjects> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    print("SELECTED LIST FROM ADD STUDENT IS ${widget.selectedList}");
+
+    for(var i in widget.selectedList) {
+      selectedItems.add(i);
+    }
+
     getSubjectDetailsAndSetIntoList().whenComplete(() {
       setState((){
         loading = false;
@@ -38,8 +48,7 @@ class _AddSubjectsState extends State<AddSubjects> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectedItems.toString());
-
+    print(selectedItems);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Subjects"),
@@ -74,9 +83,12 @@ class _AddSubjectsState extends State<AddSubjects> {
               border: Border(top: BorderSide(width: 1, color: Colors.black))
             ),
             child: ElevatedButton.icon(
-              onPressed: selectedItems.isEmpty ? null
-              :() {
-                
+              onPressed: selectedItems.isEmpty ? 
+              () {
+                Navigator.pop(context, []);
+              } :
+              () {
+                Navigator.pop(context, selectedItems);
               },
               icon: const Icon(Icons.check_outlined),
               label: Text("${selectedItems.length} subjects selected"),
@@ -96,9 +108,9 @@ class _AddSubjectsState extends State<AddSubjects> {
         setState(() {
           checkbox.value = value!;
           if (value) {
-            selectedItems.add(CheckBoxState(subCode: checkbox.subCode, value: value));
+            selectedItems.add(checkbox.subCode);
           } else {
-            selectedItems.removeWhere((element) => element.subCode == checkbox.subCode);
+            selectedItems.removeWhere((element) => element == checkbox.subCode);
           }
         });
       }
