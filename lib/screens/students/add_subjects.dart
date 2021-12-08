@@ -45,21 +45,44 @@ class _AddSubjectsState extends State<AddSubjects> {
         title: const Text("Add Subjects"),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        itemCount: subjects.length,
-        itemBuilder: (BuildContext context, int index) {
-          if (loading) {
-            return const Text("Loading");
-          } else {
-            return buildSingleCheckbox(subjects[index], index);
-          }
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.separated(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: subjects.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (loading) {
+                  return const Text("Loading");
+                } else {
+                  return buildSingleCheckbox(subjects[index], index);
+                }
+              },
+              separatorBuilder: (context, index) {
+                return const Divider(
+                  height: 0,
+                  color: Colors.black38,
+                );
+              },
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            decoration: const BoxDecoration(
+              border: Border(top: BorderSide(width: 1, color: Colors.black))
+            ),
+            child: ElevatedButton.icon(
+              onPressed: selectedItems.isEmpty ? null
+              :() {
+                
+              },
+              icon: const Icon(Icons.check_outlined),
+              label: Text("${selectedItems.length} subjects selected"),
+            ),
+          )
+        ],
       )
     );
   }
