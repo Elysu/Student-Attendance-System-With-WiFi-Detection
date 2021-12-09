@@ -70,7 +70,8 @@ class DatabaseService {
   Future getUserData(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    UserModel().setData(uid, data['deviceID'], data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
+    String deviceID = data['deviceID'] != null ? data['deviceID'].toString() : '';
+    UserModel().setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
   }
 
   // get all students document as a list
