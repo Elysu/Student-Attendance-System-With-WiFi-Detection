@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -8,14 +9,14 @@ class AuthService {
   UserModel userModel = UserModel();
   bool isTeacher = false;
 
-  void getAndSetUserDataIntoModel(User user) async {
-    await _dbService.getUserData(user.uid);
+  getAndSetUserDataIntoModel(String uid) async {
+    await _dbService.getUserData(uid);
   }
 
   // use user data model to create user object based on firebase User
   UserModel? _userFromFirebase(User user) {
     if (user != null) {
-      getAndSetUserDataIntoModel(user);
+      getAndSetUserDataIntoModel(user.uid);
       return userModel;
     } else {
       return null;
@@ -39,6 +40,28 @@ class AuthService {
     } catch(e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  // teacher register student
+  Future registerStudent(String email, String password, String name, String id, List subjects) async {
+    try {
+      FirebaseApp app = await Firebase.initializeApp(name: 'Secondary', options: Firebase.app().options);
+      UserCredential userCredential = await FirebaseAuth.instanceFor(app: app)
+      .createUserWithEmailAndPassword(email: email, password: password);
+
+      // create a document for the newly added student with their uid
+      bool addStudentStatus = await _dbService.addUser(userCredential.user!.uid, email, password, name, id, subjects);
+
+      await app.delete();
+      return addStudentStatus;
+    }
+    on FirebaseAuthException catch (e) {
+      // Do something with exception. This try/catch is here to make sure 
+      // that even if the user creation fails, app.delete() runs, if is not, 
+      // next time Firebase.initializeApp() will fail as the previous one was
+      // not deleted.
+      return e.code;
     }
   }
 

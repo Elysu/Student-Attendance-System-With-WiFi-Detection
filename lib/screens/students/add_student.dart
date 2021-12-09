@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
+import 'package:student_attendance_fyp/services/auth.dart';
 
 class AddStudent extends StatefulWidget {
   const AddStudent({ Key? key }) : super(key: key);
@@ -10,6 +11,15 @@ class AddStudent extends StatefulWidget {
 }
 
 class _AddStudentState extends State<AddStudent> {
+  final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
+
+  // TextEditingController to get text value from TextFormField
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController idController = TextEditingController();
+
   // text field state
   String email = '';
   String password = '';
@@ -17,6 +27,7 @@ class _AddStudentState extends State<AddStudent> {
   String id = '';
   String error = '';
   List<CheckBoxState> selectedItems = [];
+  List subjectCode = [];
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +40,15 @@ class _AddStudentState extends State<AddStudent> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
           child: Form(
+            // validate form via _formKey (access validation techniques and state)
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // email field
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: emailController,
                   decoration: const InputDecoration(
                     hintText: 'example@e.newera.edu.my',
                     icon: Icon(Icons.email),
@@ -50,6 +64,7 @@ class _AddStudentState extends State<AddStudent> {
                 // password field
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: passwordController,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.password),
                     labelText: "Password"
@@ -65,6 +80,7 @@ class _AddStudentState extends State<AddStudent> {
                 // name field
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: nameController,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.person),
                     labelText: "Name"
@@ -79,6 +95,7 @@ class _AddStudentState extends State<AddStudent> {
                 // Student ID field
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: idController,
                   decoration: const InputDecoration(
                     hintText: 'S12345',
                     icon: Icon(Icons.person_pin_rounded),
@@ -142,7 +159,57 @@ class _AddStudentState extends State<AddStudent> {
                       );
                     }
                   )
-                )
+                ),
+
+                const SizedBox(height: 20),
+                // submit button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      subjectCode.clear();
+
+                      for (int i=0; i<selectedItems.length; i++) {
+                        subjectCode.add(selectedItems[i].subCode);
+                      }
+
+                      print(subjectCode);
+
+                      // if everything is valid
+                      if (_formKey.currentState!.validate()) {
+                        dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectCode);
+
+                        switch (result) {
+                          case 'email-already-in-use':
+                            setState(() {
+                              error = 'This email is already in-use.';
+                              print(error);
+                            });
+                            break;
+                          case 'invalid-email':
+                            setState(() {
+                              error = 'Invalid email.';
+                              print(error);
+                            });
+                            break;
+                          case 'weak-password':
+                            setState(() {
+                              error = 'Weak password, try using a stronger password.';
+                              print(error);
+                            });
+                            break;
+                          case true:
+                            print('Success');
+                            break;
+                          case false:
+                            print('Failed');
+                            break;
+                        }
+                      }
+                    },
+                    child: const Text("Add Student"),
+                  ),
+                ),
               ],
             ),
           ),
@@ -165,7 +232,7 @@ class _AddStudentState extends State<AddStudent> {
         MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems))
       );
     }
-    
+
     if (result != null) {
       setState(() {
         selectedItems = result!;

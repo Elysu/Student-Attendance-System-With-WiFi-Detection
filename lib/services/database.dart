@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
@@ -28,6 +29,42 @@ class DatabaseService {
   // always listening to changes in the database
   // get users stream
 
+  // register student from teacher side
+  Future<bool> addUser(String uid, String email, String password, String name, String id, List subjects) async {
+    bool status = await userCollection.doc(uid).set({
+      'deviceID': null,
+      'email': email,
+      'password': password,
+      'id': id,
+      'isTeacher': false,
+      'name': name,
+      'subjects': subjects
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    return status;
+  }
+
+  // check if email already exists in Firebase
+  Future<bool> checkIfEmailInUse(String email) async {
+    try {
+      // Fetch sign-in methods for the email address
+      final list = await _auth.fetchSignInMethodsForEmail(email);
+
+      // In case list is not empty
+      if (list.isNotEmpty) {
+        // Return true because there is an existing
+        // user using the email address
+        return true;
+      } else {
+        // Return false because email adress is not in use
+        return false;
+      }
+    } catch (error) {
+      print(error.toString());
+      return true;
+    }
+  }
 
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {
@@ -84,7 +121,6 @@ class DatabaseService {
     .orderBy("c_datetimeStart", descending: false)
     .snapshots();
   }
-
 
   // get class history data
   Stream<QuerySnapshot> getClassHistoryData(BuildContext context) async* {
