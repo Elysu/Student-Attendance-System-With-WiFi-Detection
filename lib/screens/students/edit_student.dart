@@ -72,6 +72,14 @@ class _EditStudentState extends State<EditStudent> {
         setState(() {
           isReadOnly = true;
           visibility = false;
+          nameController = TextEditingController(text: studentData['name'].toString());
+          idController = TextEditingController(text: studentData['id'].toString());
+
+          selectedItems.clear();
+          List subjects = studentData["subjects"];
+          for (int i=0; i<subjects.length; i++) {
+            selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
+          }
         });
       },
       child: const Icon(Icons.cancel_outlined),
@@ -210,7 +218,19 @@ class _EditStudentState extends State<EditStudent> {
                   
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
-                          
+                          bool result = await dbService.updateUserData(widget.docID, nameController.text, idController.text, subjectList);
+
+                          if (result) {
+                            setState(() {
+                              isReadOnly = true;
+                              visibility = false;
+                            });
+
+                          } else {
+                            setState(() {
+                              error = "Failed to save, please try again.";
+                            });
+                          }
                         }
                       },
                       child: const Text("Save"),

@@ -120,7 +120,10 @@ class _StudentListState extends State<StudentList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
-              );
+              ).then((value) {
+                didChangeDependencies();
+                setState(() {});
+              });
             },
           );
         },

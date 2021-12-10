@@ -12,18 +12,6 @@ class DatabaseService {
   final CollectionReference subjectCollection = FirebaseFirestore.instance.collection('subjects');
   UserModel userModel = UserModel();
 
-  /*
-  Future updateUserData (String stuID, String stuName, String stuSubject, String stuSubCode, String stuDeviceID) async {
-    return await studentCollection.doc(uid).set({
-      'stu_id': stuID,
-      'stu_name': stuName,
-      'stu_subject': stuSubject,
-      'stu_sub-code': stuSubCode,
-      'stu_deviceID': stuDeviceID
-    });
-  }
-  */
-
   // firestore streams
   // always listening to changes in the database
   // get users stream
@@ -36,6 +24,17 @@ class DatabaseService {
       'password': password,
       'id': id,
       'isTeacher': false,
+      'name': name,
+      'subjects': subjects
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    return status;
+  }
+  // update student data
+  Future<bool> updateUserData (String uid, String name, String id, List subjects) async {
+    bool status = await userCollection.doc(uid).update({
+      'id': id,
       'name': name,
       'subjects': subjects
     }).then((value) => true)
