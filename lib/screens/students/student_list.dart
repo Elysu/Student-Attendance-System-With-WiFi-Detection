@@ -134,8 +134,15 @@ class _StudentListState extends State<StudentList> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddStudent())
+            MaterialPageRoute(builder: (context) => const AddStudent())
           ).then((value) {
+            if (value != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Student successfully added."),
+                )
+              );
+            }
             didChangeDependencies();
             setState(() {});
           });

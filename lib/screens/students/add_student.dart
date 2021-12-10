@@ -204,7 +204,7 @@ class _AddStudentState extends State<AddStudent> {
                             print('Failed');
                             break;
                           case true:
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                             break;
                         }
                       }
