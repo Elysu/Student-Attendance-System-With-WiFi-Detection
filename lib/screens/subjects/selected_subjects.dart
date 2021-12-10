@@ -68,7 +68,14 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
 
   // get all students documents first
   getSubjects() async {
-    var data = await dbService.subjectCollection.where('sub_code', whereIn: UserModel().getSubjects).get();
+    List subjects = UserModel().getSubjects;
+    List subjectCode = [];
+
+    for (int i=0; i<subjects.length; i++) {
+      subjectCode.add(subjects[i]['sub_code']);
+    }
+
+    var data = await dbService.subjectCollection.where('sub_code', whereIn: subjectCode).get();
     setState(() {
       _allResults = data.docs;
     });

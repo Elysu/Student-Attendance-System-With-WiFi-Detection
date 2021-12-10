@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class EditStudent extends StatefulWidget {
-  const EditStudent({ Key? key }) : super(key: key);
+  const EditStudent({ Key? key, required this.docID }) : super(key: key);
+
+  final docID;
 
   @override
   _EditStudentState createState() => _EditStudentState();
@@ -11,6 +14,7 @@ class EditStudent extends StatefulWidget {
 
 class _EditStudentState extends State<EditStudent> {
   final _formKey = GlobalKey<FormState>();
+  DatabaseService dbService = DatabaseService();
 
   // TextEditingController to get text value from TextFormField
   TextEditingController nameController = TextEditingController();
@@ -25,6 +29,28 @@ class _EditStudentState extends State<EditStudent> {
   bool isReadOnly = true;
   bool visibility = false;
   Icon editIcon = const Icon(Icons.edit);
+  dynamic studentData;
+  bool loading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getStudentData().whenComplete(() {
+      setState((){
+        loading = false;
+        nameController = TextEditingController(text: studentData['name'].toString());
+        idController = TextEditingController(text: studentData['id'].toString());
+      });
+      print(studentData["name"]);
+      print(studentData["email"]);
+      print(studentData["id"]);
+    });
+  }
+
+  Future getStudentData() async {
+    studentData = await dbService.getStudentDetails(widget.docID);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +71,7 @@ class _EditStudentState extends State<EditStudent> {
           visibility = false;
         });
       },
-      child: const Icon(Icons.cancel),
+      child: const Icon(Icons.cancel_outlined),
     );
 
     return Scaffold(
@@ -53,7 +79,8 @@ class _EditStudentState extends State<EditStudent> {
         title: const Text("Edit Student"),
         centerTitle: true,
       ),
-      body: SingleChildScrollView( // make contents scrollable when keyboard appears
+      body: loading ? const Center(child: Text("Loading")) 
+      : SingleChildScrollView( // make contents scrollable when keyboard appears
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
           child: Form(
@@ -71,23 +98,11 @@ class _EditStudentState extends State<EditStudent> {
                     icon: Icon(Icons.email),
                     labelText: "Email"
                   ),
+                  controller: TextEditingController(text: studentData['email'].toString()),
                   // if isValid then value is null
                   validator: (value) => value!.isEmpty ? "Enter an email." : null,
                 ),
       
-                // password field
-                const SizedBox(height: 20),
-                TextFormField(
-                  readOnly: true,
-                  decoration: const InputDecoration(
-                    icon: Icon(Icons.password),
-                    labelText: "Password"
-                  ),
-                  obscureText: true,
-                  // if isValid then value is null
-                  validator: (value) => value!.length < 12 ? "Password cannot be shorter than 12 characters." : null,
-                ),
-                
                 // name field
                 const SizedBox(height: 20),
                 TextFormField(

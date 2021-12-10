@@ -11,7 +11,6 @@ class NetInfo {
     if (status.isDenied) {
       // Use location.
       await Permission.locationWhenInUse.request();
-      openAppSettings();
     }
 
     wifiBSSID = await networkInfo.getWifiBSSID();

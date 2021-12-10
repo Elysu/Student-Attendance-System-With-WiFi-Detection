@@ -35,22 +35,18 @@ class _HomeState extends State<Home> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const EditStudent())
-            );
-            // UserModel userModel = UserModel();
-            // NetInfo netInfo = NetInfo();
-            // var bssid = await netInfo.getBSSID();
+            UserModel userModel = UserModel();
+            NetInfo netInfo = NetInfo();
+            var bssid = await netInfo.getBSSID();
 
-            // print("MAC ADDRESS: ${bssid}");
-            // print('User ID: ${userModel.getUID}');
-            // print('Device ID: ${userModel.getDeviceID}');
-            // print('Email: ${userModel.getEmail}');
-            // print('ID: ${userModel.getID}');
-            // print('Name: ${userModel.getName}');
-            // print('isTeacher: ${userModel.getTeacher}');
-            // print('Subjects: ${userModel.getSubjects}');
+            print("MAC ADDRESS: ${bssid}");
+            print('User ID: ${userModel.getUID}');
+            print('Device ID: ${userModel.getDeviceID}');
+            print('Email: ${userModel.getEmail}');
+            print('ID: ${userModel.getID}');
+            print('Name: ${userModel.getName}');
+            print('isTeacher: ${userModel.getTeacher}');
+            print('Subjects: ${userModel.getSubjects}');
           },
           child: const Icon(Icons.add),
           backgroundColor: Colors.blue[500],

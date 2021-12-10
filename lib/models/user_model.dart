@@ -5,7 +5,7 @@ class UserModel {
   static String? id;
   static String? name;
   static bool? isTeacher;
-  static List<String> subjects = [];
+  static List subjects = [];
 
   String get getUID {
     return uid!;
@@ -31,7 +31,7 @@ class UserModel {
     return isTeacher!;
   }
 
-  List<String> get getSubjects {
+  List get getSubjects {
     return subjects;
   }
 

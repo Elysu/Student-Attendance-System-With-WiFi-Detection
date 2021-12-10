@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
@@ -45,39 +44,25 @@ class DatabaseService {
     return status;
   }
 
-  // check if email already exists in Firebase
-  Future<bool> checkIfEmailInUse(String email) async {
-    try {
-      // Fetch sign-in methods for the email address
-      final list = await _auth.fetchSignInMethodsForEmail(email);
-
-      // In case list is not empty
-      if (list.isNotEmpty) {
-        // Return true because there is an existing
-        // user using the email address
-        return true;
-      } else {
-        // Return false because email adress is not in use
-        return false;
-      }
-    } catch (error) {
-      print(error.toString());
-      return true;
-    }
-  }
-
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
     String deviceID = data['deviceID'] != null ? data['deviceID'].toString() : '';
-    UserModel().setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], data['subjects']);
+    List subjects = data['subjects'];
+    UserModel().setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
   }
 
   // get all students document as a list
   Future getStudents() async {
     var data = await userCollection.where('isTeacher', isNotEqualTo: true).get();
     return data.docs;
+  }
+  // get a student detail
+  Future getStudentDetails(String uid) async {
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    return data;
   }
 
   // get all subjects document as a list
@@ -103,8 +88,15 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
+    List subjects = data['subjects'];
+    List subjectCode = [];
+
+    for (int i=0; i<subjects.length; i++) {
+      subjectCode.add(subjects[i]['sub_code']);
+    }
+
     yield* classCollection
-    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_sub-code', whereIn: subjectCode)
     .where('c_ongoing', isEqualTo: true)
     .orderBy("c_datetimeStart", descending: false)
     .snapshots();
@@ -115,8 +107,15 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
+    List subjects = data['subjects'];
+    List subjectCode = [];
+
+    for (int i=0; i<subjects.length; i++) {
+      subjectCode.add(subjects[i]['sub_code']);
+    }
+
     yield* classCollection
-    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_sub-code', whereIn: subjectCode)
     .where('c_datetimeStart', isGreaterThan: DateTime.now())
     .where('c_ongoing', isEqualTo: false)
     .orderBy("c_datetimeStart", descending: false)
@@ -128,8 +127,15 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
+    List subjects = data['subjects'];
+    List subjectCode = [];
+
+    for (int i=0; i<subjects.length; i++) {
+      subjectCode.add(subjects[i]['sub_code']);
+    }
+
     yield* classCollection
-    .where('c_sub-code', whereIn: data['subjects'])
+    .where('c_sub-code', whereIn: subjectCode)
     .where('c_datetimeEnd', isLessThan: DateTime.now())
     .where('c_ongoing', isEqualTo: false)
     .orderBy("c_datetimeEnd", descending: true)

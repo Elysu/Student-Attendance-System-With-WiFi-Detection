@@ -27,7 +27,7 @@ class _AddStudentState extends State<AddStudent> {
   String id = '';
   String error = '';
   List<CheckBoxState> selectedItems = [];
-  List subjectCode = [];
+  List subjectList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -155,17 +155,17 @@ class _AddStudentState extends State<AddStudent> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      subjectCode.clear();
+                      subjectList.clear();
 
                       for (int i=0; i<selectedItems.length; i++) {
-                        subjectCode.add(selectedItems[i].subCode);
+                        subjectList.add({"sub_code": selectedItems[i].subCode, "sub_name": selectedItems[i].title});
                       }
 
-                      print(subjectCode);
+                      print(subjectList);
 
                       // if everything is valid
                       if (_formKey.currentState!.validate()) {
-                        dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectCode);
+                        dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectList);
 
                         switch (result) {
                           case 'email-already-in-use':

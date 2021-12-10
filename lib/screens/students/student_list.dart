@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/screens/home/home.dart';
 import 'package:student_attendance_fyp/screens/students/add_student.dart';
 import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
@@ -52,12 +51,12 @@ class _StudentListState extends State<StudentList> {
 
     if (_searchController.text != "") {
       // we have a search parameter
-      for(int i=0; i<_allResults.length; i++) {
+      for (int i=0; i<_allResults.length; i++) {
         DocumentSnapshot ds = _allResults[i];
         var name = ds['name'].toString().toLowerCase();
         var id = ds['id'].toString().toLowerCase();
 
-        if(name.contains(_searchController.text.toLowerCase()) || id.contains(_searchController.text.toLowerCase())) {
+        if (name.contains(_searchController.text.toLowerCase()) || id.contains(_searchController.text.toLowerCase())) {
           showResults.add(_allResults[i]);
         }
       }
@@ -120,7 +119,7 @@ class _StudentListState extends State<StudentList> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const EditStudent())
+                MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
               );
             },
           );
