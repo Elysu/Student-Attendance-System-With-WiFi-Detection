@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/screens/home/home.dart';
 import 'package:student_attendance_fyp/screens/students/add_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -118,7 +119,7 @@ class _StudentListState extends State<StudentList> {
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               title: Text(_resultsList[index]["name"]),
-              subtitle: Text("Student ID: ${_resultsList[index]["id"]}"),
+              subtitle: Text(_resultsList[index]["id"]),
             );
           },
           separatorBuilder: (context, index) {
@@ -133,8 +134,11 @@ class _StudentListState extends State<StudentList> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddStudent())
-          );
+            MaterialPageRoute(builder: (context) => AddStudent())
+          ).then((value) {
+            didChangeDependencies();
+            setState(() {});
+          });
         },
         child: const Icon(Icons.person_add),
       ),

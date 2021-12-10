@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
+import 'package:student_attendance_fyp/screens/students/student_list.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 
 class AddStudent extends StatefulWidget {
@@ -198,11 +199,12 @@ class _AddStudentState extends State<AddStudent> {
                               print(error);
                             });
                             break;
-                          case true:
-                            print('Success');
-                            break;
                           case false:
+                            error = 'Failed to add student.';
                             print('Failed');
+                            break;
+                          case true:
+                            Navigator.pop(context);
                             break;
                         }
                       }
@@ -210,6 +212,11 @@ class _AddStudentState extends State<AddStudent> {
                     child: const Text("Add Student"),
                   ),
                 ),
+                const SizedBox(height: 20),
+                Text(
+                  error,
+                  style: const TextStyle(color: Colors.red, fontSize: 14)
+                )
               ],
             ),
           ),
