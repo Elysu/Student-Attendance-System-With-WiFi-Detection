@@ -25,7 +25,7 @@ class _EditStudentState extends State<EditStudent> {
   String id = '';
   String error = '';
   List<CheckBoxState> selectedItems = [];
-  List subjectCode = [];
+  List subjectList = [];
   bool isReadOnly = true;
   bool visibility = false;
   Icon editIcon = const Icon(Icons.edit);
@@ -42,9 +42,12 @@ class _EditStudentState extends State<EditStudent> {
         nameController = TextEditingController(text: studentData['name'].toString());
         idController = TextEditingController(text: studentData['id'].toString());
       });
-      print(studentData["name"]);
-      print(studentData["email"]);
-      print(studentData["id"]);
+      
+      List subjects = studentData["subjects"];
+
+      for (int i=0; i<subjects.length; i++) {
+        selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
+      }
     });
   }
 
@@ -197,13 +200,13 @@ class _EditStudentState extends State<EditStudent> {
                     visible: visibility,
                     child: ElevatedButton(
                       onPressed: () async {
-                        subjectCode.clear();
+                        subjectList.clear();
                   
                         for (int i=0; i<selectedItems.length; i++) {
-                          subjectCode.add(selectedItems[i].subCode);
+                          subjectList.add({"sub_code": selectedItems[i].subCode, "sub_name": selectedItems[i].title});
                         }
                   
-                        print(subjectCode);
+                        print(subjectList);
                   
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
