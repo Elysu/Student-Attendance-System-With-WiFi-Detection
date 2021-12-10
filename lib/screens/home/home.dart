@@ -3,6 +3,7 @@ import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 import 'package:student_attendance_fyp/services/network_info.dart';
 
@@ -14,12 +15,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var wifiBSSID;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +35,22 @@ class _HomeState extends State<Home> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            UserModel userModel = UserModel();
-            NetInfo netInfo = NetInfo();
-            var bssid = await netInfo.getBSSID();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EditStudent())
+            );
+            // UserModel userModel = UserModel();
+            // NetInfo netInfo = NetInfo();
+            // var bssid = await netInfo.getBSSID();
 
-            print("MAC ADDRESS: ${bssid}");
-            print('User ID: ${userModel.getUID}');
-            print('Device ID: ${userModel.getDeviceID}');
-            print('Email: ${userModel.getEmail}');
-            print('ID: ${userModel.getID}');
-            print('Name: ${userModel.getName}');
-            print('isTeacher: ${userModel.getTeacher}');
-            print('Subjects: ${userModel.getSubjects}');
+            // print("MAC ADDRESS: ${bssid}");
+            // print('User ID: ${userModel.getUID}');
+            // print('Device ID: ${userModel.getDeviceID}');
+            // print('Email: ${userModel.getEmail}');
+            // print('ID: ${userModel.getID}');
+            // print('Name: ${userModel.getName}');
+            // print('isTeacher: ${userModel.getTeacher}');
+            // print('Subjects: ${userModel.getSubjects}');
           },
           child: const Icon(Icons.add),
           backgroundColor: Colors.blue[500],

@@ -1,39 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
-import 'package:student_attendance_fyp/services/auth.dart';
 
-class AddStudent extends StatefulWidget {
-  const AddStudent({ Key? key }) : super(key: key);
+class EditStudent extends StatefulWidget {
+  const EditStudent({ Key? key }) : super(key: key);
 
   @override
-  _AddStudentState createState() => _AddStudentState();
+  _EditStudentState createState() => _EditStudentState();
 }
 
-class _AddStudentState extends State<AddStudent> {
-  final AuthService _auth = AuthService();
+class _EditStudentState extends State<EditStudent> {
   final _formKey = GlobalKey<FormState>();
 
   // TextEditingController to get text value from TextFormField
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController idController = TextEditingController();
 
   // text field state
-  String email = '';
-  String password = '';
   String name = '';
   String id = '';
   String error = '';
   List<CheckBoxState> selectedItems = [];
   List subjectCode = [];
+  bool isReadOnly = true;
+  bool visibility = false;
+  Icon editIcon = const Icon(Icons.edit);
 
   @override
   Widget build(BuildContext context) {
+    FloatingActionButton editButton = FloatingActionButton(
+      onPressed: () {
+        setState(() {
+          isReadOnly = false;
+          visibility = true;
+        });
+      },
+      child: const Icon(Icons.edit),
+    );
+
+    FloatingActionButton cancelButton = FloatingActionButton(
+      onPressed: () {
+        setState(() {
+          isReadOnly = true;
+          visibility = false;
+        });
+      },
+      child: const Icon(Icons.cancel),
+    );
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Student"),
+        title: const Text("Edit Student"),
         centerTitle: true,
       ),
       body: SingleChildScrollView( // make contents scrollable when keyboard appears
@@ -48,7 +65,7 @@ class _AddStudentState extends State<AddStudent> {
                 // email field
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: emailController,
+                  readOnly: true,
                   decoration: const InputDecoration(
                     hintText: 'example@e.newera.edu.my',
                     icon: Icon(Icons.email),
@@ -61,7 +78,7 @@ class _AddStudentState extends State<AddStudent> {
                 // password field
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: passwordController,
+                  readOnly: true,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.password),
                     labelText: "Password"
@@ -74,6 +91,7 @@ class _AddStudentState extends State<AddStudent> {
                 // name field
                 const SizedBox(height: 20),
                 TextFormField(
+                  readOnly: isReadOnly,
                   controller: nameController,
                   decoration: const InputDecoration(
                     icon: Icon(Icons.person),
@@ -86,6 +104,7 @@ class _AddStudentState extends State<AddStudent> {
                 // Student ID field
                 const SizedBox(height: 20),
                 TextFormField(
+                  readOnly: isReadOnly,
                   controller: idController,
                   decoration: const InputDecoration(
                     hintText: 'S12345',
@@ -102,12 +121,15 @@ class _AddStudentState extends State<AddStudent> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     const Text("Selected Subjects:"),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        _navigateAddSubjects(context);
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Subjects')
+                    Visibility(
+                      visible: visibility,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _navigateAddSubjects(context);
+                        },
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Subjects')
+                      ),
                     )
                   ],
                 ),
@@ -129,14 +151,17 @@ class _AddStudentState extends State<AddStudent> {
                       return ListTile(
                         title: Text(selectedItems[index].title),
                         subtitle: Text(selectedItems[index].subCode),
-                        trailing: IconButton(
-                          onPressed: (){
-                            setState(() {
-                              selectedItems.removeAt(index);
-                            });
-                          },
-                          icon: const Icon(Icons.remove_circle),
-                          color: Colors.red,
+                        trailing: Visibility(
+                          visible: visibility,
+                          child: IconButton(
+                            onPressed: (){
+                              setState(() {
+                                selectedItems.removeAt(index);
+                              });
+                            },
+                            icon: const Icon(Icons.remove_circle),
+                            color: Colors.red,
+                          ),
                         ),
                       );
                     },
@@ -153,50 +178,25 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      subjectCode.clear();
-
-                      for (int i=0; i<selectedItems.length; i++) {
-                        subjectCode.add(selectedItems[i].subCode);
-                      }
-
-                      print(subjectCode);
-
-                      // if everything is valid
-                      if (_formKey.currentState!.validate()) {
-                        dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectCode);
-
-                        switch (result) {
-                          case 'email-already-in-use':
-                            setState(() {
-                              error = 'This email is already in-use.';
-                              print(error);
-                            });
-                            break;
-                          case 'invalid-email':
-                            setState(() {
-                              error = 'Invalid email.';
-                              print(error);
-                            });
-                            break;
-                          case 'weak-password':
-                            setState(() {
-                              error = 'Weak password, try using a stronger password.';
-                              print(error);
-                            });
-                            break;
-                          case false:
-                            error = 'Failed to add student.';
-                            print('Failed');
-                            break;
-                          case true:
-                            Navigator.pop(context, true);
-                            break;
+                  child: Visibility(
+                    visible: visibility,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        subjectCode.clear();
+                  
+                        for (int i=0; i<selectedItems.length; i++) {
+                          subjectCode.add(selectedItems[i].subCode);
                         }
-                      }
-                    },
-                    child: const Text("Add Student"),
+                  
+                        print(subjectCode);
+                  
+                        // if everything is valid
+                        if (_formKey.currentState!.validate()) {
+                          
+                        }
+                      },
+                      child: const Text("Save"),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -209,9 +209,10 @@ class _AddStudentState extends State<AddStudent> {
           ),
         ),
       ),
+      floatingActionButton: isReadOnly ? editButton : cancelButton
     );
   }
-
+  
   void _navigateAddSubjects(BuildContext context) async {
     final List<CheckBoxState>? result;
 

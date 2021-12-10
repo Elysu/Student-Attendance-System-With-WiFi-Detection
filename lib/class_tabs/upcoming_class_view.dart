@@ -22,11 +22,11 @@ class _UpcomingClassViewState extends State<UpcomingClassView> with AutomaticKee
         stream: dbService.getUpcomingClassData(context),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Text("Loading...");
+            return const Center(child: Text("Loading..."));
           }
           
           if (snapshot.data!.docs.isEmpty) {
-            return const Text("No upcoming class at the moment.");
+            return const Center(child: Text("No upcoming class at the moment."));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,

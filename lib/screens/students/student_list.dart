@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/screens/home/home.dart';
 import 'package:student_attendance_fyp/screens/students/add_student.dart';
+import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class StudentList extends StatefulWidget {
@@ -110,25 +111,26 @@ class _StudentListState extends State<StudentList> {
           ),
         ],
       ),
-      body: GestureDetector(
-        onTap: () {
-          
+      body: ListView.separated(
+        itemCount: _resultsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text(_resultsList[index]["name"]),
+            subtitle: Text(_resultsList[index]["id"]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EditStudent())
+              );
+            },
+          );
         },
-        child: ListView.separated(
-          itemCount: _resultsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(_resultsList[index]["name"]),
-              subtitle: Text(_resultsList[index]["id"]),
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              color: Colors.black38,
-            );
-          },
-        ),
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 0,
+            color: Colors.black38,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

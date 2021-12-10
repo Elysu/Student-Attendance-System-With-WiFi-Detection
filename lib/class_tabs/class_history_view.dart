@@ -22,9 +22,9 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
       child: StreamBuilder<QuerySnapshot>(
         stream: dbService.getClassHistoryData(context),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Text("Loading...");
+          if (!snapshot.hasData) return const Center(child: Text("Loading..."));
           if (snapshot.data!.docs.isEmpty) {
-            return const Text("No recent class.");
+            return const Center(child: Text("No recent class."));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,

@@ -23,25 +23,25 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
         stream: dbService.getOngoingClassData(context),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Text("Loading...");
+            return const Center(child: Text("Loading..."));
           }
 
           if (snapshot.data!.docs.isEmpty) {
-            return Container(child: const Text("No ongoing class at the moment."));
+            return const Center(child: Text("No ongoing class at the moment."));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (BuildContext context, int index) {
                 return StreamBuilder(
-                stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
-                builder: (context, AsyncSnapshot<int> s) {
-                  if (s.hasData) {
-                    return buildClassList(context, snapshot.data!.docs[index], s.data);
-                  } else {
-                    return Container();
+                  stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
+                  builder: (context, AsyncSnapshot<int> s) {
+                    if (s.hasData) {
+                      return buildClassList(context, snapshot.data!.docs[index], s.data);
+                    } else {
+                      return Container();
+                    }
                   }
-                }
-              );
+                );
               }
             );
           }
