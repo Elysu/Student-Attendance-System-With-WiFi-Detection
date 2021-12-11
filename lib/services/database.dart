@@ -52,6 +52,18 @@ class DatabaseService {
     UserModel().setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
   }
 
+  // get all teachers document as a list
+  Future getTeachers() async {
+    var data = await userCollection.where('isTeacher', isEqualTo: true).get();
+    return data.docs;
+  }
+  // get teacher details
+  Future getTeacherDetails(String uid) async {
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    return data;
+  }
+
   // get all students document as a list
   Future getStudents() async {
     var data = await userCollection.where('isTeacher', isNotEqualTo: true).get();

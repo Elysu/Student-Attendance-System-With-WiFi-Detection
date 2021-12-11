@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/screens/subjects/change_teacher.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class EditSubject extends StatefulWidget {
@@ -21,6 +22,7 @@ class _EditSubjectState extends State<EditSubject> {
   // text field state
   String subjectName = '';
   String subjectCode = '';
+  Map subjectTeacher = {};
   String error = '';
   bool isReadOnly = true;
   bool visibility = false;
@@ -37,6 +39,7 @@ class _EditSubjectState extends State<EditSubject> {
         loading = false;
         subNameController = TextEditingController(text: subjectData['sub_name'].toString());
         subCodeController = TextEditingController(text: subjectData['sub_code'].toString());
+        subjectTeacher = subjectData['sub_teacher'];
       });
     });
   }
@@ -121,10 +124,10 @@ class _EditSubjectState extends State<EditSubject> {
                       visible: visibility,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          // _navigateSelectTeacher(context);
+                          _navigateSelectTeacher(context);
                         },
-                        icon: const Icon(Icons.add),
-                        label: const Text('Change Subject Teacher')
+                        icon: const Icon(Icons.loop),
+                        label: const Text('Change')
                       ),
                     )
                   ],
@@ -137,9 +140,9 @@ class _EditSubjectState extends State<EditSubject> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                   ),
-                  child: const ListTile(
-                    title: Text("Ng Si Liang"),
-                    subtitle: Text("T123"),
+                  child: ListTile(
+                    title: Text(subjectTeacher["t_name"]),
+                    subtitle: Text(subjectTeacher["t_id"]),
                   )
                 ),
 
@@ -187,5 +190,23 @@ class _EditSubjectState extends State<EditSubject> {
   }
 
   void _navigateSelectTeacher(BuildContext context) async {
+    Map result = {};
+
+    if (subjectTeacher.isNotEmpty) {
+      result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ChangeTeacher(currentTeacher: {}))
+      );
+    } else {
+      result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChangeTeacher(currentTeacher: {"t_name": subjectTeacher["t_name"], "t_id": subjectTeacher["t_id"]}))
+      );
+    }
+
+    setState(() {
+      subjectTeacher["t_name"] = result["t_name"];
+      subjectTeacher["t_id"] = result["t_id"];
+    });
   }
 }
