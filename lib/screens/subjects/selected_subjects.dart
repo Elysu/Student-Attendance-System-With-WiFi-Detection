@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/subjects/edit_subject.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class SelectedSubjects extends StatefulWidget {
@@ -121,6 +122,15 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
           return ListTile(
             title: Text(_resultsList[index]["sub_name"]),
             subtitle: Text(_resultsList[index]["sub_code"]),
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
+              ).then((value) {
+                didChangeDependencies();
+                setState(() {});
+              });
+            },
           );
         },
         separatorBuilder: (context, index) {
