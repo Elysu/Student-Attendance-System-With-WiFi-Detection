@@ -105,10 +105,33 @@ class _AddSubjectState extends State<AddSubject> {
                     onPressed: () async {
                       // if everything is valid
                       if (_formKey.currentState!.validate() && subjectTeacher.isNotEmpty) {
-                        setState(() {
-                          error = '';
-                        });
-                        print("Sucess! Subject teacher: $subjectTeacher");
+                        error = '';
+                        bool isExist = await dbService.checkSubjectExist(subCodeController.text);
+
+                        if (isExist) {
+                          setState(() {
+                            error = 'A subject with this subject code has already exist in the system';
+                          });
+                        } else {
+                          bool result = await dbService.addSubject(subCodeController.text, subNameController.text, subjectTeacher);
+
+                          if (result) {
+                            List subject = [{"sub_code": subCodeController.text, "sub_name": subNameController.text}];
+                            bool insertStatus = await dbService.updateUserTeacherSubject(subjectTeacher["t_uid"].toString(), subject);
+
+                            if (insertStatus) {
+                              Navigator.pop(context, true);
+                            } else {
+                              setState(() {
+                                error = "Subject added but doesn't appear under the selected teacher";
+                              });
+                            }
+                          } else {
+                            setState(() {
+                              error = 'Failed to add subject.';
+                            });
+                          }
+                        }
                       } else {
                         setState(() {
                           error = '';

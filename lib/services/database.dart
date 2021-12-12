@@ -43,6 +43,36 @@ class DatabaseService {
     return status;
   }
 
+  // add subject into database
+  Future<bool> addSubject(String subCode, String subName, Map subTeacher) async {
+    bool status = await subjectCollection.add({
+      "sub_code": subCode,
+      "sub_name": subName,
+      "sub_teacher": subTeacher
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    return status;
+  }
+  // check if subject exist before adding into database
+  Future<bool> checkSubjectExist(String subCode) async {
+    var data = await subjectCollection.where('sub_code', isEqualTo: subCode).get();
+    if (data.docs.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  // update subjects on teacher user
+  Future<bool> updateUserTeacherSubject (String uid, List subject) async {
+    bool status = await userCollection.doc(uid).update({
+      "subjects": FieldValue.arrayUnion(subject)
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    return status;
+  }
+
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
