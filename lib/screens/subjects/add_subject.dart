@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/screens/subjects/change_teacher.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
-class EditSubject extends StatefulWidget {
-  const EditSubject({ Key? key, required this.docID}) : super(key: key);
-
-  final docID;
+class AddSubject extends StatefulWidget {
+  const AddSubject({ Key? key }) : super(key: key);
 
   @override
-  _EditSubjectState createState() => _EditSubjectState();
+  _AddSubjectState createState() => _AddSubjectState();
 }
 
-class _EditSubjectState extends State<EditSubject> {
+class _AddSubjectState extends State<AddSubject> {
   final _formKey = GlobalKey<FormState>();
   DatabaseService dbService = DatabaseService();
 
@@ -19,75 +17,20 @@ class _EditSubjectState extends State<EditSubject> {
   TextEditingController subNameController = TextEditingController();
   TextEditingController subCodeController = TextEditingController();
 
-  // text field state
-  String subjectName = '';
-  String subjectCode = '';
-  Map subjectTeacher = {};
+  // text fields
+  String subName = '';
+  String subCode = '';
   String error = '';
-  bool isReadOnly = true;
-  bool visibility = false;
-  Icon editIcon = const Icon(Icons.edit);
-  Map? subjectData;
-  bool loading = true;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getSubjectData().whenComplete(() {
-      setState((){
-        loading = false;
-        subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
-        subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
-        subjectTeacher = subjectData!['sub_teacher'];
-        print("Subject Data inistate is ${subjectData!['sub_teacher']}");
-      });
-    });
-  }
-
-  Future getSubjectData() async {
-    subjectData = await dbService.getSubjectDetails(widget.docID);
-  }
+  Map subjectTeacher = {};
 
   @override
   Widget build(BuildContext context) {
-    print(subjectData);
-    FloatingActionButton editButton = FloatingActionButton(
-      onPressed: () {
-        setState(() {
-          isReadOnly = false;
-          visibility = true;
-        });
-      },
-      child: const Icon(Icons.edit),
-    );
-
-    FloatingActionButton cancelButton = FloatingActionButton(
-      onPressed: () {
-        setState(() {
-          isReadOnly = true;
-          visibility = false;
-          subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
-          subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
-          
-          subjectTeacher.remove("t_name");
-          subjectTeacher.remove("t_id");
-          subjectTeacher.remove("t_uid");
-
-          print("Subject Data is ${subjectData!['sub_teacher'].toString()}");
-          subjectTeacher.addAll(subjectData!['sub_teacher']);
-        });
-      },
-      child: const Icon(Icons.cancel_outlined),
-    );
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Subject"),
+        title: const Text("Add Subject"),
         centerTitle: true,
       ),
-      body: loading ? const Center(child: Text("Loading")) 
-      : SingleChildScrollView( // make contents scrollable when keyboard appears
+      body: SingleChildScrollView( // make contents scrollable when keyboard appears
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
           child: Form(
@@ -99,7 +42,6 @@ class _EditSubjectState extends State<EditSubject> {
                 // subject name field
                 const SizedBox(height: 20),
                 TextFormField(
-                  readOnly: isReadOnly,
                   decoration: const InputDecoration(
                     hintText: 'Networking',
                     icon: Icon(Icons.menu_book),
@@ -113,7 +55,6 @@ class _EditSubjectState extends State<EditSubject> {
                 // subject code field
                 const SizedBox(height: 20),
                 TextFormField(
-                  readOnly: isReadOnly,
                   controller: subCodeController,
                   decoration: const InputDecoration(
                     hintText: 'NWK-123',
@@ -130,15 +71,12 @@ class _EditSubjectState extends State<EditSubject> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     const Text("Subject Teacher:"),
-                    Visibility(
-                      visible: visibility,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          _navigateSelectTeacher(context);
-                        },
-                        icon: const Icon(Icons.loop),
-                        label: const Text('Change')
-                      ),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        _navigateSelectTeacher(context);
+                      },
+                      icon: const Icon(Icons.loop),
+                      label: const Text('Change')
                     )
                   ],
                 ),
@@ -147,10 +85,13 @@ class _EditSubjectState extends State<EditSubject> {
                 const SizedBox(height: 10),
                 Container(
                   width: double.infinity,
+                  padding: subjectTeacher.isEmpty ? const EdgeInsets.all(20) : const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                   ),
-                  child: ListTile(
+                  child: subjectTeacher.isEmpty
+                  ? const Center(child: Text("No teacher selected"))
+                  : ListTile(
                     title: Text(subjectTeacher["t_name"].toString()),
                     subtitle: Text(subjectTeacher["t_id"].toString()),
                   )
@@ -160,29 +101,25 @@ class _EditSubjectState extends State<EditSubject> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  child: Visibility(
-                    visible: visibility,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // if everything is valid
-                        // if (_formKey.currentState!.validate()) {
-                        //   bool result = await dbService.updateSubjectData(widget.docID, nameController.text, idController.text, subjectList);
-
-                        //   if (result) {
-                        //     setState(() {
-                        //       isReadOnly = true;
-                        //       visibility = false;
-                        //     });
-
-                        //   } else {
-                        //     setState(() {
-                        //       error = "Failed to save, please try again.";
-                        //     });
-                        //   }
-                        // }
-                      },
-                      child: const Text("Save"),
-                    ),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // if everything is valid
+                      if (_formKey.currentState!.validate() && subjectTeacher.isNotEmpty) {
+                        setState(() {
+                          error = '';
+                        });
+                        print("Sucess! Subject teacher: $subjectTeacher");
+                      } else {
+                        setState(() {
+                          error = '';
+                          
+                          if (subjectTeacher.isEmpty) {
+                            error = 'Select a teacher for this subject';
+                          }
+                        });
+                      }
+                    },
+                    child: const Text("Add Subject"),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -195,7 +132,6 @@ class _EditSubjectState extends State<EditSubject> {
           ),
         ),
       ),
-      floatingActionButton: isReadOnly ? editButton : cancelButton
     );
   }
 

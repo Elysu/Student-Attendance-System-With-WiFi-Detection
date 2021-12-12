@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/subjects/add_subject.dart';
 import 'package:student_attendance_fyp/screens/subjects/edit_subject.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -139,6 +140,25 @@ class _AllSubjectsState extends State<AllSubjects> {
             color: Colors.black38,
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddSubject())
+          ).then((value) {
+            if (value != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Subject successfully added."),
+                )
+              );
+            }
+            didChangeDependencies();
+            setState(() {});
+          });
+        },
+        child: const Icon(Icons.post_add),
       ),
       resizeToAvoidBottomInset: false
     );

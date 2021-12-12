@@ -82,7 +82,7 @@ class _AddSubjectsState extends State<AddSubjects> {
             child: ElevatedButton.icon(
               onPressed: selectedItems.isEmpty ? 
               () {
-                Navigator.pop(context, List<CheckBoxState>.empty());
+                Navigator.pop(context, List<CheckBoxState>.empty(growable: true));
               } :
               () {
                 Navigator.pop(context, selectedItems);

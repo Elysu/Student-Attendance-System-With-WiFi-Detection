@@ -75,7 +75,10 @@ class _EditStudentState extends State<EditStudent> {
           nameController = TextEditingController(text: studentData['name'].toString());
           idController = TextEditingController(text: studentData['id'].toString());
 
-          selectedItems.clear();
+          if (selectedItems.isNotEmpty) {
+            selectedItems = List.empty(growable: true);
+          }
+          
           List subjects = studentData["subjects"];
           for (int i=0; i<subjects.length; i++) {
             selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));

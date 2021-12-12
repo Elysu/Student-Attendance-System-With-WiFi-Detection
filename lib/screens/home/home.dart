@@ -3,7 +3,6 @@ import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
-import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 import 'package:student_attendance_fyp/services/network_info.dart';
 
