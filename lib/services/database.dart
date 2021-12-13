@@ -74,7 +74,7 @@ class DatabaseService {
       return false;
     }
   }
-  // update subjects on teacher user
+  // update subjects on teacher user (add subject)
   Future<bool> updateUserTeacherSubject (String uid, List subject) async {
     bool status = await userCollection.doc(uid).update({
       "subjects": FieldValue.arrayUnion(subject)
@@ -121,6 +121,8 @@ class DatabaseService {
       return false;
     }
   }
+  // update subject details
+  
 
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {

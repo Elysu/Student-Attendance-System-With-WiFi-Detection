@@ -52,7 +52,6 @@ class _EditSubjectState extends State<EditSubject> {
 
   @override
   Widget build(BuildContext context) {
-    print(subjectData);
     FloatingActionButton editButton = FloatingActionButton(
       onPressed: () {
         setState(() {
@@ -174,21 +173,11 @@ class _EditSubjectState extends State<EditSubject> {
                     child: ElevatedButton(
                       onPressed: () async {
                         // if everything is valid
-                        // if (_formKey.currentState!.validate()) {
-                        //   bool result = await dbService.updateSubjectData(widget.docID, nameController.text, idController.text, subjectList);
-
-                        //   if (result) {
-                        //     setState(() {
-                        //       isReadOnly = true;
-                        //       visibility = false;
-                        //     });
-
-                        //   } else {
-                        //     setState(() {
-                        //       error = "Failed to save, please try again.";
-                        //     });
-                        //   }
-                        // }
+                        if (_formKey.currentState!.validate()) {
+                          print(subNameController.text);
+                          print(subCodeController.text);
+                          print(subjectTeacher);
+                        }
                       },
                       child: const Text("Save"),
                     ),
