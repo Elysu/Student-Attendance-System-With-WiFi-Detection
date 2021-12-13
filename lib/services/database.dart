@@ -72,6 +72,44 @@ class DatabaseService {
 
     return status;
   }
+  // delete subject based on doc ID
+  Future deleteSubject(String docID) async {
+    bool status = await subjectCollection.doc(docID).delete()
+    .then((value) => true)
+    .catchError((error) {
+      print(error.toString());
+      return false;
+    });
+
+    return status;
+  }
+  // delete subject details under users
+  Future deleteUserSubject(String subCode, String subName) async {
+    var data = await userCollection.where("subjects", arrayContains: {"sub_code": subCode, "sub_name": subName}).get();
+
+    if (data.docs.isNotEmpty) {
+      List elementDelete = [{"sub_code": subCode, "sub_name": subName}];
+      bool? status;
+      for (int i=0; i<data.docs.length; i++) {
+        status = await userCollection.doc(data.docs[i].id).update({
+          "subjects": FieldValue.arrayRemove(elementDelete)
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+
+        if (status == false) {
+          break;
+        }
+      }
+
+      return status;
+    } else {
+      print("No document with this sub_code in Users collection");
+      return false;
+    }
+  }
 
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {

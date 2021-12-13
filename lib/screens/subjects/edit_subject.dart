@@ -85,6 +85,30 @@ class _EditSubjectState extends State<EditSubject> {
       appBar: AppBar(
         title: const Text("Edit Subject"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text('Delete NWK-123'),
+                  content: const Text('This subject will be permanently removed from the system. Continue?'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'Cancel'),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            icon: const Icon(Icons.delete),
+          )
+        ],
       ),
       body: loading ? const Center(child: Text("Loading")) 
       : SingleChildScrollView( // make contents scrollable when keyboard appears
