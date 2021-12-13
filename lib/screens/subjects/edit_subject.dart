@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/screens/subjects/change_teacher.dart';
 import 'package:student_attendance_fyp/services/database.dart';
+import 'package:student_attendance_fyp/shared/delete.dart';
 
 class EditSubject extends StatefulWidget {
   const EditSubject({ Key? key, required this.docID}) : super(key: key);
@@ -87,24 +88,8 @@ class _EditSubjectState extends State<EditSubject> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => AlertDialog(
-                  title: const Text('Delete NWK-123'),
-                  content: const Text('This subject will be permanently removed from the system. Continue?'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, 'OK'),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                ),
-              );
+            onPressed: () async {
+              await deleteDialog(context, widget.docID, 2, subjectData!['sub_code'].toString(), subjectData!['sub_name'].toString());
             },
             icon: const Icon(Icons.delete),
           )

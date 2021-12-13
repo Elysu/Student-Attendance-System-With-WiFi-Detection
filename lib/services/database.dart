@@ -42,6 +42,17 @@ class DatabaseService {
 
     return status;
   }
+  // delete student based on docID
+  Future deleteStudent(String docID) async {
+    bool status = await userCollection.doc(docID).delete()
+    .then((value) => true)
+    .catchError((error) {
+      print(error.toString());
+      return false;
+    });
+
+    return status;
+  }
 
   // add subject into database
   Future<bool> addSubject(String subCode, String subName, Map subTeacher) async {

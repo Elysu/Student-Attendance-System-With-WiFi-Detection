@@ -20,12 +20,11 @@ deleteDialog(BuildContext context, String docID, int type, [String? subCode, Str
             onPressed: () async {
               switch (type) {
                 case 1:
-                  await deleteStudent(docID);
+                  await deleteStudent(context, docID);
                   break;
                 case 2:
                   if (subCode != null || subName != null) {
-                    await deleteSubject(docID, subCode!, subName!);
-                    Navigator.pop(context);
+                    await deleteSubject(context, docID, subCode!, subName!);
                   } else {
                     print("Sub Code or Sub Name is null");
                   }
@@ -41,12 +40,33 @@ deleteDialog(BuildContext context, String docID, int type, [String? subCode, Str
 }
 
 // delete student
-deleteStudent(String docID) async {
+deleteStudent(BuildContext context, String docID) async {
+  DatabaseService dbService = DatabaseService();
+  bool studentDelete = await dbService.deleteStudent(docID);
 
+  if (studentDelete) {
+    // pop twice
+    int count = 0;
+    Navigator.of(context).popUntil((_) => count++ >= 2);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Student successfully deleted from the system."),
+      )
+    );
+  } else {
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Failed to delete student."),
+      )
+    );
+  }
 }
 
 // delete subject
-deleteSubject(String docID, String subCode, String subName) async {
+deleteSubject(BuildContext context, String docID, String subCode, String subName) async {
   DatabaseService dbService = DatabaseService();
   bool subjectDelete = await dbService.deleteSubject(docID);
 
@@ -54,9 +74,23 @@ deleteSubject(String docID, String subCode, String subName) async {
     bool userSubjectDelete = await dbService.deleteUserSubject(subCode, subName);
 
     if (userSubjectDelete) {
-      print("Successfully deleted");
+      // pop twice
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Subject successfully deleted from the system."),
+        )
+      );
     }
   } else {
-    print("Subject Delete Failed");
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Failed to delete subject."),
+      )
+    );
   }
 }

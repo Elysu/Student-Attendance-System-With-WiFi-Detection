@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/database.dart';
+import 'package:student_attendance_fyp/shared/delete.dart';
 
 class EditStudent extends StatefulWidget {
   const EditStudent({ Key? key, required this.docID }) : super(key: key);
@@ -92,6 +93,14 @@ class _EditStudentState extends State<EditStudent> {
       appBar: AppBar(
         title: const Text("Edit Student"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await deleteDialog(context, widget.docID, 1);
+            },
+            icon: const Icon(Icons.delete),
+          )
+        ],
       ),
       body: loading ? const Center(child: Text("Loading")) 
       : SingleChildScrollView( // make contents scrollable when keyboard appears
