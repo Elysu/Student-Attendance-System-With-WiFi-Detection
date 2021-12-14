@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/subjects/change_teacher.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 import 'package:student_attendance_fyp/shared/delete.dart';
@@ -30,6 +31,7 @@ class _EditSubjectState extends State<EditSubject> {
   Icon editIcon = const Icon(Icons.edit);
   Map? subjectData;
   bool loading = true;
+  bool isAdmin = UserModel().getTeacher == false ? false : true;
 
   @override
   void initState() {
@@ -51,30 +53,38 @@ class _EditSubjectState extends State<EditSubject> {
 
   @override
   Widget build(BuildContext context) {
-    FloatingActionButton editButton = FloatingActionButton(
-      onPressed: () {
-        setState(() {
-          isReadOnly = false;
-          visibility = true;
-        });
-      },
-      child: const Icon(Icons.edit),
+
+
+    Visibility editButton = Visibility(
+      visible: isAdmin,
+      child: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            isReadOnly = false;
+            visibility = true;
+          });
+        },
+        child: const Icon(Icons.edit),
+      ),
     );
 
-    FloatingActionButton cancelButton = FloatingActionButton(
-      onPressed: () {
-        getSubjectData().whenComplete(() {
-          setState((){
-            isReadOnly = true;
-            visibility = false;
-            subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
-            subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
-            subjectTeacher.clear();
-            subjectTeacher = subjectData!['sub_teacher'];
+    Visibility cancelButton = Visibility(
+      visible: isAdmin,
+      child: FloatingActionButton(
+        onPressed: () {
+          getSubjectData().whenComplete(() {
+            setState((){
+              isReadOnly = true;
+              visibility = false;
+              subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
+              subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
+              subjectTeacher.clear();
+              subjectTeacher = subjectData!['sub_teacher'];
+            });
           });
-        });
-      },
-      child: const Icon(Icons.cancel_outlined),
+        },
+        child: const Icon(Icons.cancel_outlined),
+      ),
     );
 
     return Scaffold(
@@ -82,11 +92,14 @@ class _EditSubjectState extends State<EditSubject> {
         title: const Text("Edit Subject"),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () async {
-              await deleteDialog(context, widget.docID, 2, subjectData!['sub_code'].toString(), subjectData!['sub_name'].toString());
-            },
-            icon: const Icon(Icons.delete),
+          Visibility(
+            visible: isAdmin,
+            child: IconButton(
+              onPressed: () async {
+                await deleteDialog(context, widget.docID, 2, subjectData!['sub_code'].toString(), subjectData!['sub_name'].toString());
+              },
+              icon: const Icon(Icons.delete),
+            ),
           )
         ],
       ),
