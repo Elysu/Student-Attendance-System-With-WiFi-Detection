@@ -32,7 +32,7 @@ class DatabaseService {
     return status;
   }
   // update student data
-  Future<bool> updateUserData (String uid, String name, String id, List subjects) async {
+  Future<bool> updateUserData(String uid, String name, String id, List subjects) async {
     bool status = await userCollection.doc(uid).update({
       'id': id,
       'name': name,
@@ -101,6 +101,7 @@ class DatabaseService {
     if (data.docs.isNotEmpty) {
       List elementDelete = [{"sub_code": subCode, "sub_name": subName}];
       bool? status;
+
       for (int i=0; i<data.docs.length; i++) {
         status = await userCollection.doc(data.docs[i].id).update({
           "subjects": FieldValue.arrayRemove(elementDelete)
@@ -122,7 +123,77 @@ class DatabaseService {
     }
   }
   // update subject details
-  
+  Future<bool> updateSubject(String docID, String subCode, String subName, Map subTeacher) async {
+    bool status = await subjectCollection.doc(docID).update({
+      'sub_code': subCode,
+      'sub_name': subName,
+      'sub_teacher': subTeacher
+    }).then((value) => true)
+    .catchError((error) {
+      print(error.toString());
+      return false;
+    });
+
+    return status;
+  }
+  // update subjects under teacher when teacher changed for this subject (edit subject)
+  Future<bool> updateTeacherSubject(String subjectDocID, String oldSubCode, String oldSubName, String newSubCode, String newSubName, Map currentTeacher, Map newTeacher) async {
+    List oldSubject = [{"sub_code": oldSubCode, "sub_name": oldSubName}];
+    List newSubject = [{"sub_code": newSubCode, "sub_name": newSubName}];
+    
+    if (currentTeacher == newTeacher) {
+      bool isSubCodeSame = oldSubCode == newSubCode ? true : false;
+      bool isSubNameSame = oldSubName == newSubName ? true : false;
+
+      if (isSubCodeSame && isSubNameSame) {
+        return true;
+      } else {
+        bool removeOldSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
+        'subjects': FieldValue.arrayRemove(oldSubject),
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+
+        bool addNewSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
+        'subjects': FieldValue.arrayUnion(newSubject),
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+
+        if (removeOldSubject && addNewSubject) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      bool statusCurrentTeacher = await userCollection.doc(currentTeacher["t_uid"]).update({
+        'subjects': FieldValue.arrayRemove(oldSubject),
+      }).then((value) => true)
+      .catchError((error) {
+        print(error.toString());
+        return false;
+      });
+
+      bool statusNewTeacher = await userCollection.doc(newTeacher["t_uid"]).update({
+        'subjects': FieldValue.arrayUnion(newSubject),
+      }).then((value) => true)
+      .catchError((error) {
+        print(error.toString());
+        return false;
+      });
+
+      if (statusCurrentTeacher && statusNewTeacher) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   // get current user data and set it into UserModel
   Future getUserData(String uid) async {
@@ -130,7 +201,7 @@ class DatabaseService {
     var data = snapshot.data() as Map;
     String deviceID = data['deviceID'] != null ? data['deviceID'].toString() : '';
     List subjects = data['subjects'];
-    UserModel().setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
+    userModel.setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
   }
 
   // get all teachers document as a list

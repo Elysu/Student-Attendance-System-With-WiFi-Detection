@@ -41,7 +41,6 @@ class _EditSubjectState extends State<EditSubject> {
         subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
         subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
         subjectTeacher = subjectData!['sub_teacher'];
-        print("Subject Data inistate is ${subjectData!['sub_teacher']}");
       });
     });
   }
@@ -64,18 +63,15 @@ class _EditSubjectState extends State<EditSubject> {
 
     FloatingActionButton cancelButton = FloatingActionButton(
       onPressed: () {
-        setState(() {
-          isReadOnly = true;
-          visibility = false;
-          subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
-          subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
-          
-          subjectTeacher.remove("t_name");
-          subjectTeacher.remove("t_id");
-          subjectTeacher.remove("t_uid");
-
-          print("Subject Data is ${subjectData!['sub_teacher'].toString()}");
-          subjectTeacher.addAll(subjectData!['sub_teacher']);
+        getSubjectData().whenComplete(() {
+          setState((){
+            isReadOnly = true;
+            visibility = false;
+            subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
+            subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
+            subjectTeacher.clear();
+            subjectTeacher = subjectData!['sub_teacher'];
+          });
         });
       },
       child: const Icon(Icons.cancel_outlined),
@@ -174,9 +170,42 @@ class _EditSubjectState extends State<EditSubject> {
                       onPressed: () async {
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
-                          print(subNameController.text);
-                          print(subCodeController.text);
+                          String newSubCode = subCodeController.text;
+                          String newSubName = subNameController.text;
+
+                          print(newSubName);
+                          print(newSubCode);
                           print(subjectTeacher);
+                          print("Subject data is ${subjectData!['sub_teacher']}");
+
+                          bool updateSubject = await dbService.updateSubject(widget.docID, newSubCode, newSubName, subjectTeacher);
+
+                          if (updateSubject) {
+                            bool updateTeacherSubject = await dbService.updateTeacherSubject(widget.docID, subjectData!['sub_code'], subjectData!['sub_name'], newSubCode, newSubName, subjectData!["sub_teacher"], subjectTeacher);
+
+                            if (updateTeacherSubject) {
+                              getSubjectData().whenComplete(() {
+                                setState((){
+                                  isReadOnly = true;
+                                  visibility = false;
+
+                                  subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
+                                  subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
+                                  subjectTeacher = subjectData!['sub_teacher'];
+                                });
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Subject successfully updated."),
+                                )
+                              );
+                            }
+                          } else {
+                            setState(() {
+                              error = 'Subject update failed.';
+                            });
+                          }
                         }
                       },
                       child: const Text("Save"),
@@ -215,7 +244,6 @@ class _EditSubjectState extends State<EditSubject> {
     if (result != null) {
       setState(() {
         subjectTeacher = result;
-        print(subjectTeacher);
       });
     }
   }
