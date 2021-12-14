@@ -247,6 +247,13 @@ class DatabaseService {
     return data;
   }
 
+  // get class details based on single document
+  Future getClassDetails(String docID) async {
+    DocumentSnapshot snapshot = await classCollection.doc(docID).get();
+    var data = snapshot.data() as Map;
+    return data;
+  }
+
   // get ongoing class
   Stream<QuerySnapshot> getOngoingClassData(BuildContext context) async* {
     final uid = await _auth.currentUser!.uid;
@@ -319,6 +326,20 @@ class DatabaseService {
       }
     } else {
       yield 0;
+    }
+  }
+  // Future version of attendance exists
+  Future getClassAttendance(String uid, String docID) async {
+    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
+    if (snapshot.exists) {
+      var data = snapshot.data() as Map;
+      if (data['isLate'] == true) {
+        return 2;
+      } else {
+        return 1;
+      }
+    } else {
+      return 0;
     }
   }
 }

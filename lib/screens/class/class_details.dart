@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class ClassDetails extends StatefulWidget {
   const ClassDetails({ Key? key, required this.docID }) : super(key: key);
@@ -10,17 +14,73 @@ class ClassDetails extends StatefulWidget {
 }
 
 class _ClassDetailsState extends State<ClassDetails> {
+  DatabaseService dbService = DatabaseService();
+  dynamic classDetails;
+  Map classTeacher = {};
+  bool loading = true;
+  int? attendance;
+  String attendanceText = "";
+  Color? attendanceColor;
+  Timestamp? tStart;
+  Timestamp? tEnd;
+  DateTime? dStart;
+  DateTime? dEnd;
+  String classStatus = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getClass().whenComplete(() {
+      setState(() {
+        classTeacher = classDetails["c_teacher"];
+        loading = false;
+        tStart = classDetails['c_datetimeStart'];
+        tEnd = classDetails['c_datetimeEnd'];
+        dStart = tStart!.toDate();
+        dEnd = tEnd!.toDate();
+        classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
+        
+        switch (attendance) {
+          case 0:
+            attendanceText = "ABSENT";
+            attendanceColor = Colors.red;
+            break;
+          case 1:
+            attendanceText = "PRESENT";
+            attendanceColor = Colors.green;
+            break;
+          case 2:
+            attendanceText = "LATE";
+            attendanceColor = Colors.orange;
+            break;
+        }
+      });
+    });
+  }
+
+  Future getClass() async {
+    classDetails = await dbService.getClassDetails(widget.docID);
+    attendance = await dbService.getClassAttendance(UserModel().getUID, widget.docID);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Class Details"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.people_alt),
+            onPressed: () {},
+          )
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-          child: Column(
+      body: loading ? const Text("Loading...") 
+      : Container(
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               // class name
@@ -28,19 +88,19 @@ class _ClassDetailsState extends State<ClassDetails> {
               const Text("Class:"),
               const SizedBox(height: 5),
               Text(
-                "Human Computer Interaction",
-                style: TextStyle(fontSize: 20),
+                classDetails["c_sub-name"],
+                style: const TextStyle(fontSize: 20),
               ),
-      
+
               // class subject code
               const SizedBox(height: 30),
               const Text("Subject Code:"),
               const SizedBox(height: 5),
               Text(
-                "BIBGE-123",
-                style: TextStyle(fontSize: 20),
+                classDetails["c_sub-code"],
+                style: const TextStyle(fontSize: 20),
               ),
-      
+
               // class datetime
               Row(
                 children: <Widget>[
@@ -54,8 +114,8 @@ class _ClassDetailsState extends State<ClassDetails> {
                         const Text("Date:"),
                         const SizedBox(height: 5),
                         Text(
-                          "24/11/2021",
-                          style: TextStyle(fontSize: 20),
+                          "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}",
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
@@ -70,8 +130,8 @@ class _ClassDetailsState extends State<ClassDetails> {
                         const Text("Time:"),
                         const SizedBox(height: 5),
                         Text(
-                          "4:00 PM - 7:00 PM",
-                          style: TextStyle(fontSize: 20),
+                          "${DateFormat('jm').format(dStart!).toString()} - ${DateFormat('jm').format(dEnd!).toString()}",
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
@@ -80,6 +140,7 @@ class _ClassDetailsState extends State<ClassDetails> {
               ),
 
               // class status and classroom
+              const SizedBox(height: 30),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -88,12 +149,11 @@ class _ClassDetailsState extends State<ClassDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         // classroom
-                        const SizedBox(height: 30),
                         const Text("Classroom:"),
                         const SizedBox(height: 5),
                         Text(
-                          "B3",
-                          style: TextStyle(fontSize: 20),
+                          classDetails["classroom"],
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
@@ -104,39 +164,66 @@ class _ClassDetailsState extends State<ClassDetails> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         // class status
-                        const SizedBox(height: 30),
                         const Text("Class Status:"),
                         const SizedBox(height: 5),
                         Text(
-                          "Ongoing",
-                          style: TextStyle(fontSize: 20),
+                          classStatus,
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              
+
               // class teacher
               const SizedBox(height: 30),
               const Text("Lecturer:"),
               const SizedBox(height: 5),
               Text(
-                "Ng Si Liang",
-                style: TextStyle(fontSize: 20),
+                classTeacher["t_name"],
+                style: const TextStyle(fontSize: 20),
               ),
 
-              // my attendance
+              // class attendance
               const SizedBox(height: 30),
-              const Text("Your attendance:"),
-              const SizedBox(height: 5),
-              Text(
-                "PRESENT",
-                style: TextStyle(fontSize: 20),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text("Your attendance:"),
+                        const SizedBox(height: 5),
+                        Text(
+                          attendanceText,
+                          style: TextStyle(fontSize: 20, color: attendanceColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.note_alt),
+                              label: const Text("Mark Attendance")),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ]
-          ),
-        ),
+            ]),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.edit),
       ),
     );
   }

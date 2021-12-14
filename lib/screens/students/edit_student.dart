@@ -146,7 +146,7 @@ class _EditStudentState extends State<EditStudent> {
                   controller: idController,
                   decoration: const InputDecoration(
                     hintText: 'S12345',
-                    icon: Icon(Icons.person_pin_rounded),
+                    icon: Icon(Icons.badge),
                     labelText: "Student ID"
                   ),
                   // if isValid then value is null

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 
 Widget buildClassList(BuildContext context, DocumentSnapshot classes, [dynamic attendance]) {
   return ClassList_ListView(classes: classes, attendance: attendance);
@@ -41,24 +42,24 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
         break;
     }
 
-  Widget checkUpcomingOrOngoing() {
-    if (attendance != "") {
-      return Padding(
-                padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
-                child: Row(
-                  children: <Widget>[
-                    const Text("Attendance: "),
-                    Text(
-                      attendance,
-                      style: TextStyle(color: attendanceColor),
-                    ),
-                  ],
-                ),
-              );
-    } else {
-      return Container();
+    Widget checkUpcomingOrOngoing() {
+      if (attendance != "") {
+        return Padding(
+                  padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
+                  child: Row(
+                    children: <Widget>[
+                      const Text("Attendance: "),
+                      Text(
+                        attendance,
+                        style: TextStyle(color: attendanceColor),
+                      ),
+                    ],
+                  ),
+                );
+      } else {
+        return Container();
+      }
     }
-  }
 
     return Card(
         child: Padding(
@@ -135,6 +136,8 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     DateTime dEnd = tEnd.toDate();
     String attendance = "";
     Color? attendanceColor;
+    bool visibility = UserModel().getTeacher ? true : false;
+    print(visibility);
 
     switch (widget.attendance) {
       case 0:
@@ -196,7 +199,18 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                   ],
                 ),
               ),
-              Padding(
+              teacherDisplayAttendance(visibility, attendance, attendanceColor!)
+            ],
+          ),
+        )
+    );
+  }
+
+  Widget teacherDisplayAttendance(bool visibility, String attendance, Color attendanceColor) {
+    if (visibility) {
+      return const SizedBox.shrink();
+    } else {
+      return  Padding(
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
@@ -207,10 +221,7 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        )
-    );
+              );
+    }
   }
 }
