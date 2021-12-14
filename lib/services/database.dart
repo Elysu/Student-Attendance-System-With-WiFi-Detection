@@ -130,7 +130,6 @@ class DatabaseService {
       'sub_teacher': subTeacher
     }).then((value) => true)
     .catchError((error) {
-      print(error.toString());
       return false;
     });
 
@@ -148,19 +147,19 @@ class DatabaseService {
       if (isSubCodeSame && isSubNameSame) {
         return true;
       } else {
+        // remove old sub code and sub name from teacher
         bool removeOldSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
         'subjects': FieldValue.arrayRemove(oldSubject),
         }).then((value) => true)
         .catchError((error) {
-          print(error.toString());
           return false;
         });
 
+        // update new sub code and sub name for teacher
         bool addNewSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
         'subjects': FieldValue.arrayUnion(newSubject),
         }).then((value) => true)
         .catchError((error) {
-          print(error.toString());
           return false;
         });
 
@@ -171,6 +170,7 @@ class DatabaseService {
         }
       }
     } else {
+      // remove old sub code and sub name for old teacher
       bool statusCurrentTeacher = await userCollection.doc(currentTeacher["t_uid"]).update({
         'subjects': FieldValue.arrayRemove(oldSubject),
       }).then((value) => true)
@@ -179,6 +179,7 @@ class DatabaseService {
         return false;
       });
 
+      // update new sub code and sub name to new teacher
       bool statusNewTeacher = await userCollection.doc(newTeacher["t_uid"]).update({
         'subjects': FieldValue.arrayUnion(newSubject),
       }).then((value) => true)

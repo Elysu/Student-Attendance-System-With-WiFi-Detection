@@ -173,11 +173,6 @@ class _EditSubjectState extends State<EditSubject> {
                           String newSubCode = subCodeController.text;
                           String newSubName = subNameController.text;
 
-                          print(newSubName);
-                          print(newSubCode);
-                          print(subjectTeacher);
-                          print("Subject data is ${subjectData!['sub_teacher']}");
-
                           bool updateSubject = await dbService.updateSubject(widget.docID, newSubCode, newSubName, subjectTeacher);
 
                           if (updateSubject) {
@@ -188,7 +183,6 @@ class _EditSubjectState extends State<EditSubject> {
                                 setState((){
                                   isReadOnly = true;
                                   visibility = false;
-
                                   subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
                                   subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
                                   subjectTeacher = subjectData!['sub_teacher'];
