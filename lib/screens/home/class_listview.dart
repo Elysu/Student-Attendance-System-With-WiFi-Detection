@@ -210,7 +210,7 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     if (visibility) {
       return const SizedBox.shrink();
     } else {
-      return  Padding(
+      return Padding(
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
