@@ -253,6 +253,18 @@ class DatabaseService {
     var data = snapshot.data() as Map;
     return data;
   }
+  // delete class session based on single document
+  // delete subject based on doc ID
+  Future deleteClass(String docID) async {
+    bool status = await classCollection.doc(docID).delete()
+    .then((value) => true)
+    .catchError((error) {
+      print(error.toString());
+      return false;
+    });
+
+    return status;
+  }
 
   // get ongoing class
   Stream<QuerySnapshot> getOngoingClassData(BuildContext context) async* {

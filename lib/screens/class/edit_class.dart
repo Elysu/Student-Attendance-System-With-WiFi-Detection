@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:student_attendance_fyp/services/database.dart';
+import 'package:student_attendance_fyp/shared/delete.dart';
 
 class EditClass extends StatefulWidget {
   const EditClass({ Key? key, required this.docID}) : super(key: key);
@@ -74,7 +75,9 @@ class _EditClassState extends State<EditClass> {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {},
+            onPressed: () {
+              deleteDialog(context, widget.docID, 3);
+            },
           )
         ],
       ),
@@ -123,13 +126,11 @@ class _EditClassState extends State<EditClass> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
                       Expanded(
                         flex: 5,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: () {
@@ -143,52 +144,74 @@ class _EditClassState extends State<EditClass> {
                       ),
                     ],
                   ),
-      
+
                   // time
                   const SizedBox(height: 30),
                   Row(
                     children: <Widget>[
+                      // start time
                       Expanded(
                         flex: 5,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
+                          children: [
                             const Text("Start Time:"),
                             const SizedBox(height: 5),
-                            Container(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-      
-                                },
-                                icon: const Icon(Icons.access_time),
-                                label: const Text("PICK A TIME")
-                              ),
+                            Text(
+                              DateFormat('jm').format(dStart!).toString(),
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // start time button
+                      Expanded(
+                        flex: 5,   
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+
+                            },
+                            icon: const Icon(Icons.access_time),
+                            label: const Text("PICK A TIME")
+                          ),
+                        )
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+                  Row(
+                    children: <Widget>[
+                      // End time
+                      Expanded(
+                        flex: 5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("End Time:"),
+                            const SizedBox(height: 5),
+                            Text(
+                              DateFormat('jm').format(dEnd!).toString(),
+                              style: const TextStyle(fontSize: 20),
                             )
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10),
+                      // End time button
                       Expanded(
-                        flex: 5,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            // time
-                            const Text("End Time:"),
-                            const SizedBox(height: 5),
-                            Container(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  
-                                },
-                                icon: const Icon(Icons.share_arrival_time_outlined),
-                                label: const Text("PICK A TIME")
-                              ),
-                            )
-                          ],
-                        ),
+                        flex: 5,   
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+
+                            },
+                            icon: const Icon(Icons.share_arrival_time_outlined),
+                            label: const Text("PICK A TIME")
+                          ),
+                        )
                       ),
                     ],
                   ),

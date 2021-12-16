@@ -3,7 +3,19 @@ import 'package:student_attendance_fyp/services/database.dart';
 
 // 1 = student delete, 2 = subject delete
 deleteDialog(BuildContext context, String docID, int type, [String? subCode, String? subName]) {
-  String content = type == 1 ? "student" : "subject";
+  String content = "";
+
+  switch (type) {
+    case 1:
+      content = "student";
+      break;
+    case 2:
+      content = "subject";
+      break;
+    case 3:
+      content = "class";
+      break;
+  }
 
   return showDialog(
     context: context,
@@ -28,6 +40,9 @@ deleteDialog(BuildContext context, String docID, int type, [String? subCode, Str
                   } else {
                     print("Sub Code or Sub Name is null");
                   }
+                  break;
+                case 3:
+                  await deleteClass(context, docID);
                   break;
               }
             },
@@ -90,6 +105,24 @@ deleteSubject(BuildContext context, String docID, String subCode, String subName
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Failed to delete subject."),
+      )
+    );
+  }
+}
+
+deleteClass(BuildContext context, String docID) async {
+  DatabaseService dbService = DatabaseService();
+  bool classDelete = await dbService.deleteClass(docID);
+
+  if (classDelete) {
+    int count = 0;
+    Navigator.of(context).popUntil((_) => count++ >= 3);
+  } else {
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Failed to delete class session."),
       )
     );
   }
