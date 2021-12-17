@@ -24,6 +24,8 @@ class _EditClassState extends State<EditClass> {
   Timestamp? tEnd;
   DateTime? dStart;
   DateTime? dEnd;
+  DateTime? newClassDate;
+  String date = "";
   String classStatus = "";
   List<String> allClassroom = [];
   String? dropdownValue;
@@ -40,6 +42,7 @@ class _EditClassState extends State<EditClass> {
         tEnd = classDetails['c_datetimeEnd'];
         dStart = tStart!.toDate();
         dEnd = tEnd!.toDate();
+        date = "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}";
         classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
       });
     });
@@ -120,7 +123,7 @@ class _EditClassState extends State<EditClass> {
                             const Text("Date:"),
                             const SizedBox(height: 5),
                             Text(
-                              "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}",
+                              date,
                               style: const TextStyle(fontSize: 20),
                             ),
                           ],
@@ -134,7 +137,7 @@ class _EditClassState extends State<EditClass> {
                               width: double.infinity,
                               child: ElevatedButton.icon(
                                 onPressed: () {
-      
+                                  pickDate(context, dStart!);
                                 },
                                 icon: const Icon(Icons.date_range),
                                 label: const Text("PICK A DATE")),
@@ -171,7 +174,7 @@ class _EditClassState extends State<EditClass> {
                           width: double.infinity,
                           child: ElevatedButton.icon(
                             onPressed: () {
-
+                              pickTime(context);
                             },
                             icon: const Icon(Icons.access_time),
                             label: const Text("PICK A TIME")
@@ -302,5 +305,25 @@ class _EditClassState extends State<EditClass> {
         ),
       ),
     );
+  }
+
+  Future pickDate(BuildContext context, DateTime dStart) async {
+    final newDate = await showDatePicker(
+      context: context,
+      initialDate: newClassDate ?? dStart,
+      firstDate: DateTime(DateTime.now().year - 5),
+      lastDate: DateTime(DateTime.now().year + 5),
+    );
+
+    if (newDate == null) return;
+
+    setState(() {
+      newClassDate = newDate;
+      date = "${DateFormat('d').format(newClassDate!).toString()}/${DateFormat('yM').format(newClassDate!).toString()}";
+    });
+  }
+
+  Future pickTime(BuildContext context) async {
+
   }
 }

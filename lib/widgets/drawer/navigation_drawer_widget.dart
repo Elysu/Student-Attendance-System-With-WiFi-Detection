@@ -34,7 +34,7 @@ class NavigationDrawerWidget extends StatelessWidget {
       return Column(
         children: <Widget>[
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
-          buildMenuItem(context, text: "Student List", icon: Icons.person),
+          buildMenuItem(context, text: "All Students", icon: Icons.person),
         ],
       );
     } else {
@@ -51,7 +51,7 @@ class NavigationDrawerWidget extends StatelessWidget {
           case "Logout":
             await _auth.userSignOut();
             break;
-          case "Student List":
+          case "All Students":
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const StudentList())
