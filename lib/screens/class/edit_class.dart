@@ -300,9 +300,11 @@ class _EditClassState extends State<EditClass> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        newStartDateTime
+                        newStartDateTime = updateTime(newStartTime!);
+                        newEndDateTime = updateTime(endTime!);
 
                         print(newStartDateTime);
+                        print(newEndDateTime);
                       },
                       child: const Text("Save"),
                     ),
@@ -372,5 +374,15 @@ class _EditClassState extends State<EditClass> {
     }
 
     if (newTime == null) return;
+  }
+
+  DateTime updateTime(TimeOfDay time) {
+    return DateTime(
+      newStartDateTime!.year,
+      newStartDateTime!.month,
+      newStartDateTime!.day,
+      time.hour,
+      time.minute
+    );
   }
 }
