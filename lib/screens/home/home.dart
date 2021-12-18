@@ -3,6 +3,7 @@ import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
 import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/class/create_class.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 import 'package:student_attendance_fyp/services/network_info.dart';
 
@@ -33,19 +34,11 @@ class _HomeState extends State<Home> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            UserModel userModel = UserModel();
-            NetInfo netInfo = NetInfo();
-            var bssid = await netInfo.getBSSID();
-
-            print("MAC ADDRESS: ${bssid}");
-            print('User ID: ${userModel.getUID}');
-            print('Device ID: ${userModel.getDeviceID}');
-            print('Email: ${userModel.getEmail}');
-            print('ID: ${userModel.getID}');
-            print('Name: ${userModel.getName}');
-            print('isTeacher: ${userModel.getTeacher}');
-            print('Subjects: ${userModel.getSubjects}');
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CreateClass())
+            );
           },
           child: const Icon(Icons.add),
           backgroundColor: Colors.blue[500],

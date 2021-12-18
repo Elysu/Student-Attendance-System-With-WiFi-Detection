@@ -352,7 +352,6 @@ class _EditClassState extends State<EditClass> {
   // 1 = start time , 2 = end time
   Future pickTime(BuildContext context, int type) async {
     final initialTime = TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
-    // var dateFormat = DateFormat("h:mm a"); // convert to 12 hours format
     TimeOfDay? newTime;
 
     switch (type) {
