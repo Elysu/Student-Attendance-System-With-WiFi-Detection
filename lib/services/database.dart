@@ -253,8 +253,19 @@ class DatabaseService {
     var data = snapshot.data() as Map;
     return data;
   }
+  // update class details
+  Future<bool> updateClassDetails(String docID, DateTime datetimeStart, DateTime datetimeEnd, String classroom, bool classOngoing) async {
+    bool status = await classCollection.doc(docID).update({
+      'c_datetimeStart': datetimeStart,
+      'c_datetimeEnd': datetimeEnd,
+      'classroom': classroom,
+      'c_ongoing': classOngoing
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    return status;
+  }
   // delete class session based on single document
-  // delete subject based on doc ID
   Future deleteClass(String docID) async {
     bool status = await classCollection.doc(docID).delete()
     .then((value) => true)

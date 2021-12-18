@@ -29,9 +29,8 @@ class _ClassDetailsState extends State<ClassDetails> {
   String classStatus = "";
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     getClass().whenComplete(() {
       setState(() {
         classTeacher = classDetails["c_teacher"];
@@ -229,7 +228,9 @@ class _ClassDetailsState extends State<ClassDetails> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => EditClass(docID: widget.docID))
-          );
+          ).then((value) {
+            didChangeDependencies();
+          });
         },
         child: const Icon(Icons.edit),
       ),

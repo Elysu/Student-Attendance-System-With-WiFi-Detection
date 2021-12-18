@@ -19,10 +19,10 @@ class _EditClassState extends State<EditClass> {
   dynamic classDetails;
   Map classTeacher = {};
   bool loading = true;
-  int? attendance;
+  bool? classOngoing;
   Timestamp? tStart, tEnd; // to store timestamp from firestore
   DateTime? dStart, dEnd; // to convert time stamp to DateTime and store new selected date
-  String strDate = "", strStartTime = "", strEndTime = "", classStatus = "", classroom = "", startTimePeriod = "", endTimePeriod = "", error = ""; // String that display on form
+  String strDate = "", strStartTime = "", strEndTime = "", strClassStatus = "", classroom = "", startTimePeriod = "", endTimePeriod = "", error = ""; // String that display on form
   TimeOfDay? startTime, endTime;
   List<String> allClassroom = [];
 
@@ -47,7 +47,8 @@ class _EditClassState extends State<EditClass> {
         endTimePeriod = endTime!.period == DayPeriod.am ? "AM" : "PM";
         strStartTime = DateFormat("h:mm").format(dStart!).toString() + " " + startTimePeriod;
         strEndTime = DateFormat("h:mm").format(dEnd!).toString() + " " + endTimePeriod;
-        classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
+        classOngoing = classDetails['c_ongoing'];
+        strClassStatus = classOngoing! ? "Ongoing" : "Not Available";
         classroom = classDetails['classroom'];
       });
     });
@@ -267,7 +268,7 @@ class _EditClassState extends State<EditClass> {
                               decoration: const InputDecoration(
                                 label: Text("Status")
                               ),
-                              value: classStatus,
+                              value: strClassStatus,
                               items: <String>["Ongoing", "Not Available"].map<DropdownMenuItem<String>>((String val) {
                                 return DropdownMenuItem<String>(
                                   value: val,
@@ -276,7 +277,7 @@ class _EditClassState extends State<EditClass> {
                               }).toList(),
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  classStatus = newValue!;
+                                  strClassStatus = newValue!;
                                 });
                               },
                             )
@@ -300,26 +301,30 @@ class _EditClassState extends State<EditClass> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         dStart = updateTime(startTime!);
                         dEnd = updateTime(endTime!);
-
-                        print(dStart);
-                        print(dEnd);
-                        print(classroom);
-                        print(classStatus);
-
+                        
                         // validation
+                        if (dEnd!.isBefore(dStart!)) {
+                          setState(() {
+                            error = "End time cannot be earlier than start time.";
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 5),
+                                content: Text(error, style: const TextStyle(color: Colors.red)),
+                              )
+                            );
+                          });
+                        } else {
+                          updateClass();
+                        }
                       },
                       child: const Text("Save"),
                     ),
                   ),
 
                   const SizedBox(height: 20),
-                  Text(
-                    error,
-                    style: const TextStyle(color: Colors.red, fontSize: 14)
-                  )
                 ]),
           ),
         ),
@@ -396,5 +401,24 @@ class _EditClassState extends State<EditClass> {
       time.hour,
       time.minute
     );
+  }
+
+  void updateClass() async {
+    classOngoing = strClassStatus == "Ongoing" ? true : false;
+    bool status = await dbService.updateClassDetails(widget.docID, dStart!, dEnd!, classroom, classOngoing!);
+
+    if (status) {
+      Navigator.pop(context, true);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 5),
+        content: Text("Class details has been updated.", style: TextStyle(color: Colors.green)),
+      ));
+    } else {
+      error = "Failed to update class details.";
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: const Duration(seconds: 5),
+        content: Text(error, style: const TextStyle(color: Colors.red)),
+      ));
+    }
   }
 }
