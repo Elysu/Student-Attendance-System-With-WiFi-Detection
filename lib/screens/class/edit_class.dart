@@ -21,9 +21,9 @@ class _EditClassState extends State<EditClass> {
   bool loading = true;
   int? attendance;
   Timestamp? tStart, tEnd; // to store timestamp from firestore
-  DateTime? dStart, dEnd, newStartDateTime, newEndDateTime; // to convert time stamp to DateTime and store new selected date
-  String strDate = "", strStartTime = "", strEndTime = "", classStatus = "", classroom = ""; // String that display on form
-  TimeOfDay? startTime, endTime, newStartTime, newEndTime;
+  DateTime? dStart, dEnd; // to convert time stamp to DateTime and store new selected date
+  String strDate = "", strStartTime = "", strEndTime = "", classStatus = "", classroom = "", startTimePeriod = "", endTimePeriod = "", error = ""; // String that display on form
+  TimeOfDay? startTime, endTime;
   List<String> allClassroom = [];
 
   @override
@@ -40,12 +40,13 @@ class _EditClassState extends State<EditClass> {
         // set date into variables
         dStart = tStart!.toDate();
         dEnd = tEnd!.toDate();
-        newStartDateTime = dStart;
-        strDate = "${DateFormat('d').format(newStartDateTime!).toString()}/${DateFormat('yM').format(newStartDateTime!).toString()}";
+        strDate = "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}";
         startTime = TimeOfDay(hour: dStart!.hour, minute: dStart!.minute);
         endTime = TimeOfDay(hour: dEnd!.hour, minute: dEnd!.minute);
-        strStartTime = DateFormat('jm').format(dStart!).toString();
-        strEndTime = DateFormat('jm').format(dEnd!).toString();
+        startTimePeriod = startTime!.period == DayPeriod.am ? "AM" : "PM";
+        endTimePeriod = endTime!.period == DayPeriod.am ? "AM" : "PM";
+        strStartTime = DateFormat("h:mm").format(dStart!).toString() + " " + startTimePeriod;
+        strEndTime = DateFormat("h:mm").format(dEnd!).toString() + " " + endTimePeriod;
         classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
         classroom = classDetails['classroom'];
       });
@@ -54,7 +55,7 @@ class _EditClassState extends State<EditClass> {
     // loop all classroom to dropdown list
     String strClassroom = "A";
     for (int i=1; i<=50; i++) {
-      allClassroom.add("${strClassroom}${i}");
+      allClassroom.add(strClassroom + "" + i.toString());
       if (i == 50) {
         switch (strClassroom) {
           case "A":
@@ -300,14 +301,24 @@ class _EditClassState extends State<EditClass> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        newStartDateTime = updateTime(newStartTime!);
-                        newEndDateTime = updateTime(endTime!);
+                        dStart = updateTime(startTime!);
+                        dEnd = updateTime(endTime!);
 
-                        print(newStartDateTime);
-                        print(newEndDateTime);
+                        print(dStart);
+                        print(dEnd);
+                        print(classroom);
+                        print(classStatus);
+
+                        // validation
                       },
                       child: const Text("Save"),
                     ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  Text(
+                    error,
+                    style: const TextStyle(color: Colors.red, fontSize: 14)
                   )
                 ]),
           ),
@@ -320,55 +331,56 @@ class _EditClassState extends State<EditClass> {
   Future pickDate(BuildContext context) async {
     final newDate = await showDatePicker(
       context: context,
-      initialDate: newStartDateTime ?? DateTime.now(),
+      initialDate: dStart ?? DateTime.now(),
       firstDate: DateTime(DateTime.now().year - 5),
       lastDate: DateTime(DateTime.now().year + 5),
     );
 
-    if (newDate == null) return;
-
-    setState(() {
-      newStartDateTime = newDate;
-      strDate = "${DateFormat('d').format(newStartDateTime!).toString()}/${DateFormat('yM').format(newStartDateTime!).toString()}";
-    });
+    if (newDate != null) {
+      setState(() {
+        dStart = newDate;
+        strDate = "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}";
+      });
+    }
   }
 
   // 1 = start time , 2 = end time
   Future pickTime(BuildContext context, int type) async {
     final initialTime = TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
+    // var dateFormat = DateFormat("h:mm a"); // convert to 12 hours format
     TimeOfDay? newTime;
-    var dateFormat = DateFormat("h:mm a"); // convert to 12 hours format
 
     switch (type) {
       case 1: {
         newTime = await showTimePicker(
           context: context,
-          initialTime: newStartTime ?? startTime!
+          initialTime: startTime ?? initialTime
         );
 
-        if (newTime == null) return;
-
-        setState(() {
-          newStartTime = newTime;
-          //newStartDateTime.hour(newStartTime.hour);
-          DateTime tempDate = DateFormat("hh:mm").parse(newStartTime!.hour.toString() + ":" + newStartTime!.minute.toString());
-          strStartTime = dateFormat.format(tempDate);
-        });
+        if (newTime != null) {
+          setState(() {
+            startTime = newTime;
+            String timePeriod = startTime!.period == DayPeriod.am ? "AM" : "PM";
+            DateTime tempDate = DateFormat("hh:mm").parse(startTime!.hour.toString() + ":" + startTime!.minute.toString());
+            strStartTime = DateFormat('h:mm').format(tempDate).toString() + " " + timePeriod;
+          });
+        }
         break;
       }
       case 2: {
         newTime = await showTimePicker(
           context: context,
-          initialTime: newEndTime ?? endTime!
+          initialTime: endTime ?? initialTime
         );
 
-        if (newTime == null) return;
-
-        setState(() {
-          newEndTime = newTime;
-          DateTime tempDate = DateFormat("hh:mm").parse(newEndTime!.hour.toString() + ":" + newEndTime!.minute.toString());
-          strEndTime = dateFormat.format(tempDate);
-        });
+        if (newTime != null) {
+          setState(() {
+            endTime = newTime;
+            String timePeriod = endTime!.period == DayPeriod.am ? "AM" : "PM";
+            DateTime tempDate = DateFormat("hh:mm").parse(endTime!.hour.toString() + ":" + endTime!.minute.toString());
+            strEndTime = DateFormat('h:mm').format(tempDate).toString() + " " + timePeriod;
+          });
+        }
         break;
       }
     }
@@ -378,9 +390,9 @@ class _EditClassState extends State<EditClass> {
 
   DateTime updateTime(TimeOfDay time) {
     return DateTime(
-      newStartDateTime!.year,
-      newStartDateTime!.month,
-      newStartDateTime!.day,
+      dStart!.year,
+      dStart!.month,
+      dStart!.day,
       time.hour,
       time.minute
     );
