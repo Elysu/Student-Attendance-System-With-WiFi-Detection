@@ -237,7 +237,6 @@ class DatabaseService {
         docs.add(doc.id);
       }
     });
-    print(docs);
     return docs;
   }
   // get subject details based on single document

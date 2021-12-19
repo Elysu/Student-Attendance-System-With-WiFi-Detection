@@ -388,8 +388,6 @@ class _EditClassState extends State<EditClass> {
         break;
       }
     }
-
-    if (newTime == null) return;
   }
 
   DateTime updateTime(TimeOfDay time) {

@@ -1,0 +1,59 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "class",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "c_ongoing",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "`c_sub-code`",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "c_datetimeEnd",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "class",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "c_ongoing",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "`c_sub-code`",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "c_datetimeStart",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "class",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "c_onoging",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "`c_sub-code`",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "c_datetimeStart",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   var wifiBSSID;
+  //bool isTeacher = UserModel().getTeacher;
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +34,18 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CreateClass())
-            );
-          },
-          child: const Icon(Icons.add),
-          backgroundColor: Colors.blue[500],
+        floatingActionButton: Visibility(
+          visible: true,
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreateClass())
+              );
+            },
+            child: const Icon(Icons.add),
+            backgroundColor: Colors.blue[500],
+          ),
         ),
         body: const TabBarView(
           children: <Widget>[

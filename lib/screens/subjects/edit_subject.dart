@@ -53,8 +53,6 @@ class _EditSubjectState extends State<EditSubject> {
 
   @override
   Widget build(BuildContext context) {
-
-
     Visibility editButton = Visibility(
       visible: isAdmin,
       child: FloatingActionButton(
