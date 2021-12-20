@@ -86,4 +86,28 @@ class AuthService {
       return null;
     }
   }
+
+  Future deleteUser(String email) async {
+    dynamic password = await _dbService.getUserPasswordWithEmail(email);
+    if (password != null) {
+      try {
+        FirebaseApp app = await Firebase.initializeApp(name: 'Delete', options: Firebase.app().options);
+        UserCredential userCredential = await FirebaseAuth.instanceFor(app: app).signInWithEmailAndPassword(email: email, password: password);
+        User? currentUser = FirebaseAuth.instanceFor(app: app).currentUser;
+        await currentUser!.delete();
+        await app.delete();
+        return true;
+      }
+      on FirebaseAuthException catch (e) {
+        // Do something with exception. This try/catch is here to make sure 
+        // that even if the user deletion fails, app.delete() runs, if is not, 
+        // next time Firebase.initializeApp() will fail as the previous one was
+        // not deleted.
+        return e.code;
+      }
+    } else {
+      print("Failed to delete student");
+      return false;
+    }
+  }
 }

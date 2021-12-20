@@ -96,7 +96,7 @@ class _EditStudentState extends State<EditStudent> {
         actions: [
           IconButton(
             onPressed: () async {
-              await deleteDialog(context, widget.docID, 1);
+              await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
             },
             icon: const Icon(Icons.delete),
           )
@@ -192,7 +192,7 @@ class _EditStudentState extends State<EditStudent> {
                         trailing: Visibility(
                           visible: visibility,
                           child: IconButton(
-                            onPressed: (){
+                            onPressed: () {
                               setState(() {
                                 selectedItems.removeAt(index);
                               });

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/services/auth.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 // 1 = student delete, 2 = subject delete
-deleteDialog(BuildContext context, String docID, int type, [String? subCode, String? subName]) {
+deleteDialog({ required BuildContext context, required String docID, required int type, String? subCode, String? subName, String? email }) {
   String content = "";
 
   switch (type) {
@@ -32,7 +33,11 @@ deleteDialog(BuildContext context, String docID, int type, [String? subCode, Str
             onPressed: () async {
               switch (type) {
                 case 1:
-                  await deleteStudent(context, docID);
+                  if (email != null) {
+                    await deleteStudent(context, docID, email);
+                  } else {
+                    print("Email is null");
+                  }
                   break;
                 case 2:
                   if (subCode != null || subName != null) {
@@ -55,26 +60,40 @@ deleteDialog(BuildContext context, String docID, int type, [String? subCode, Str
 }
 
 // delete student
-deleteStudent(BuildContext context, String docID) async {
-  DatabaseService dbService = DatabaseService();
-  bool studentDelete = await dbService.deleteStudent(docID);
+deleteStudent(BuildContext context, String docID, String email) async {
+  AuthService auth = AuthService();
+  dynamic result = await auth.deleteUser(email);
 
-  if (studentDelete) {
-    // pop twice
-    int count = 0;
-    Navigator.of(context).popUntil((_) => count++ >= 2);
+  if (result == true) {
+    DatabaseService dbService = DatabaseService();
+    bool studentDelete = await dbService.deleteStudent(docID);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Student successfully deleted from the system."),
-      )
-    );
+    if (studentDelete) {
+      // pop twice
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Student successfully deleted from the system."),
+        )
+      );
+    } else {
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Failed to delete student."),
+        )
+      );
+    }
   } else {
     Navigator.pop(context);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Failed to delete student."),
+        duration: Duration(seconds: 5),
+        content: Text("Failed to delete student.", style: TextStyle(color: Colors.red)),
       )
     );
   }

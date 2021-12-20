@@ -94,7 +94,7 @@ class _EditSubjectState extends State<EditSubject> {
             visible: isAdmin,
             child: IconButton(
               onPressed: () async {
-                await deleteDialog(context, widget.docID, 2, subjectData!['sub_code'].toString(), subjectData!['sub_name'].toString());
+                await deleteDialog(context: context, docID: widget.docID, type: 2, subCode: subjectData!['sub_code'].toString(), subName: subjectData!['sub_name'].toString());
               },
               icon: const Icon(Icons.delete),
             ),

@@ -86,7 +86,7 @@ class _EditClassState extends State<EditClass> {
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () {
-              deleteDialog(context, widget.docID, 3);
+              deleteDialog(context: context, docID: widget.docID, type: 3);
             },
           )
         ],

@@ -364,4 +364,19 @@ class DatabaseService {
       return 0;
     }
   }
+
+  // get user data based on email
+  Future getUserPasswordWithEmail(String email) async {
+    var docList = await userCollection.where("email", isEqualTo: email).get();
+
+    if (docList.docs.isNotEmpty) {
+      DocumentSnapshot ds = await userCollection.doc(docList.docs[0].id).get();
+      var data = ds.data() as Map;
+      
+      return data["password"].toString();
+    } else {
+      print("No user document to delete");
+      return null;
+    }
+  }
 }
