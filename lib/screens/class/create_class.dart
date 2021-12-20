@@ -224,6 +224,7 @@ class _CreateClassState extends State<CreateClass> {
                         children: <Widget>[
                           // classroom
                           DropdownButtonFormField(
+                            validator: (value) => value == null ? 'Select a classroom.' : null,
                             decoration: const InputDecoration(label: Text("Select Classroom")),
                             value: classroom,
                             items: allClassroom
@@ -250,6 +251,7 @@ class _CreateClassState extends State<CreateClass> {
                         children: <Widget>[
                           // class status
                           DropdownButtonFormField(
+                            validator: (value) => value == null ? 'Select class status.' : null,
                             decoration: const InputDecoration(label: Text("Status")),
                             value: strClassStatus,
                             items: <String>["Ongoing", "Not Available"]
@@ -286,11 +288,24 @@ class _CreateClassState extends State<CreateClass> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () async {
-                      
+                      bool isValid = validation();
+
+                      // everything is valid
+                      if (isValid) {
+                        bool isOngoing = strClassStatus == "Ongoing" ? true : false;
+
+                        print("Subject: " + classSubject.toString());
+                        print("datetime_Start: " + dStart.toString());
+                        print("datetime_End: " + dEnd.toString());
+                        print("classroom: " + classroom!);
+                        print("class ongoing: " + isOngoing.toString());
+                      }
                     },
                     child: const Text("Save"),
                   ),
                 ),
+
+                const SizedBox(height: 20)
               ],
             ),
           ),
@@ -380,6 +395,65 @@ class _CreateClassState extends State<CreateClass> {
         classSubject = result;
         subTeacher = classSubject["sub_teacher"];
       });
+    }
+  }
+
+  bool validation() {
+    // if everything is valid
+    if (classSubject.isNotEmpty && startTime != null && endTime != null && dStart != null && _formKey.currentState!.validate()) {
+      dStart = updateTime(startTime!);
+      dEnd = updateTime(endTime!);
+
+      // check if end time is earlier than start time
+      if (dEnd!.isBefore(dStart!)) {
+        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(
+          duration: Duration(seconds: 5),
+          content: Text("End time cannot be earlier than start time.", style: TextStyle(color: Colors.red)),
+        ));
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      // if all fields are empty
+      if (classSubject.isEmpty && (startTime == null || endTime == null || dStart == null)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(seconds: 5),
+            content: Text(
+              "Please select a subject and specify the date and time.",
+              style: TextStyle(color: Colors.red)
+            ),
+          )
+        );
+      } else {
+        // if no subject selected
+        if (classSubject.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 5),
+              content: Text(
+                "Please select a subject .",
+                style: TextStyle(color: Colors.red)
+              ),
+            )
+          );
+        }
+
+        // if startTime, endTime, or dStart is not specified
+        if (startTime == null || endTime == null || dStart == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              duration: Duration(seconds: 5),
+              content: Text(
+                "Please select a date and start & end time.",
+                style: TextStyle(color: Colors.red)
+              ),
+            )
+          );
+        }
+      }
+      return false;
     }
   }
 }

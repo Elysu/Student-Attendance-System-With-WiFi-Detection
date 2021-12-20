@@ -275,6 +275,15 @@ class DatabaseService {
 
     return status;
   }
+  // check if there are any ongoing class for this subjects
+  Future checkOngoingClassForSubject(String subCode) async {
+    var data = await classCollection.where("c_sub-code", isEqualTo: subCode).where("c_ongoing", isEqualTo: true).get();
+    if (data.docs.isNotEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   // get ongoing class
   Stream<QuerySnapshot> getOngoingClassData(BuildContext context) async* {
