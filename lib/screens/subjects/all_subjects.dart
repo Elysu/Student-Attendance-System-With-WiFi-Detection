@@ -150,7 +150,7 @@ class _AllSubjectsState extends State<AllSubjects> {
             if (value != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Subject successfully added."),
+                  content: Text("Subject successfully added.", style: TextStyle(color: Colors.green)),
                 )
               );
             }

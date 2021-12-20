@@ -143,7 +143,7 @@ class _StudentListState extends State<StudentList> {
             if (value != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text("Student successfully added."),
+                  content: Text("Student successfully added.", style: TextStyle(color: Colors.green)),
                 )
               );
             }

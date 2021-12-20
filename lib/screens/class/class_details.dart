@@ -16,11 +16,12 @@ class ClassDetails extends StatefulWidget {
 
 class _ClassDetailsState extends State<ClassDetails> {
   DatabaseService dbService = DatabaseService();
+  bool isTeacher = UserModel().getTeacher;
   dynamic classDetails;
   Map classTeacher = {};
   bool loading = true;
-  int? attendance;
-  String attendanceText = "";
+  int? attendance, totalAttendance, totalStudent;
+  String attendanceText = "", attendanceLabel = "", strTotalAttendance = "";
   Color? attendanceColor;
   Timestamp? tStart;
   Timestamp? tEnd;
@@ -32,31 +33,38 @@ class _ClassDetailsState extends State<ClassDetails> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     getClass().whenComplete(() {
-      setState(() {
-        classTeacher = classDetails["c_teacher"];
-        loading = false;
-        tStart = classDetails['c_datetimeStart'];
-        tEnd = classDetails['c_datetimeEnd'];
-        dStart = tStart!.toDate();
-        dEnd = tEnd!.toDate();
-        classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
-        
-        switch (attendance) {
-          case 0:
-            attendanceText = "ABSENT";
-            attendanceColor = Colors.red;
-            break;
-          case 1:
-            attendanceText = "PRESENT";
-            attendanceColor = Colors.green;
-            break;
-          case 2:
-            attendanceText = "LATE";
-            attendanceColor = Colors.orange;
-            break;
-        }
+      getTotalAttendance(classDetails["c_sub-code"], classDetails["c_sub-name"], widget.docID).whenComplete(() {
+        setState(() {
+          classTeacher = classDetails["c_teacher"];
+          loading = false;
+          tStart = classDetails['c_datetimeStart'];
+          tEnd = classDetails['c_datetimeEnd'];
+          dStart = tStart!.toDate();
+          dEnd = tEnd!.toDate();
+          classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
+          
+          switch (attendance) {
+            case 0:
+              attendanceText = "ABSENT";
+              attendanceColor = Colors.red;
+              break;
+            case 1:
+              attendanceText = "PRESENT";
+              attendanceColor = Colors.green;
+              break;
+            case 2:
+              attendanceText = "LATE";
+              attendanceColor = Colors.orange;
+              break;
+          }
+        });
       });
     });
+  }
+
+  Future getTotalAttendance(String subCode, String subName, String classID) async {
+    totalStudent = await dbService.getTotalStudentsForSubject(subCode, subName);
+    totalAttendance = await dbService.getTotalAttendance(classID);
   }
 
   Future getClass() async {
@@ -66,6 +74,14 @@ class _ClassDetailsState extends State<ClassDetails> {
 
   @override
   Widget build(BuildContext context) {
+    if (isTeacher) {
+      attendanceLabel = "Total attendance:";
+      attendanceColor = Colors.black;
+      strTotalAttendance = totalAttendance.toString() + "/" + totalStudent.toString();
+    } else {
+      attendanceLabel = "Your attendance:";
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Class Details"),
@@ -195,27 +211,30 @@ class _ClassDetailsState extends State<ClassDetails> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          const Text("Your attendance:"),
+                          Text(attendanceLabel),
                           const SizedBox(height: 5),
                           Text(
-                            attendanceText,
+                            isTeacher ? strTotalAttendance : attendanceText,
                             style: TextStyle(fontSize: 20, color: attendanceColor),
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      flex: 5,
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(Icons.note_alt),
-                                label: const Text("Mark Attendance")),
-                          )
-                        ],
+                    Visibility(
+                      visible: isTeacher ? false : true,
+                      child: Expanded(
+                        flex: 5,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.note_alt),
+                                  label: const Text("Mark Attendance")),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -223,16 +242,19 @@ class _ClassDetailsState extends State<ClassDetails> {
               ]),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => EditClass(docID: widget.docID))
-          ).then((value) {
-            didChangeDependencies();
-          });
-        },
-        child: const Icon(Icons.edit),
+      floatingActionButton: Visibility(
+        visible: isTeacher,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EditClass(docID: widget.docID))
+            ).then((value) {
+              didChangeDependencies();
+            });
+          },
+          child: const Icon(Icons.edit),
+        ),
       ),
     );
   }

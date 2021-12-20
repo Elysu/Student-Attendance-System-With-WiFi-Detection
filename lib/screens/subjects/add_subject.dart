@@ -109,9 +109,13 @@ class _AddSubjectState extends State<AddSubject> {
                         bool isExist = await dbService.checkSubjectExist(subCodeController.text);
 
                         if (isExist) {
-                          setState(() {
-                            error = 'A subject with this subject code has already exist in the system';
-                          });
+                          error = 'A subject with this subject code has already exist in the system';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(seconds: 5),
+                              content: Text(error, style: const TextStyle(color: Colors.red)),
+                            )
+                          );
                         } else {
                           bool result = await dbService.addSubject(subCodeController.text, subNameController.text, subjectTeacher);
 
@@ -122,34 +126,42 @@ class _AddSubjectState extends State<AddSubject> {
                             if (insertStatus) {
                               Navigator.pop(context, true);
                             } else {
-                              setState(() {
-                                error = "Subject added but doesn't appear under the selected teacher";
-                              });
+                              error = "Subject added but doesn't appear under the selected teacher";
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  duration: const Duration(seconds: 5),
+                                  content: Text(error, style: const TextStyle(color: Colors.red)),
+                                )
+                              );
                             }
                           } else {
-                            setState(() {
-                              error = 'Failed to add subject.';
-                            });
+                            error = 'Failed to add subject.';
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 5),
+                                content: Text(error, style: const TextStyle(color: Colors.red)),
+                              )
+                            );
                           }
                         }
                       } else {
-                        setState(() {
-                          error = '';
+                        error = '';
                           
-                          if (subjectTeacher.isEmpty) {
-                            error = 'Select a teacher for this subject';
-                          }
-                        });
+                        if (subjectTeacher.isEmpty) {
+                          error = 'Select a teacher for this subject';
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(seconds: 5),
+                              content: Text(error, style: const TextStyle(color: Colors.red)),
+                            )
+                          );
+                        }
                       }
                     },
                     child: const Text("Add Subject"),
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  error,
-                  style: const TextStyle(color: Colors.red, fontSize: 14)
-                )
               ],
             ),
           ),

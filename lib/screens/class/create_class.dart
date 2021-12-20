@@ -47,7 +47,8 @@ class _CreateClassState extends State<CreateClass> {
   Widget build(BuildContext context) {
     if (classSubject.isEmpty) {
       subName = "No subject selected";
-      subCode = "No subject selected";
+      subCode = "None";
+      subTeacherName = "None";
     } else {
       subName = classSubject["sub_name"];
       subCode = classSubject["sub_code"];

@@ -24,7 +24,6 @@ class _EditStudentState extends State<EditStudent> {
   // text field state
   String name = '';
   String id = '';
-  String error = '';
   List<CheckBoxState> selectedItems = [];
   List subjectList = [];
   bool isReadOnly = true;
@@ -225,9 +224,7 @@ class _EditStudentState extends State<EditStudent> {
                         for (int i=0; i<selectedItems.length; i++) {
                           subjectList.add({"sub_code": selectedItems[i].subCode, "sub_name": selectedItems[i].title});
                         }
-                  
-                        print(subjectList);
-                  
+
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
                           bool result = await dbService.updateUserData(widget.docID, nameController.text, idController.text, subjectList);
@@ -237,11 +234,19 @@ class _EditStudentState extends State<EditStudent> {
                               isReadOnly = true;
                               visibility = false;
                             });
-
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                duration: Duration(seconds: 5),
+                                content: Text("Student details successfully updated", style: TextStyle(color: Colors.green)),
+                              )
+                            );
                           } else {
-                            setState(() {
-                              error = "Failed to save, please try again.";
-                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                duration: Duration(seconds: 5),
+                                content: Text("Failed to save, please try again.", style: TextStyle(color: Colors.red)),
+                              )
+                            );
                           }
                         }
                       },
@@ -250,10 +255,6 @@ class _EditStudentState extends State<EditStudent> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  error,
-                  style: const TextStyle(color: Colors.red, fontSize: 14)
-                )
               ],
             ),
           ),

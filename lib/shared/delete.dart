@@ -75,7 +75,7 @@ deleteStudent(BuildContext context, String docID, String email) async {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Student successfully deleted from the system."),
+          content: Text("Student successfully deleted from the system.", style: TextStyle(color: Colors.green)),
         )
       );
     } else {
@@ -83,7 +83,7 @@ deleteStudent(BuildContext context, String docID, String email) async {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Failed to delete student."),
+          content: Text("Failed to delete student.", style: TextStyle(color: Colors.red)),
         )
       );
     }
@@ -114,7 +114,7 @@ deleteSubject(BuildContext context, String docID, String subCode, String subName
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Subject successfully deleted from the system."),
+          content: Text("Subject successfully deleted from the system.", style: TextStyle(color: Colors.green)),
         )
       );
     }
@@ -123,7 +123,7 @@ deleteSubject(BuildContext context, String docID, String subCode, String subName
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Failed to delete subject."),
+        content: Text("Failed to delete subject.", style: TextStyle(color: Colors.red)),
       )
     );
   }
@@ -141,7 +141,7 @@ deleteClass(BuildContext context, String docID) async {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Failed to delete class session."),
+        content: Text("Failed to delete class session.", style: TextStyle(color: Colors.red)),
       )
     );
   }

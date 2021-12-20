@@ -379,4 +379,27 @@ class DatabaseService {
       return null;
     }
   }
+
+  // get the total students in this subject
+  Future getTotalStudentsForSubject(String subCode, String subName) async {
+    var docList = await userCollection
+    .where("isTeacher", isEqualTo: false)
+    .where("subjects", arrayContains: {"sub_code": subCode, "sub_name": subName}).get();
+
+    if (docList.docs.isNotEmpty) {
+      return docList.docs.length;
+    } else {
+      return 0;
+    }
+  }
+  // get the number of attended student in this class
+  Future getTotalAttendance(String classID) async {
+    var docList = await classCollection.doc(classID).collection('attendance').get();
+
+    if (docList.docs.isNotEmpty) {
+      return docList.docs.length;
+    } else {
+      return 0;
+    }
+  }
 }

@@ -194,16 +194,21 @@ class _AddStudentState extends State<AddStudent> {
                             Navigator.pop(context, true);
                             break;
                         }
+
+                        if (result != true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              duration: const Duration(seconds: 5),
+                              content: Text(error, style: const TextStyle(color: Colors.red)),
+                            )
+                          );
+                        }
                       }
                     },
                     child: const Text("Add Student"),
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  error,
-                  style: const TextStyle(color: Colors.red, fontSize: 14)
-                )
               ],
             ),
           ),

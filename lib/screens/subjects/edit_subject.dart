@@ -202,14 +202,18 @@ class _EditSubjectState extends State<EditSubject> {
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Subject successfully updated."),
+                                  content: Text("Subject successfully updated.", style: TextStyle(color: Colors.green)),
                                 )
                               );
                             }
                           } else {
-                            setState(() {
-                              error = 'Subject update failed.';
-                            });
+                            error = 'Subject update failed.';
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 5),
+                                content: Text(error, style: const TextStyle(color: Colors.red)),
+                              )
+                            );
                           }
                         }
                       },
@@ -218,10 +222,6 @@ class _EditSubjectState extends State<EditSubject> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Text(
-                  error,
-                  style: const TextStyle(color: Colors.red, fontSize: 14)
-                )
               ],
             ),
           ),
