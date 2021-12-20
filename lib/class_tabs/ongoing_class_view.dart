@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/class/class_details.dart';
 import 'package:student_attendance_fyp/screens/home/class_listview.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -36,7 +37,15 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
                   stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
                   builder: (context, AsyncSnapshot<int> s) {
                     if (s.hasData) {
-                      return buildClassList(context, snapshot.data!.docs[index], s.data);
+                      return GestureDetector(
+                        child: buildClassList(context, snapshot.data!.docs[index], s.data),
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
+                          );
+                        },
+                      );
                     } else {
                       return Container();
                     }

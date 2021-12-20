@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:student_attendance_fyp/screens/class/class_details.dart';
 import 'package:student_attendance_fyp/screens/class/select_subject.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -293,12 +294,55 @@ class _CreateClassState extends State<CreateClass> {
                       // everything is valid
                       if (isValid) {
                         bool isOngoing = strClassStatus == "Ongoing" ? true : false;
-
+                        // true = exist, false = not exist
+                        bool classExists = isOngoing ? await dbService.checkOngoingClassForSubject(subCode) : false;
                         print("Subject: " + classSubject.toString());
                         print("datetime_Start: " + dStart.toString());
                         print("datetime_End: " + dEnd.toString());
                         print("classroom: " + classroom!);
                         print("class ongoing: " + isOngoing.toString());
+
+                        if (classExists == false) {
+                          dynamic status = await dbService.createClassSession(classSubject, dStart!, dEnd!, classroom!, isOngoing);
+
+                          if (status is String) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                duration: Duration(seconds: 5),
+                                content: Text(
+                                  "Class successfully created.",
+                                  style: TextStyle(color: Colors.green)
+                                ),
+                              )
+                            );
+
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ClassDetails(docID: status))
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                duration: Duration(seconds: 5),
+                                content: Text(
+                                  "Failed to create class session.",
+                                  style: TextStyle(color: Colors.red)
+                                ),
+                              )
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              duration: Duration(seconds: 5),
+                              content: Text(
+                                "There is already an ongoing class session with this subject.",
+                                style: TextStyle(color: Colors.red)
+                              ),
+                            )
+                          );
+                        }
                       }
                     },
                     child: const Text("Save"),
@@ -433,7 +477,7 @@ class _CreateClassState extends State<CreateClass> {
             const SnackBar(
               duration: Duration(seconds: 5),
               content: Text(
-                "Please select a subject .",
+                "Please select a subject.",
                 style: TextStyle(color: Colors.red)
               ),
             )

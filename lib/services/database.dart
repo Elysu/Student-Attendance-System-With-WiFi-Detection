@@ -279,9 +279,31 @@ class DatabaseService {
   Future checkOngoingClassForSubject(String subCode) async {
     var data = await classCollection.where("c_sub-code", isEqualTo: subCode).where("c_ongoing", isEqualTo: true).get();
     if (data.docs.isNotEmpty) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
+    }
+  }
+  // create class session
+  Future createClassSession(Map subject, DateTime dStart, DateTime dEnd, String classroom, bool isOngoing) async {
+    Map subTeacher = subject["sub_teacher"];
+    String docID = classCollection.doc().id;
+
+    bool status = await classCollection.doc(docID).set({
+      "c_datetimeEnd": dEnd,
+      "c_datetimeStart": dStart,
+      "c_ongoing": isOngoing,
+      "c_sub-code": subject["sub_code"],
+      "c_sub-name": subject["sub_name"],
+      "c_teacher": {"t_id": subTeacher["t_id"], "t_name": subTeacher["t_name"]},
+      "classroom": classroom
+    }).then((value) => true)
+    .catchError((error) => false);
+
+    if (status) {
+      return docID;
+    } else {
+      return false;
     }
   }
 

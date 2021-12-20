@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/screens/home/home.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -134,8 +135,13 @@ deleteClass(BuildContext context, String docID) async {
   bool classDelete = await dbService.deleteClass(docID);
 
   if (classDelete) {
-    int count = 0;
-    Navigator.of(context).popUntil((_) => count++ >= 3);
+    Navigator.pushAndRemoveUntil(
+      context, 
+      MaterialPageRoute(
+        builder: (context) => Home()
+      ),
+     ModalRoute.withName("/Home")
+    );
   } else {
     Navigator.pop(context);
 
