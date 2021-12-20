@@ -45,26 +45,28 @@ class _SelectSubjectState extends State<SelectSubject> {
         title: const Text("Select Subject for Class Session"),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: subjects.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(subjects[index]["sub_name"]),
-            subtitle: Text(subjects[index]["sub_code"]),
-            trailing: subjects[index]["sub_code"] == widget.currentSubject["sub_code"] ? const Icon(Icons.done) : const SizedBox.shrink(),
-            onTap: () {
-              Navigator.pop(context, subjects[index]);
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+      body: SingleChildScrollView(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: subjects.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(subjects[index]["sub_name"]),
+              subtitle: Text(subjects[index]["sub_code"]),
+              trailing: subjects[index]["sub_code"] == widget.currentSubject["sub_code"] ? const Icon(Icons.done) : const SizedBox.shrink(),
+              onTap: () {
+                Navigator.pop(context, subjects[index]);
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
       )
     );
   }

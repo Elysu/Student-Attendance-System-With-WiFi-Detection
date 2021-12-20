@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/class/class_attendance/class_attendance.dart';
 import 'package:student_attendance_fyp/screens/class/edit_class.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -89,7 +90,12 @@ class _ClassDetailsState extends State<ClassDetails> {
         actions: [
           IconButton(
             icon: const Icon(Icons.people_alt),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ClassAttendance(classDocID: widget.docID))
+              );
+            },
           )
         ],
       ),
