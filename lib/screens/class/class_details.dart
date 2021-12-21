@@ -47,11 +47,18 @@ class _ClassDetailsState extends State<ClassDetails> {
           if (isTeacher) {
             attendanceLabel = "Total attendance:";
           } else {
+            attendanceLabel = "Your attendance:";
             switch (attendance) {
-              case 0:
-                attendanceText = "ABSENT";
-                attendanceColor = Colors.red;
+              case 0: {
+                if (classDetails['c_ongoing']) {
+                  attendanceText = "N/A";
+                  attendanceColor = Colors.grey;
+                } else {
+                  attendanceText = "ABSENT";
+                  attendanceColor = Colors.red;
+                }
                 break;
+              }
               case 1:
                 attendanceText = "PRESENT";
                 attendanceColor = Colors.green;

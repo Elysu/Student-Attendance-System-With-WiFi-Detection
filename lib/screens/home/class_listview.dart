@@ -29,8 +29,8 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
 
     switch (widget.attendance) {
       case 0:
-        attendance = "ATTENDACE NOT TAKEN YET";
-        attendanceColor = Colors.red;
+        attendance = "N/A";
+        attendanceColor = Colors.grey;
         break;
       case 1:
         attendance = "PRESENT";

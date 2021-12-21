@@ -142,6 +142,12 @@ deleteClass(BuildContext context, String docID) async {
       ),
      ModalRoute.withName("/Home")
     );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Class session deleted.", style: TextStyle(color: Colors.green)),
+      )
+    );
   } else {
     Navigator.pop(context);
 

@@ -269,6 +269,14 @@ class DatabaseService {
   }
   // delete class session based on single document
   Future deleteClass(String docID) async {
+    // delete subcollection documents with loop
+    await classCollection.doc(docID).collection('students').get().then((snapshot) {
+      for (DocumentSnapshot ds in snapshot.docs) {
+        ds.reference.delete();
+      }
+    });
+
+    // delete main document in class collection
     bool status = await classCollection.doc(docID).delete()
     .then((value) => true)
     .catchError((error) {
@@ -443,13 +451,15 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await classCollection.doc(docID).collection('students').doc(uid).get();
 
-    var data = snapshot.data() as Map;
-    if (data["status"] == "present") {
-      yield 1;
-    } else  if (data["status"] == "late") {
-      yield 2;
-    } else {
-       yield 0;
+    if (snapshot.exists){
+      var data = snapshot.data() as Map;
+      if (data["status"] == "present") {
+        yield 1;
+      } else  if (data["status"] == "late") {
+        yield 2;
+      } else {
+        yield 0;
+      }
     }
   }
   // Future version of attendance exists
@@ -457,13 +467,15 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await classCollection.doc(docID).collection('students').doc(uid).get();
 
-    var data = snapshot.data() as Map;
-    if (data['status'] == "present") {
-      return 1;
-    } else  if (data["status"] == "late") {
-      return 2;
-    } else {
-      return 0;
+    if (snapshot.exists) {
+      var data = snapshot.data() as Map;
+      if (data['status'] == "present") {
+        return 1;
+      } else  if (data["status"] == "late") {
+        return 2;
+      } else {
+        return 0;
+      }
     }
   }
 
