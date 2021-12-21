@@ -312,18 +312,29 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    List subjects = data['subjects'];
-    List subjectCode = [];
 
-    for (int i=0; i<subjects.length; i++) {
-      subjectCode.add(subjects[i]['sub_code']);
+    if (data["isTeacher"] == false) {
+      List subjects = data['subjects'];
+      List subjectCode = [];
+
+      for (int i=0; i<subjects.length; i++) {
+        subjectCode.add(subjects[i]['sub_code']);
+      }
+
+      yield* classCollection
+      .where('c_sub-code', whereIn: subjectCode)
+      .where('c_ongoing', isEqualTo: true)
+      .orderBy("c_datetimeStart", descending: false)
+      .snapshots();
+    } else {
+      Map teacher = {"t_id": data["id"], "t_name": data["name"]};
+
+      yield* classCollection
+      .where('c_teacher', isEqualTo: teacher)
+      .where('c_ongoing', isEqualTo: true)
+      .orderBy("c_datetimeStart", descending: false)
+      .snapshots();
     }
-
-    yield* classCollection
-    .where('c_sub-code', whereIn: subjectCode)
-    .where('c_ongoing', isEqualTo: true)
-    .orderBy("c_datetimeStart", descending: false)
-    .snapshots();
   }
 
   // get upcoming class
@@ -331,19 +342,31 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    List subjects = data['subjects'];
-    List subjectCode = [];
 
-    for (int i=0; i<subjects.length; i++) {
-      subjectCode.add(subjects[i]['sub_code']);
+    if (data["isTeacher"] == false) {
+      List subjects = data['subjects'];
+      List subjectCode = [];
+
+      for (int i=0; i<subjects.length; i++) {
+        subjectCode.add(subjects[i]['sub_code']);
+      }
+
+      yield* classCollection
+      .where('c_sub-code', whereIn: subjectCode)
+      .where('c_datetimeStart', isGreaterThan: DateTime.now())
+      .where('c_ongoing', isEqualTo: false)
+      .orderBy("c_datetimeStart", descending: false)
+      .snapshots();
+    } else {
+      Map teacher = {"t_id": data["id"], "t_name": data["name"]};
+
+      yield* classCollection
+      .where('c_teacher', isEqualTo: teacher)
+      .where('c_datetimeStart', isGreaterThan: DateTime.now())
+      .where('c_ongoing', isEqualTo: false)
+      .orderBy("c_datetimeStart", descending: false)
+      .snapshots();
     }
-
-    yield* classCollection
-    .where('c_sub-code', whereIn: subjectCode)
-    .where('c_datetimeStart', isGreaterThan: DateTime.now())
-    .where('c_ongoing', isEqualTo: false)
-    .orderBy("c_datetimeStart", descending: false)
-    .snapshots();
   }
 
   // get class history data
@@ -351,19 +374,31 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    List subjects = data['subjects'];
-    List subjectCode = [];
 
-    for (int i=0; i<subjects.length; i++) {
-      subjectCode.add(subjects[i]['sub_code']);
+    if (data["isTeacher"] == false) {
+      List subjects = data['subjects'];
+      List subjectCode = [];
+
+      for (int i=0; i<subjects.length; i++) {
+        subjectCode.add(subjects[i]['sub_code']);
+      }
+
+      yield* classCollection
+      .where('c_sub-code', whereIn: subjectCode)
+      .where('c_datetimeEnd', isLessThan: DateTime.now())
+      .where('c_ongoing', isEqualTo: false)
+      .orderBy("c_datetimeEnd", descending: true)
+      .snapshots();
+    } else {
+      Map teacher = {"t_id": data["id"], "t_name": data["name"]};
+
+      yield* classCollection
+      .where('c_teacher', isEqualTo: teacher)
+      .where('c_datetimeEnd', isLessThan: DateTime.now())
+      .where('c_ongoing', isEqualTo: false)
+      .orderBy("c_datetimeEnd", descending: true)
+      .snapshots();
     }
-
-    yield* classCollection
-    .where('c_sub-code', whereIn: subjectCode)
-    .where('c_datetimeEnd', isLessThan: DateTime.now())
-    .where('c_ongoing', isEqualTo: false)
-    .orderBy("c_datetimeEnd", descending: true)
-    .snapshots();
   }
 
   // check if student's UID has a document in attendance subcollection
