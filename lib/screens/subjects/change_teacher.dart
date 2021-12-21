@@ -46,26 +46,28 @@ class _ChangeTeacherState extends State<ChangeTeacher> {
         title: const Text("Change Subject Teacher"),
         centerTitle: true,
       ),
-      body: ListView.separated(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: teachers.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(teachers[index]["t_name"]),
-            subtitle: Text(teachers[index]["t_id"]),
-            trailing: teachers[index]["t_id"] == widget.currentTeacher["t_id"] ? const Icon(Icons.done) : const SizedBox.shrink(),
-            onTap: () {
-              Navigator.pop(context, {"t_id": teachers[index]["t_id"], "t_name": teachers[index]["t_name"], "t_uid": teachers[index]["t_uid"]});
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+      body: SingleChildScrollView(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: teachers.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(teachers[index]["t_name"]),
+              subtitle: Text(teachers[index]["t_id"]),
+              trailing: teachers[index]["t_id"] == widget.currentTeacher["t_id"] ? const Icon(Icons.done) : const SizedBox.shrink(),
+              onTap: () {
+                Navigator.pop(context, {"t_id": teachers[index]["t_id"], "t_name": teachers[index]["t_name"], "t_uid": teachers[index]["t_uid"]});
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
       )
     );
   }

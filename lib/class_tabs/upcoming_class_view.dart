@@ -29,19 +29,23 @@ class _UpcomingClassViewState extends State<UpcomingClassView> with AutomaticKee
           if (snapshot.data!.docs.isEmpty) {
             return const Center(child: Text("No upcoming class at the moment."));
           } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: buildClassList(context, snapshot.data!.docs[index]),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
-                    );
-                  },
-                );
-              }
+            return SingleChildScrollView(
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    child: buildClassList(context, snapshot.data!.docs[index]),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
+                      );
+                    },
+                  );
+                }
+              ),
             );
           }
         }

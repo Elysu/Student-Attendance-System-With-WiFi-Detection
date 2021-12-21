@@ -112,6 +112,8 @@ class _StudentListState extends State<StudentList> {
       ),
       body: SingleChildScrollView(
         child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
           itemCount: _resultsList.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(

@@ -27,28 +27,32 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
           if (snapshot.data!.docs.isEmpty) {
             return const Center(child: Text("No recent class."));
           } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (BuildContext context, int index) {
-                return StreamBuilder(
-                  stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
-                  builder: (context, AsyncSnapshot<int> s) {
-                    if (s.hasData) {
-                      return GestureDetector(
-                        child: buildClassHistory(context, snapshot.data!.docs[index], s.data),
-                        onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
-                          );
-                        },
-                      );
-                    } else {
-                      return Container();
+            return SingleChildScrollView(
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return StreamBuilder(
+                    stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
+                    builder: (context, AsyncSnapshot<int> s) {
+                      if (s.hasData) {
+                        return GestureDetector(
+                          child: buildClassHistory(context, snapshot.data!.docs[index], s.data),
+                          onTap: (){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
+                            );
+                          },
+                        );
+                      } else {
+                        return Container();
+                      }
                     }
-                  }
-                );
-              }
+                  );
+                }
+              ),
             );
           }
         }

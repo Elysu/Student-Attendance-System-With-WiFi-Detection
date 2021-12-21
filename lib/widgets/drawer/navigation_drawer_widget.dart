@@ -21,7 +21,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
-          buildMenuItem(context, text: "Class Subjects", icon: Icons.book),
+          buildMenuItem(context, text: "My Subjects", icon: Icons.book),
           isTeacher(context),
           buildMenuItem(context, text: "Logout", icon: Icons.logout),
         ],
@@ -57,7 +57,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const StudentList())
             );
             break;
-          case "Class Subjects":
+          case "My Subjects":
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SelectedSubjects())

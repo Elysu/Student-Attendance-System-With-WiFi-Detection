@@ -94,12 +94,14 @@ class _ClassDetailsState extends State<ClassDetails> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ClassAttendance(classDocID: widget.docID))
-              );
+              ).then((value) {
+                didChangeDependencies();
+              });
             },
           )
         ],
       ),
-      body: loading ? const Text("Loading...") 
+      body: loading ? const Center(child: Text("Loading...")) 
       : SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),

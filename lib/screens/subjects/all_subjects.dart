@@ -16,7 +16,7 @@ class _AllSubjectsState extends State<AllSubjects> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'Class Subjects' );
+  Widget _appBarTitle = const Text( 'All Subjects' );
 
   Future? resultsLoaded;
   List _allResults = [];
@@ -70,13 +70,6 @@ class _AllSubjectsState extends State<AllSubjects> {
 
   // get all students documents first
   getSubjects() async {
-    List subjects = UserModel().getSubjects;
-    List subjectCode = [];
-
-    for (int i=0; i<subjects.length; i++) {
-      subjectCode.add(subjects[i]['sub_code']);
-    }
-
     var data = await dbService.subjectCollection.get();
     setState(() {
       _allResults = data.docs;
@@ -98,7 +91,7 @@ class _AllSubjectsState extends State<AllSubjects> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        _appBarTitle = const Text( 'Class Subjects' );
+        _appBarTitle = const Text( 'All Subjects' );
         _searchController.clear();
       }
     });
@@ -117,29 +110,34 @@ class _AllSubjectsState extends State<AllSubjects> {
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: _resultsList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(_resultsList[index]["sub_name"]),
-            subtitle: Text(_resultsList[index]["sub_code"]),
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
-              ).then((value) {
-                didChangeDependencies();
-                setState(() {});
-              });
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+      body: SingleChildScrollView(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: _resultsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(_resultsList[index]["sub_name"]),
+              subtitle: Text(_resultsList[index]["sub_code"]),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
+                ).then((value) {
+                  setState(() {
+                    didChangeDependencies();
+                  });
+                });
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -154,8 +152,9 @@ class _AllSubjectsState extends State<AllSubjects> {
                 )
               );
             }
-            didChangeDependencies();
-            setState(() {});
+            setState(() {
+              didChangeDependencies();
+            });
           });
         },
         child: const Icon(Icons.post_add),

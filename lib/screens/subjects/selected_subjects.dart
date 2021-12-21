@@ -15,7 +15,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'Class Subjects' );
+  Widget _appBarTitle = const Text( 'My Subjects' );
 
   Future? resultsLoaded;
   List _allResults = [];
@@ -25,6 +25,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print("Fresh");
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -69,6 +70,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
 
   // get all students documents first
   getSubjects() async {
+    await dbService.getUserData(UserModel().getUID);
     List subjects = UserModel().getSubjects;
     List subjectCode = [];
 
@@ -97,7 +99,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        _appBarTitle = const Text( 'Class Subjects' );
+        _appBarTitle = const Text( 'My Subjects' );
         _searchController.clear();
       }
     });
@@ -116,29 +118,33 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
           ),
         ],
       ),
-      body: ListView.separated(
-        itemCount: _resultsList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            title: Text(_resultsList[index]["sub_name"]),
-            subtitle: Text(_resultsList[index]["sub_code"]),
-            onTap: (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
-              ).then((value) {
-                didChangeDependencies();
-                setState(() {});
-              });
-            },
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider(
-            height: 0,
-            color: Colors.black38,
-          );
-        },
+      body: SingleChildScrollView(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: _resultsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(_resultsList[index]["sub_name"]),
+              subtitle: Text(_resultsList[index]["sub_code"]),
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
+                ).then((value) {
+                  didChangeDependencies();
+                  setState(() {});
+                });
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
       ),
       resizeToAvoidBottomInset: false
     );

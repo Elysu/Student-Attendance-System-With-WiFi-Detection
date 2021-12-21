@@ -21,29 +21,29 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         title: const Text("Class Attendance"),
         centerTitle: true,
       ),
-      body: loading ? const Text("Loading...")
-      : SingleChildScrollView(
-        child: ListView.separated(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: subjects.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(subjects[index]["sub_name"]),
-              subtitle: Text(subjects[index]["sub_code"]),
-              onTap: () {
+      // body: loading ? const Text("Loading...")
+      // : SingleChildScrollView(
+      //   child: ListView.separated(
+      //     scrollDirection: Axis.vertical,
+      //     shrinkWrap: true,
+      //     itemCount: subjects.length,
+      //     itemBuilder: (BuildContext context, int index) {
+      //       return ListTile(
+      //         title: Text(subjects[index]["sub_name"]),
+      //         subtitle: Text(subjects[index]["sub_code"]),
+      //         onTap: () {
                 
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              color: Colors.black38,
-            );
-          },
-        ),
-      )
+      //         },
+      //       );
+      //     },
+      //     separatorBuilder: (context, index) {
+      //       return const Divider(
+      //         height: 0,
+      //         color: Colors.black38,
+      //       );
+      //     },
+      //   ),
+      // )
     );
   }
 }
