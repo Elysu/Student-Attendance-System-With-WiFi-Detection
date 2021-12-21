@@ -34,7 +34,7 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (BuildContext context, int index) {
                   return StreamBuilder(
-                    stream: dbService.attendanceExists(UserModel().getUID, snapshot.data!.docs[index].id),
+                    stream: dbService.streamGetAttendance(snapshot.data!.docs[index].id),
                     builder: (context, AsyncSnapshot<int> s) {
                       if (s.hasData) {
                         return GestureDetector(

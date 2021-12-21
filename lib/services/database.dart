@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 
 class DatabaseService {
@@ -19,7 +20,8 @@ class DatabaseService {
   // register student from teacher side
   Future<bool> addUser(String uid, String email, String password, String name, String id, List subjects) async {
     bool status = await userCollection.doc(uid).set({
-      'deviceID': null,
+      'last_deviceID': null,
+      'current_deviceID': null,
       'email': email,
       'password': password,
       'id': id,
@@ -200,9 +202,10 @@ class DatabaseService {
   Future getUserData(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-    String deviceID = data['deviceID'] != null ? data['deviceID'].toString() : '';
+    String currentDeviceID = data['current_deviceID'] != null ? data['deviceID'].toString() : '';
+    String lastDeviceID = data['last_deviceID'] != null ? data['deviceID'].toString() : '';
     List subjects = data['subjects'];
-    userModel.setData(uid, deviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
+    userModel.setData(uid, currentDeviceID, lastDeviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
   }
 
   // get all teachers document as a list
@@ -306,6 +309,39 @@ class DatabaseService {
       return false;
     }
   }
+  // set student with this subject into the subcollection (students) of this class session
+  Future addStudentsIntoClass(Map subject, String classID) async {
+    var docList = await userCollection.where("subjects", arrayContains: {"sub_code": subject["sub_code"], "sub_name": subject["sub_name"]}).get();
+
+    if (docList.docs.isNotEmpty) {
+      bool returnStatus = true;
+
+      for (int i=0; i<docList.docs.length; i++){
+        DocumentSnapshot ds = await userCollection.doc(docList.docs[i].id).get();
+
+        bool status = await classCollection.doc(classID).collection("students").doc(docList.docs[i].id).set({
+          "datetime": null,
+          "deviceID": null,
+          "id": ds["id"],
+          "name": ds["name"],
+          "status": "n/a"
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+
+        if (status == false) {
+          returnStatus = false;
+          break;
+        }
+      }
+
+      return returnStatus;
+    } else {
+      return "no-student";
+    }
+  }
 
   // get ongoing class
   Stream<QuerySnapshot> getOngoingClassData(BuildContext context) async* {
@@ -403,29 +439,29 @@ class DatabaseService {
 
   // check if student's UID has a document in attendance subcollection
   // 0 = absent, 1 = present, 2 = late
-  Stream<int> attendanceExists(String uid, String docID) async* {
-    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
-    if (snapshot.exists) {
-      var data = snapshot.data() as Map;
-      if (data['isLate'] == true) {
-        yield 2;
-      } else {
-        yield 1;
-      }
+  Stream<int> streamGetAttendance(String docID) async* {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('students').doc(uid).get();
+
+    var data = snapshot.data() as Map;
+    if (data["status"] == "present") {
+      yield 1;
+    } else  if (data["status"] == "late") {
+      yield 2;
     } else {
-      yield 0;
+       yield 0;
     }
   }
   // Future version of attendance exists
-  Future getClassAttendance(String uid, String docID) async {
-    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('attendance').doc(uid).get();
-    if (snapshot.exists) {
-      var data = snapshot.data() as Map;
-      if (data['isLate'] == true) {
-        return 2;
-      } else {
-        return 1;
-      }
+  Future futureGetAttendance(String docID) async {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('students').doc(uid).get();
+
+    var data = snapshot.data() as Map;
+    if (data['status'] == "present") {
+      return 1;
+    } else  if (data["status"] == "late") {
+      return 2;
     } else {
       return 0;
     }
@@ -446,26 +482,25 @@ class DatabaseService {
     }
   }
 
-  // get the total students in this subject
-  Future getTotalStudentsForSubject(String subCode, String subName) async {
-    var docList = await userCollection
-    .where("isTeacher", isEqualTo: false)
-    .where("subjects", arrayContains: {"sub_code": subCode, "sub_name": subName}).get();
-
-    if (docList.docs.isNotEmpty) {
-      return docList.docs.length;
-    } else {
-      return 0;
-    }
-  }
-  // get the number of attended student in this class
+  // get total students in this class
   Future getTotalAttendance(String classID) async {
-    var docList = await classCollection.doc(classID).collection('attendance').get();
+    var docList = await classCollection.doc(classID).collection('students').get();
+    CollectionReference attendanceCollection = classCollection.doc(classID).collection('students');
+    int totalAttendance = 0;
 
     if (docList.docs.isNotEmpty) {
-      return docList.docs.length;
+      for (int i=0; i<docList.docs.length; i++) {
+        DocumentSnapshot ds = await attendanceCollection.doc(docList.docs[i].id).get();
+        var data = ds.data() as Map;
+
+        if (data["status"] == "present" || data["status"] == "late") {
+          totalAttendance++;
+        }
+      }
+      String strAttendance = totalAttendance.toString() + "/" + docList.docs.length.toString();
+      return strAttendance;
     } else {
-      return 0;
+      return "This class has no student.";
     }
   }
 }

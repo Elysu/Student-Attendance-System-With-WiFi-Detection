@@ -34,7 +34,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     getClass().whenComplete(() {
-      getTotalAttendance(classDetails["c_sub-code"], classDetails["c_sub-name"], widget.docID).whenComplete(() {
+      getTotalAttendance(widget.docID).whenComplete(() {
         setState(() {
           classTeacher = classDetails["c_teacher"];
           loading = false;
@@ -44,45 +44,43 @@ class _ClassDetailsState extends State<ClassDetails> {
           dEnd = tEnd!.toDate();
           classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
           
-          switch (attendance) {
-            case 0:
-              attendanceText = "ABSENT";
-              attendanceColor = Colors.red;
-              break;
-            case 1:
-              attendanceText = "PRESENT";
-              attendanceColor = Colors.green;
-              break;
-            case 2:
-              attendanceText = "LATE";
-              attendanceColor = Colors.orange;
-              break;
+          if (isTeacher) {
+            attendanceLabel = "Total attendance:";
+          } else {
+            switch (attendance) {
+              case 0:
+                attendanceText = "ABSENT";
+                attendanceColor = Colors.red;
+                break;
+              case 1:
+                attendanceText = "PRESENT";
+                attendanceColor = Colors.green;
+                break;
+              case 2:
+                attendanceText = "LATE";
+                attendanceColor = Colors.orange;
+                break;
+            }
           }
         });
       });
     });
   }
 
-  Future getTotalAttendance(String subCode, String subName, String classID) async {
-    totalStudent = await dbService.getTotalStudentsForSubject(subCode, subName);
-    totalAttendance = await dbService.getTotalAttendance(classID);
+  Future getTotalAttendance(String classID) async {
+    strTotalAttendance = await dbService.getTotalAttendance(classID);
   }
 
   Future getClass() async {
     classDetails = await dbService.getClassDetails(widget.docID);
-    attendance = await dbService.getClassAttendance(UserModel().getUID, widget.docID);
+
+    if (!isTeacher) {
+      attendance = await dbService.futureGetAttendance(widget.docID);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isTeacher) {
-      attendanceLabel = "Total attendance:";
-      attendanceColor = Colors.black;
-      strTotalAttendance = totalAttendance.toString() + "/" + totalStudent.toString();
-    } else {
-      attendanceLabel = "Your attendance:";
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Class Details"),

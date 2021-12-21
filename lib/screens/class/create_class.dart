@@ -296,16 +296,13 @@ class _CreateClassState extends State<CreateClass> {
                         bool isOngoing = strClassStatus == "Ongoing" ? true : false;
                         // true = exist, false = not exist
                         bool classExists = isOngoing ? await dbService.checkOngoingClassForSubject(subCode) : false;
-                        print("Subject: " + classSubject.toString());
-                        print("datetime_Start: " + dStart.toString());
-                        print("datetime_End: " + dEnd.toString());
-                        print("classroom: " + classroom!);
-                        print("class ongoing: " + isOngoing.toString());
 
                         if (classExists == false) {
                           dynamic status = await dbService.createClassSession(classSubject, dStart!, dEnd!, classroom!, isOngoing);
+                          dynamic addStudent = await dbService.addStudentsIntoClass(classSubject, status);
 
-                          if (status is String) {
+                          // if status return docID and addstudent is success, everything is valid
+                          if (status is String && addStudent) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 duration: Duration(seconds: 5),
@@ -316,23 +313,71 @@ class _CreateClassState extends State<CreateClass> {
                               )
                             );
 
+                            print("Subject: " + classSubject.toString());
+                            print("datetime_Start: " + dStart.toString());
+                            print("datetime_End: " + dEnd.toString());
+                            print("classroom: " + classroom!);
+                            print("class ongoing: " + isOngoing.toString());
+
                             Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ClassDetails(docID: status))
                             );
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                duration: Duration(seconds: 5),
-                                content: Text(
-                                  "Failed to create class session.",
-                                  style: TextStyle(color: Colors.red)
-                                ),
-                              )
-                            );
+                            // if failed to create class session
+                            if (status == false) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  duration: Duration(seconds: 5),
+                                  content: Text(
+                                    "Failed to create class session.",
+                                    style: TextStyle(color: Colors.red)
+                                  ),
+                                )
+                              );
+                            } else {
+                              // if add student failed
+                              if (addStudent == false) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    duration: Duration(seconds: 5),
+                                    content: Text(
+                                      "Class session has been created but failed to add students into it.",
+                                      style: TextStyle(color: Colors.orange)
+                                    ),
+                                  )
+                                );
+
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ClassDetails(docID: status))
+                                );
+                              }
+
+                              // if addStudent returns a String which indicates no student taking the subject
+                              if (addStudent is String) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    duration: Duration(seconds: 5),
+                                    content: Text(
+                                      "Class session has been created but there is no student taking this subject.",
+                                      style: TextStyle(color: Colors.red)
+                                    ),
+                                  )
+                                );
+
+                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ClassDetails(docID: status))
+                                );
+                              }
+                            }
                           }
                         } else {
+                          // if ongoing class session with same subject exists
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               duration: Duration(seconds: 5),

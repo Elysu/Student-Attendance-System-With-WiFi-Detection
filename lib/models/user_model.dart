@@ -1,18 +1,15 @@
 class UserModel {
   static String? uid;
-  static String? deviceID;
   static String? email;
   static String? id;
   static String? name;
+  static String? currentDeviceID;
+  static String? lastDeviceID;
   static bool? isTeacher;
   static List subjects = [];
 
   String get getUID {
     return uid!;
-  }
-
-  String get getDeviceID {
-    return deviceID!;
   }
 
   String get getEmail {
@@ -35,9 +32,10 @@ class UserModel {
     return subjects;
   }
 
-  void setData(String strUID, String strDeviceID, String strEmail, String strID, String strName, bool boolIsTeacher, dynamic listSubjects) {
+  void setData(String strUID, String strCurrentDeviceID, String strLastDeviceID, String strEmail, String strID, String strName, bool boolIsTeacher, dynamic listSubjects) {
     uid = strUID;
-    deviceID = strDeviceID;
+    currentDeviceID = strCurrentDeviceID;
+    strLastDeviceID = strLastDeviceID;
     email = strEmail;
     id = strID;
     name = strName;
