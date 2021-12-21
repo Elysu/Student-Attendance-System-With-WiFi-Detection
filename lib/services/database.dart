@@ -418,7 +418,7 @@ class DatabaseService {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
-
+    
     if (data["isTeacher"] == false) {
       List subjects = data['subjects'];
       List subjectCode = [];

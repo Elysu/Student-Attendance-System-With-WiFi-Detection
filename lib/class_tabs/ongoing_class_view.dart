@@ -50,7 +50,7 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
                           },
                         );
                       } else {
-                        return Container();
+                        return const SizedBox.shrink();
                       }
                     }
                   );

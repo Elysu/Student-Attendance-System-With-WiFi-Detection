@@ -47,7 +47,7 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
                           },
                         );
                       } else {
-                        return Container();
+                        return const SizedBox.shrink();
                       }
                     }
                   );

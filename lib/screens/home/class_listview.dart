@@ -14,7 +14,7 @@ class ClassList_ListView extends StatefulWidget {
   final attendance;
 
   @override
-  State<ClassList_ListView> createState() => _ClassList_ListViewState();
+  _ClassList_ListViewState createState() => _ClassList_ListViewState();
 }
 
 class _ClassList_ListViewState extends State<ClassList_ListView> {
@@ -57,7 +57,7 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                   ),
                 );
       } else {
-        return Container();
+        return const SizedBox.shrink();
       }
     }
 
@@ -137,7 +137,6 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     String attendance = "";
     Color? attendanceColor;
     bool visibility = UserModel().getTeacher ? true : false;
-    print(visibility);
 
     switch (widget.attendance) {
       case 0:
