@@ -402,7 +402,7 @@ class DatabaseService {
 
       yield* classCollection
       .where('c_sub-code', whereIn: subjectCode)
-      .where('c_ongoing', isEqualTo: true)
+      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
       .orderBy("c_datetimeStart", descending: false)
       .snapshots();
     } else {
@@ -410,7 +410,7 @@ class DatabaseService {
 
       yield* classCollection
       .where('c_teacher', isEqualTo: teacher)
-      .where('c_ongoing', isEqualTo: true)
+      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
       .orderBy("c_datetimeStart", descending: false)
       .snapshots();
     }
