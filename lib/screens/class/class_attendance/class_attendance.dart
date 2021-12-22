@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class ClassAttendance extends StatefulWidget {
@@ -106,6 +107,10 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {},
+          ),
+          IconButton(
             icon: _searchIcon,
             onPressed: _searchPressed,
           ),
@@ -121,8 +126,16 @@ class _ClassAttendanceState extends State<ClassAttendance> {
             return ListTile(
               title: Text(_resultsList[index]["name"]),
               subtitle: Text(_resultsList[index]["id"]),
+              trailing: attendanceText(_resultsList[index]["status"]),
               onTap: () {
-
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
+                ).then((value) {
+                  setState(() {
+                    didChangeDependencies();
+                  });
+                });
               },
             );
           },
@@ -135,5 +148,23 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         ),
       )
     );
+  }
+
+  attendanceText(String attendance) {
+    String strAttendance = '';
+
+    switch (attendance) {
+      case 'present':
+        strAttendance = "PRESENT";
+        break;
+      case 'late':
+        strAttendance = "LATE";
+        break;
+      case 'n/a':
+        strAttendance = "N/A";
+        break;
+    }
+
+    return Text(strAttendance);
   }
 }

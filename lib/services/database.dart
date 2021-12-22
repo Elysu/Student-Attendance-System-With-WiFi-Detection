@@ -350,7 +350,8 @@ class DatabaseService {
           "deviceID": null,
           "id": ds["id"],
           "name": ds["name"],
-          "status": "n/a"
+          "status": "n/a",
+          "uid": docList.docs[i].id
         }).then((value) => true)
         .catchError((error) {
           print(error.toString());
