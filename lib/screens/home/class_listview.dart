@@ -24,26 +24,27 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
     Timestamp tEnd = widget.classes['c_datetimeEnd'];
     DateTime dStart = tStart.toDate();
     DateTime dEnd = tEnd.toDate();
-    String attendance = "";
-    Color? attendanceColor;
-
-    switch (widget.attendance) {
-      case 0:
-        attendance = "N/A";
-        attendanceColor = Colors.grey;
-        break;
-      case 1:
-        attendance = "PRESENT";
-        attendanceColor = Colors.green;
-        break;
-      case 2:
-        attendance = "LATE";
-        attendanceColor = Colors.orange;
-        break;
-    }
 
     Widget checkUpcomingOrOngoing() {
-      if (attendance != "") {
+      if (widget.attendance != null) {
+        String attendance = "";
+        Color? attendanceColor;
+
+        switch (widget.attendance) {
+          case 0:
+            attendance = "N/A";
+            attendanceColor = Colors.grey;
+            break;
+          case 1:
+            attendance = "PRESENT";
+            attendanceColor = Colors.green;
+            break;
+          case 2:
+            attendance = "LATE";
+            attendanceColor = Colors.orange;
+            break;
+        }
+
         return Padding(
                   padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                   child: Row(
@@ -114,12 +115,12 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
   }
 }
 
-Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, dynamic attendance) {
+Widget buildClassHistory(BuildContext context, DocumentSnapshot classes, [dynamic attendance]) {
   return ClassListHistory_ListView(classes: classes, attendance: attendance);
 }
 
 class ClassListHistory_ListView extends StatefulWidget {
-  const ClassListHistory_ListView({ Key? key, required this.classes, required this.attendance }) : super(key: key);
+  const ClassListHistory_ListView({ Key? key, required this.classes, this.attendance }) : super(key: key);
   final classes;
   final attendance;
 
@@ -134,24 +135,6 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
     Timestamp tEnd = widget.classes['c_datetimeEnd'];
     DateTime dStart = tStart.toDate();
     DateTime dEnd = tEnd.toDate();
-    String attendance = "";
-    Color? attendanceColor;
-    bool visibility = UserModel().getTeacher ? true : false;
-
-    switch (widget.attendance) {
-      case 0:
-        attendance = "ABSENT";
-        attendanceColor = Colors.red;
-        break;
-      case 1:
-        attendance = "PRESENT";
-        attendanceColor = Colors.green;
-        break;
-      case 2:
-        attendance = "LATE";
-        attendanceColor = Colors.orange;
-        break;
-    }
 
     return Card(
         child: Padding(
@@ -198,17 +181,33 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                   ],
                 ),
               ),
-              teacherDisplayAttendance(visibility, attendance, attendanceColor!)
+              isTeacherOrStudent()
             ],
           ),
         )
     );
   }
 
-  Widget teacherDisplayAttendance(bool visibility, String attendance, Color attendanceColor) {
-    if (visibility) {
-      return const SizedBox.shrink();
-    } else {
+  Widget isTeacherOrStudent() {
+    String attendance = "";
+    Color? attendanceColor;
+
+    if (widget.attendance != null) {
+      switch (widget.attendance) {
+        case 0:
+          attendance = "ABSENT";
+          attendanceColor = Colors.red;
+          break;
+        case 1:
+          attendance = "PRESENT";
+          attendanceColor = Colors.green;
+          break;
+        case 2:
+          attendance = "LATE";
+          attendanceColor = Colors.orange;
+          break;
+      }
+
       return Padding(
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
@@ -221,6 +220,8 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                   ],
                 ),
               );
+    } else {
+      return const SizedBox.shrink();
     }
   }
 }

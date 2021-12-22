@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -13,37 +14,126 @@ class ClassAttendance extends StatefulWidget {
 class _ClassAttendanceState extends State<ClassAttendance> {
   DatabaseService dbService = DatabaseService();
   bool loading = true;
+  TextEditingController _searchController = TextEditingController();
+  Icon _searchIcon = const Icon(Icons.search);
+  Widget _appBarTitle = const Text( 'Class Attendance' );
+
+  Future? resultsLoaded;
+  List _allResults = [];
+  List _resultsList = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    resultsLoaded = getAttendance();
+  }
+
+  _onSearchChanged() {
+    searchResultsList();
+  }
+
+  searchResultsList() {
+    var showResults = [];
+
+    if (_searchController.text != "") {
+      // we have a search parameter
+      for (int i=0; i<_allResults.length; i++) {
+        DocumentSnapshot ds = _allResults[i];
+        var studentName = ds['name'].toString().toLowerCase();
+        var studentID = ds['id'].toString().toLowerCase();
+
+        if (studentName.contains(_searchController.text.toLowerCase()) || studentID.contains(_searchController.text.toLowerCase())) {
+          showResults.add(_allResults[i]);
+        }
+      }
+    } else {
+      showResults = List.from(_allResults);
+    }
+    setState(() {
+      _resultsList = showResults;
+      loading = false;
+    });
+  }
+
+  // get all students documents first
+  getAttendance() async {
+    var data = await dbService.classCollection.doc(widget.classDocID).collection("students").get();
+    setState(() {
+      _allResults = data.docs;
+    });
+    searchResultsList();
+    return "Complete";
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (_searchIcon.icon == Icons.search) {
+        _searchIcon = const Icon(Icons.close);
+        _appBarTitle = TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        _searchIcon = const Icon(Icons.search);
+        _appBarTitle = const Text( 'Class Attendance' );
+        _searchController.clear();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Class Attendance"),
+        title: _appBarTitle,
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: _searchIcon,
+            onPressed: _searchPressed,
+          ),
+        ],
       ),
-      // body: loading ? const Text("Loading...")
-      // : SingleChildScrollView(
-      //   child: ListView.separated(
-      //     scrollDirection: Axis.vertical,
-      //     shrinkWrap: true,
-      //     itemCount: subjects.length,
-      //     itemBuilder: (BuildContext context, int index) {
-      //       return ListTile(
-      //         title: Text(subjects[index]["sub_name"]),
-      //         subtitle: Text(subjects[index]["sub_code"]),
-      //         onTap: () {
-                
-      //         },
-      //       );
-      //     },
-      //     separatorBuilder: (context, index) {
-      //       return const Divider(
-      //         height: 0,
-      //         color: Colors.black38,
-      //       );
-      //     },
-      //   ),
-      // )
+      body: loading ? const Text("Loading...")
+      : SingleChildScrollView(
+        child: ListView.separated(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: _resultsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(_resultsList[index]["name"]),
+              subtitle: Text(_resultsList[index]["id"]),
+              onTap: () {
+
+              },
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              height: 0,
+              color: Colors.black38,
+            );
+          },
+        ),
+      )
     );
   }
 }

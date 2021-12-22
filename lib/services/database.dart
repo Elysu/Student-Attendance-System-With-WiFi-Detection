@@ -269,11 +269,15 @@ class DatabaseService {
   }
   // delete class session based on single document
   Future deleteClass(String docID) async {
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+
     // delete subcollection documents with loop
-    await classCollection.doc(docID).collection('students').get().then((snapshot) {
-      for (DocumentSnapshot ds in snapshot.docs) {
-        ds.reference.delete();
-      }
+    bool batchStatus = await classCollection.doc(docID).collection('students').get().then((qs) {
+      qs.docs.forEach((doc) {
+        batch.delete(doc.reference);
+      });
+
+      return batch.commit().then((value) => true).catchError((error) => false);
     });
 
     // delete main document in class collection
@@ -284,7 +288,11 @@ class DatabaseService {
       return false;
     });
 
-    return status;
+    if (status && batchStatus) {
+      return true;
+    } else {
+      return false;
+    }
   }
   // check if there are any ongoing class for this subjects
   Future checkOngoingClassForSubject(String subCode) async {
@@ -319,7 +327,10 @@ class DatabaseService {
   }
   // set student with this subject into the subcollection (students) of this class session
   Future addStudentsIntoClass(Map subject, String classID) async {
-    var docList = await userCollection.where("subjects", arrayContains: {"sub_code": subject["sub_code"], "sub_name": subject["sub_name"]}).get();
+    var docList = await userCollection
+    .where("subjects", arrayContains: {"sub_code": subject["sub_code"], "sub_name": subject["sub_name"]})
+    .where("isTeacher", isEqualTo: false)
+    .get();
 
     if (docList.docs.isNotEmpty) {
       bool returnStatus = true;

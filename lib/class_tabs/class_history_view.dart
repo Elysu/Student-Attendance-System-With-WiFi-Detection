@@ -33,16 +33,38 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
                 shrinkWrap: true,
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return StreamBuilder(
-                    stream: dbService.streamGetAttendance(snapshot.data!.docs[index].id),
+                  return checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[index].id, snapshot.data!.docs[index]);
+                }
+              ),
+            );
+          }
+        }
+      ),
+    );
+  }
+
+  Widget checkTeacherOrStudentStreamBuilder(String classDocID, DocumentSnapshot ds) {
+    if (UserModel().getTeacher) {
+      return GestureDetector(
+        child: buildClassHistory(context, ds),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ClassDetails(docID: classDocID)));
+        },
+      );
+    } else {
+      return StreamBuilder(
+                    stream: dbService.streamGetAttendance(classDocID),
                     builder: (context, AsyncSnapshot<int> s) {
                       if (s.hasData) {
                         return GestureDetector(
-                          child: buildClassHistory(context, snapshot.data!.docs[index], s.data),
+                          child: buildClassHistory(context, ds, s.data),
                           onTap: (){
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => ClassDetails(docID: snapshot.data!.docs[index].id))
+                              MaterialPageRoute(builder: (context) => ClassDetails(docID: classDocID))
                             );
                           },
                         );
@@ -51,13 +73,7 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
                       }
                     }
                   );
-                }
-              ),
-            );
-          }
-        }
-      ),
-    );
+    }
   }
 
   @override
