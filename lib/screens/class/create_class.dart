@@ -297,8 +297,10 @@ class _CreateClassState extends State<CreateClass> {
                         // true = exist, false = not exist
                         bool classExists = isOngoing ? await dbService.checkOngoingClassForSubject(subCode) : false;
 
+                        dynamic ongoingTime = isOngoing ? DateTime.now() : null;
+
                         if (classExists == false) {
-                          dynamic status = await dbService.createClassSession(classSubject, dStart!, dEnd!, classroom!, isOngoing);
+                          dynamic status = await dbService.createClassSession(classSubject, dStart!, dEnd!, classroom!, isOngoing, ongoingTime);
                           dynamic addStudent = await dbService.addStudentsIntoClass(classSubject, status);
 
                           // if status return docID and addstudent is success, everything is valid

@@ -263,14 +263,29 @@ class DatabaseService {
     return data;
   }
   // update class details
-  Future<bool> updateClassDetails(String docID, DateTime datetimeStart, DateTime datetimeEnd, String classroom, bool classOngoing) async {
-    bool status = await classCollection.doc(docID).update({
-      'c_datetimeStart': datetimeStart,
-      'c_datetimeEnd': datetimeEnd,
-      'classroom': classroom,
-      'c_ongoing': classOngoing
-    }).then((value) => true)
-    .catchError((error) => false);
+  Future<bool> updateClassDetails(String docID, DateTime datetimeStart, DateTime datetimeEnd, String classroom, bool classOngoing, [dynamic ongoingTime]) async {
+    bool status;
+    
+    // if user wish to keep ongoing time
+    if (ongoingTime == 0) {
+      status = await classCollection.doc(docID).update({
+        'c_datetimeStart': datetimeStart,
+        'c_datetimeEnd': datetimeEnd,
+        'classroom': classroom,
+        'c_ongoing': classOngoing
+      }).then((value) => true)
+      .catchError((error) => false);
+    } else {
+      // reset ongoing time to new time or set it to null
+      status = await classCollection.doc(docID).update({
+        'c_datetimeStart': datetimeStart,
+        'c_datetimeEnd': datetimeEnd,
+        'classroom': classroom,
+        'c_ongoing': classOngoing,
+        'c_ongoingTime': ongoingTime
+      }).then((value) => true)
+      .catchError((error) => false);
+    }
 
     return status;
   }
@@ -311,7 +326,7 @@ class DatabaseService {
     }
   }
   // create class session
-  Future createClassSession(Map subject, DateTime dStart, DateTime dEnd, String classroom, bool isOngoing) async {
+  Future createClassSession(Map subject, DateTime dStart, DateTime dEnd, String classroom, bool isOngoing, dynamic ongoingTime) async {
     Map subTeacher = subject["sub_teacher"];
     String docID = classCollection.doc().id;
 
@@ -322,7 +337,8 @@ class DatabaseService {
       "c_sub-code": subject["sub_code"],
       "c_sub-name": subject["sub_name"],
       "c_teacher": {"t_id": subTeacher["t_id"], "t_name": subTeacher["t_name"]},
-      "classroom": classroom
+      "classroom": classroom,
+      'c_ongoingTime': ongoingTime
     }).then((value) => true)
     .catchError((error) => false);
 
@@ -533,5 +549,9 @@ class DatabaseService {
     } else {
       return "This class has no student.";
     }
+  }
+
+  Future takeAttendance() async {
+
   }
 }

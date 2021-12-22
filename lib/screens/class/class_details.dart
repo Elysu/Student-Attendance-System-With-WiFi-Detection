@@ -22,12 +22,10 @@ class _ClassDetailsState extends State<ClassDetails> {
   Map classTeacher = {};
   bool loading = true;
   int? attendance, totalAttendance, totalStudent;
-  String attendanceText = "", attendanceLabel = "", strTotalAttendance = "";
+  String attendanceText = "", attendanceLabel = "", strTotalAttendance = "", strOngoingTime = "";
   Color? attendanceColor;
-  Timestamp? tStart;
-  Timestamp? tEnd;
-  DateTime? dStart;
-  DateTime? dEnd;
+  Timestamp? tStart, tEnd, tOngoingTime;
+  DateTime? dStart, dEnd, dOngoingTime;
   String classStatus = "";
 
   @override
@@ -43,6 +41,14 @@ class _ClassDetailsState extends State<ClassDetails> {
           dStart = tStart!.toDate();
           dEnd = tEnd!.toDate();
           classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
+
+          if (classDetails["c_ongoingTime"] != null) {
+            tOngoingTime = classDetails["c_ongoingTime"];
+            dOngoingTime = tOngoingTime!.toDate();
+            strOngoingTime = dOngoingTime.toString();
+          } else {
+            strOngoingTime = "Not Available";
+          }
           
           if (isTeacher) {
             attendanceLabel = "Total attendance:";
@@ -205,6 +211,15 @@ class _ClassDetailsState extends State<ClassDetails> {
                     ),
                   ],
                 ),
+
+                // class ongoing time
+                const SizedBox(height: 30),
+                const Text("Ongoing Time:"),
+                const SizedBox(height: 5),
+                Text(
+                  strOngoingTime,
+                  style: const TextStyle(fontSize: 20),
+                ),
       
                 // class teacher
                 const SizedBox(height: 30),
@@ -233,23 +248,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                         ],
                       ),
                     ),
-                    Visibility(
-                      visible: isTeacher ? false : true,
-                      child: Expanded(
-                        flex: 5,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.note_alt),
-                                  label: const Text("Mark Attendance")),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    checkClassOngoing()
                   ],
                 ),
               ]),
@@ -270,5 +269,37 @@ class _ClassDetailsState extends State<ClassDetails> {
         ),
       ),
     );
+  }
+
+  checkClassOngoing() {
+    switch (classDetails["c_ongoing"]) {
+      case true:{
+        return Visibility(
+                      visible: isTeacher ? false : true,
+                      child: Expanded(
+                        flex: 5,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    takeAttendance();
+                                  },
+                                  icon: const Icon(Icons.note_alt),
+                                  label: const Text("Mark Attendance")),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+      }
+      case false:
+        return const SizedBox.shrink();
+    }
+  }
+
+  takeAttendance() {
+    print("clicked");
   }
 }

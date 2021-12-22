@@ -16,13 +16,13 @@ class EditClass extends StatefulWidget {
 class _EditClassState extends State<EditClass> {
   final _formKey = GlobalKey<FormState>();
   DatabaseService dbService = DatabaseService();
-  dynamic classDetails;
+  Map classDetails = {};
   Map classTeacher = {};
   bool loading = true;
   bool? classOngoing;
-  Timestamp? tStart, tEnd; // to store timestamp from firestore
-  DateTime? dStart, dEnd; // to convert time stamp to DateTime and store new selected date
-  String strDate = "", strStartTime = "", strEndTime = "", strClassStatus = "", classroom = "", startTimePeriod = "", endTimePeriod = "", error = ""; // String that display on form
+  Timestamp? tStart, tEnd, tOngoingTime; // to store timestamp from firestore
+  DateTime? dStart, dEnd, dOngoingTime; // to convert time stamp to DateTime and store new selected date
+  String strDate = "", strStartTime = "", strEndTime = "", strClassStatus = "", classroom = "", startTimePeriod = "", endTimePeriod = "", strOngoingTime = "", error = ""; // String that display on form
   TimeOfDay? startTime, endTime;
   List<String> allClassroom = [];
 
@@ -36,10 +36,10 @@ class _EditClassState extends State<EditClass> {
         loading = false;
         tStart = classDetails['c_datetimeStart'];
         tEnd = classDetails['c_datetimeEnd'];
-
-        // set date into variables
         dStart = tStart!.toDate();
         dEnd = tEnd!.toDate();
+        
+        // set date into variables
         strDate = "${DateFormat('d').format(dStart!).toString()}/${DateFormat('yM').format(dStart!).toString()}";
         startTime = TimeOfDay(hour: dStart!.hour, minute: dStart!.minute);
         endTime = TimeOfDay(hour: dEnd!.hour, minute: dEnd!.minute);
@@ -78,6 +78,14 @@ class _EditClassState extends State<EditClass> {
 
   @override
   Widget build(BuildContext context) {
+    if (classDetails["c_ongoingTime"] != null) {
+      tOngoingTime = classDetails["c_ongoingTime"];
+      dOngoingTime = tOngoingTime!.toDate();
+      strOngoingTime = dOngoingTime.toString();
+    } else {
+      strOngoingTime = "Not Available";
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Class Details"),
@@ -286,7 +294,16 @@ class _EditClassState extends State<EditClass> {
                       ),
                     ],
                   ),
-          
+
+                  // class ongoing time
+                  const SizedBox(height: 30),
+                  const Text("Ongoing Time:"),
+                  const SizedBox(height: 5),
+                  Text(
+                    strOngoingTime,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+
                   // class teacher
                   const SizedBox(height: 30),
                   const Text("Lecturer:"),
@@ -317,7 +334,24 @@ class _EditClassState extends State<EditClass> {
                             );
                           });
                         } else {
-                          updateClass();
+                          classOngoing = strClassStatus == "Ongoing" ? true : false;
+                          dynamic reset;
+
+                          if (classOngoing!) {
+                            if (classDetails["c_ongoingTime"] != null) {
+                              reset = await ongoingTimeDialog();
+
+                              if (reset == true) {
+                                updateClass(DateTime.now());
+                              } else if (reset == false) {
+                                updateClass(0); // 0 for keeping the ongoing time
+                              }
+                            } else {
+                              updateClass(DateTime.now());
+                            }
+                          } else {
+                            updateClass(null);
+                          }
                         }
                       },
                       child: const Text("Save"),
@@ -400,9 +434,8 @@ class _EditClassState extends State<EditClass> {
     );
   }
 
-  void updateClass() async {
-    classOngoing = strClassStatus == "Ongoing" ? true : false;
-    bool status = await dbService.updateClassDetails(widget.docID, dStart!, dEnd!, classroom, classOngoing!);
+  void updateClass([dynamic ongoingTime]) async {
+    bool status = await dbService.updateClassDetails(widget.docID, dStart!, dEnd!, classroom, classOngoing!, ongoingTime);
 
     if (status) {
       Navigator.pop(context, true);
@@ -417,5 +450,37 @@ class _EditClassState extends State<EditClass> {
         content: Text(error, style: const TextStyle(color: Colors.red)),
       ));
     }
+  }
+
+  ongoingTimeDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Reset ongoing start time?"),
+          content: const Text("An ongoing start time has already been set, do you want to reset to current time?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 0); // just dummy value to return instead of null
+              },
+              child: const Text("CANCEL")
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text("NO")
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text("YES")
+            ),
+          ],
+        );
+      }
+    );
   }
 }
