@@ -10,7 +10,7 @@ class AuthService {
   bool isTeacher = false;
 
   getAndSetUserDataIntoModel(String uid) async {
-    await _dbService.getUserData(uid);
+    await _dbService.getUserDataAndSetIntoModel(uid);
   }
 
   // use user data model to create user object based on firebase User

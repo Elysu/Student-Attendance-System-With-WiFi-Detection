@@ -199,13 +199,20 @@ class DatabaseService {
   }
 
   // get current user data and set it into UserModel
-  Future getUserData(String uid) async {
+  Future getUserDataAndSetIntoModel(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
     String currentDeviceID = data['current_deviceID'] != null ? data['deviceID'].toString() : '';
     String lastDeviceID = data['last_deviceID'] != null ? data['deviceID'].toString() : '';
     List subjects = data['subjects'];
     userModel.setData(uid, currentDeviceID, lastDeviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
+  }
+
+  Future getUserData() async {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+    return data;
   }
 
   // get all teachers document as a list

@@ -70,7 +70,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
 
   // get all students documents first
   getSubjects() async {
-    await dbService.getUserData(UserModel().getUID);
+    await dbService.getUserDataAndSetIntoModel(UserModel().getUID);
     List subjects = UserModel().getSubjects;
     List subjectCode = [];
 
