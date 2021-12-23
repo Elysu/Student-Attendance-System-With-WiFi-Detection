@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       initialIndex: 0,
       child: Scaffold(
         appBar: AppBar(
@@ -47,8 +47,7 @@ class _HomeState extends State<Home> {
           centerTitle: true,
           bottom: const TabBar(
             tabs: <Widget>[
-              Tab(child: Text("Ongoing Classes")),
-              Tab(child: Text("Upcoming Classes")),
+              Tab(child: Text("Classes")),
               Tab(child: Text("Class History")),
             ],
           ),
@@ -69,7 +68,6 @@ class _HomeState extends State<Home> {
         body: const TabBarView(
           children: <Widget>[
             OngoingClassView(),
-            UpcomingClassView(),
             ClassHistoryView()
           ],
         ),

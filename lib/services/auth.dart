@@ -14,7 +14,7 @@ class AuthService {
   }
 
   // use user data model to create user object based on firebase User
-  UserModel? _userFromFirebase(User user) {
+  UserModel? _userFromFirebase(User? user) {
     if (user != null) {
       getAndSetUserDataIntoModel(user.uid);
       return userModel;

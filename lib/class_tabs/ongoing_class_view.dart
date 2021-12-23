@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
@@ -14,57 +16,82 @@ class OngoingClassView extends StatefulWidget {
 
 class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepAliveClientMixin {
   DatabaseService dbService = DatabaseService();
-  List<Widget> ongoingList = [];
-  List<Widget> upcomingList = [];
 
   @override
   Widget build(BuildContext context) {
-    streamBuilder(ongoingList, upcomingList);
     return Column(
       children: <Widget>[
-        ExpansionTile(
-          title: const Text("Ongoing"),
-          children: [
-            Column(children: ongoingList)
-          ],
-        ),
-        ExpansionTile(
-          title: const Text("Upcoming"),
-          children: [
-            Column(children: upcomingList)
-          ],
-        ),
+        ongoingStreamBuilder(),
+        upcomingStreamBuilder()
       ],
     );
   }
 
-  Widget streamBuilder(List ongoingList, List upcomingList) {
-    return SizedBox(
-      height: double.infinity,
-      width: double.infinity,
-      child: StreamBuilder<QuerySnapshot>(
-        stream: dbService.getOngoingClassData(context),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: Text("Loading..."));
-          }
-
-          if (snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No ongoing or upcoming classes at the moment."));
-          } else {
-            for (int i=0; i<snapshot.data!.docs.length; i++) {
-              DocumentSnapshot ds = snapshot.data!.docs[i];
-              if (ds['c_ongoing']) {
-                ongoingList.add(checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[i].id, snapshot.data!.docs[i]));
-              } else {
-                upcomingList.add(checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[i].id, snapshot.data!.docs[i]));
-              }
-            }
-
-            return const Text("BRUH");
-          }
+  Widget ongoingStreamBuilder() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: dbService.getOngoingClassData(context),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: Text("Loading..."));
         }
-      ),
+
+        if (snapshot.data!.docs.isEmpty) {
+          return const ExpansionTile(
+            title: Text("Ongoing"),
+            subtitle: Text("No ongoing class at the moment.", style: TextStyle(color: Colors.grey)),
+          );
+        } else {
+          return ExpansionTile(
+            initiallyExpanded: true,
+            title: const Text("Ongoing"),
+            subtitle: Text(snapshot.data!.docs.length.toString() + " ongoing classes.", style: const TextStyle(color: Colors.green)),
+            children: [
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (builder, index) {
+                  return checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[index].id, snapshot.data!.docs[index]);
+                }
+              ),
+            ]
+          );
+        }
+      }
+    );
+  }
+
+  Widget upcomingStreamBuilder() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: dbService.getUpcomingClassData(context),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: Text("Loading..."));
+        }
+
+        if (snapshot.data!.docs.isEmpty) {
+          return const ExpansionTile(
+            title: Text("Upcoming"),
+            subtitle: Text("No upcoming class at the moment.", style: TextStyle(color: Colors.grey)),
+          );
+        } else {
+          return ExpansionTile(
+            initiallyExpanded: true,
+            title: const Text("Upcoming"),
+            subtitle: Text(snapshot.data!.docs.length.toString() + " upcoming classes.", style: const TextStyle(color: Colors.grey)),
+            children: [
+              ListView.builder(
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (builder, index) {
+                  return checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[index].id, snapshot.data!.docs[index]);
+                }
+              ),
+            ]
+          );
+        }
+      }
     );
   }
 

@@ -402,16 +402,16 @@ class DatabaseService {
 
       yield* classCollection
       .where('c_sub-code', whereIn: subjectCode)
-      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
-      .orderBy("c_datetimeStart", descending: false)
+      .where('c_ongoing', isEqualTo: true)
+      .orderBy("c_datetimeEnd", descending: false)
       .snapshots();
     } else {
       Map teacher = {"t_id": data["id"], "t_name": data["name"]};
 
       yield* classCollection
       .where('c_teacher', isEqualTo: teacher)
-      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
-      .orderBy("c_datetimeStart", descending: false)
+      .where('c_ongoing', isEqualTo: true)
+      .orderBy("c_datetimeEnd", descending: false)
       .snapshots();
     }
   }
@@ -432,18 +432,18 @@ class DatabaseService {
 
       yield* classCollection
       .where('c_sub-code', whereIn: subjectCode)
-      .where('c_datetimeStart', isGreaterThan: DateTime.now())
+      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
       .where('c_ongoing', isEqualTo: false)
-      .orderBy("c_datetimeStart", descending: false)
+      .orderBy("c_datetimeEnd", descending: false)
       .snapshots();
     } else {
       Map teacher = {"t_id": data["id"], "t_name": data["name"]};
 
       yield* classCollection
       .where('c_teacher', isEqualTo: teacher)
-      .where('c_datetimeStart', isGreaterThan: DateTime.now())
+      .where('c_datetimeEnd', isGreaterThan: DateTime.now())
       .where('c_ongoing', isEqualTo: false)
-      .orderBy("c_datetimeStart", descending: false)
+      .orderBy("c_datetimeEnd", descending: false)
       .snapshots();
     }
   }
