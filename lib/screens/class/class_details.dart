@@ -45,7 +45,7 @@ class _ClassDetailsState extends State<ClassDetails> {
           if (classDetails["c_ongoingTime"] != null) {
             tOngoingTime = classDetails["c_ongoingTime"];
             dOngoingTime = tOngoingTime!.toDate();
-            strOngoingTime = dOngoingTime.toString();
+            strOngoingTime = DateFormat('d/M/y').format(dOngoingTime!).toString() + " - " + DateFormat('jm').format(dOngoingTime!).toString();
           } else {
             strOngoingTime = "Not Available";
           }
@@ -300,6 +300,10 @@ class _ClassDetailsState extends State<ClassDetails> {
   }
 
   takeAttendance() {
-    print("clicked");
+    if (DateTime.now().isAfter(dOngoingTime!.add(const Duration(minutes: 5)))) {
+      print("late");
+    } else {
+      print("present");
+    }
   }
 }

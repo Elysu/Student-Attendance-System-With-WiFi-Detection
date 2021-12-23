@@ -87,7 +87,7 @@ class _ClassList_ListViewState extends State<ClassList_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Date: ${DateFormat('d').format(dStart).toString()}/${DateFormat('yM').format(dStart).toString()}"),
+                    Text("Date: ${DateFormat('d/M/y').format(dStart).toString()}"),
                   ],
                 ),
               ),
@@ -161,7 +161,7 @@ class _ClassListHistory_ListViewState extends State<ClassListHistory_ListView> {
                 padding: const EdgeInsets.only(top: 5.0, bottom: 5.0),
                 child: Row(
                   children: <Widget>[
-                    Text("Date: ${DateFormat('d').format(dStart).toString()}/${DateFormat('yM').format(dStart).toString()}"),
+                    Text("Date: ${DateFormat('d/M/y').format(dStart).toString()}"),
                   ],
                 ),
               ),
