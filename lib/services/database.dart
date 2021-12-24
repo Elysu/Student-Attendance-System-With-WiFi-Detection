@@ -551,7 +551,14 @@ class DatabaseService {
     }
   }
 
-  Future takeAttendance() async {
+  Future takeAttendance(String classID, String attendance) async {
+    final uid = await _auth.currentUser!.uid;
+    bool status = await classCollection.doc(classID).collection('students').doc(uid).update({
+      'status': attendance,
+      'datetime': DateTime.now()
+    }).then((value) => true)
+    .catchError((error) => false);
 
+    return status;
   }
 }

@@ -81,7 +81,7 @@ class _EditClassState extends State<EditClass> {
     if (classDetails["c_ongoingTime"] != null) {
       tOngoingTime = classDetails["c_ongoingTime"];
       dOngoingTime = tOngoingTime!.toDate();
-      strOngoingTime = dOngoingTime.toString();
+      strOngoingTime = DateFormat('d/M/y').format(dOngoingTime!).toString() + " - " + DateFormat('jm').format(dOngoingTime!).toString();
     } else {
       strOngoingTime = "Not Available";
     }
@@ -240,14 +240,14 @@ class _EditClassState extends State<EditClass> {
                     //crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
-                        flex: 5,
+                        flex: 7,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             // classroom
                             DropdownButtonFormField(
                               decoration: const InputDecoration(
-                                label: Text("Select Classroom")
+                                label: Text("Classroom")
                               ),
                               value: classroom,
                               items: allClassroom.map<DropdownMenuItem<String>>((String val) {
@@ -265,9 +265,9 @@ class _EditClassState extends State<EditClass> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 20),
+                      const Expanded(flex: 1, child: SizedBox.shrink()),
                       Expanded(
-                        flex: 4,
+                        flex: 6,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[

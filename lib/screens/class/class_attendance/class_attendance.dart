@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -106,10 +107,14 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         title: _appBarTitle,
         centerTitle: true,
         actions: <Widget>[
-          IconButton(
+          // show edit button if logged in user is teacher
+          UserModel().getTeacher
+          ? IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {},
-          ),
+          )
+          : const SizedBox.shrink(),
+
           IconButton(
             icon: _searchIcon,
             onPressed: _searchPressed,
@@ -128,14 +133,16 @@ class _ClassAttendanceState extends State<ClassAttendance> {
               subtitle: Text(_resultsList[index]["id"]),
               trailing: attendanceText(_resultsList[index]["status"]),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
-                ).then((value) {
-                  setState(() {
-                    didChangeDependencies();
+                if (UserModel().getTeacher) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
+                  ).then((value) {
+                    setState(() {
+                      didChangeDependencies();
+                    });
                   });
-                });
+                }
               },
             );
           },

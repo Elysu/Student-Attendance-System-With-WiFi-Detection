@@ -272,38 +272,56 @@ class _ClassDetailsState extends State<ClassDetails> {
   }
 
   checkClassOngoing() {
-    switch (classDetails["c_ongoing"]) {
-      case true:{
+    if (classDetails["c_ongoing"]) {
+      if (attendance == 0) {
         return Visibility(
-                      visible: isTeacher ? false : true,
-                      child: Expanded(
-                        flex: 5,
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    takeAttendance();
-                                  },
-                                  icon: const Icon(Icons.note_alt),
-                                  label: const Text("Mark Attendance")),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
+          visible: isTeacher ? false : true,
+          child: Expanded(
+            flex: 5,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      await takeAttendance();
+                    },
+                    icon: const Icon(Icons.note_alt),
+                    label: const Text("Mark Attendance")
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
       }
-      case false:
-        return const SizedBox.shrink();
     }
+    return const SizedBox.shrink();
   }
 
-  takeAttendance() {
+  takeAttendance() async {
+    String dbAttendance = "";
+
     if (DateTime.now().isAfter(dOngoingTime!.add(const Duration(minutes: 5)))) {
-      print("late");
+      dbAttendance = "late";
     } else {
-      print("present");
+      dbAttendance = "present";
+    }
+
+    bool status = await dbService.takeAttendance(widget.docID, dbAttendance);
+
+    if (status) {
+      didChangeDependencies();
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: const Duration(seconds: 5),
+        content: Text("Your attendance is " + dbAttendance.toUpperCase() + ".", style: const TextStyle(color: Colors.green)),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 5),
+        content: Text("Failed to take attendace, please try again.", style: TextStyle(color: Colors.red)),
+      ));
     }
   }
 }

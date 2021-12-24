@@ -219,14 +219,14 @@ class _CreateClassState extends State<CreateClass> {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      flex: 5,
+                      flex: 7,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           // classroom
                           DropdownButtonFormField(
                             validator: (value) => value == null ? 'Select a classroom.' : null,
-                            decoration: const InputDecoration(label: Text("Select Classroom")),
+                            decoration: const InputDecoration(label: Text("Classroom")),
                             value: classroom,
                             items: allClassroom
                                 .map<DropdownMenuItem<String>>((String val) {
@@ -244,9 +244,9 @@ class _CreateClassState extends State<CreateClass> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const Expanded(flex: 1, child: SizedBox.shrink()),
                     Expanded(
-                      flex: 4,
+                      flex: 6,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
