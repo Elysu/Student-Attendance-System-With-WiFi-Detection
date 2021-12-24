@@ -4,16 +4,16 @@ import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 import 'package:student_attendance_fyp/shared/delete.dart';
 
-class EditStudent extends StatefulWidget {
-  const EditStudent({ Key? key, required this.docID }) : super(key: key);
+class EditTeacher extends StatefulWidget {
+  const EditTeacher({ Key? key, required this.docID }) : super(key: key);
 
   final docID;
 
   @override
-  _EditStudentState createState() => _EditStudentState();
+  _EditTeacherState createState() => _EditTeacherState();
 }
 
-class _EditStudentState extends State<EditStudent> {
+class _EditTeacherState extends State<EditTeacher> {
   final _formKey = GlobalKey<FormState>();
   DatabaseService dbService = DatabaseService();
 
@@ -29,7 +29,7 @@ class _EditStudentState extends State<EditStudent> {
   bool isReadOnly = true;
   bool visibility = false;
   Icon editIcon = const Icon(Icons.edit);
-  dynamic studentData;
+  dynamic teacherData;
   bool loading = true;
 
   @override
@@ -39,11 +39,11 @@ class _EditStudentState extends State<EditStudent> {
     getStudentData().whenComplete(() {
       setState((){
         loading = false;
-        nameController = TextEditingController(text: studentData['name'].toString());
-        idController = TextEditingController(text: studentData['id'].toString());
+        nameController = TextEditingController(text: teacherData['name'].toString());
+        idController = TextEditingController(text: teacherData['id'].toString());
       });
       
-      List subjects = studentData["subjects"];
+      List subjects = teacherData["subjects"];
 
       for (int i=0; i<subjects.length; i++) {
         selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
@@ -52,7 +52,7 @@ class _EditStudentState extends State<EditStudent> {
   }
 
   Future getStudentData() async {
-    studentData = await dbService.getStudentDetails(widget.docID);
+    teacherData = await dbService.getStudentDetails(widget.docID);
   }
 
   @override
@@ -72,14 +72,14 @@ class _EditStudentState extends State<EditStudent> {
         setState(() {
           isReadOnly = true;
           visibility = false;
-          nameController = TextEditingController(text: studentData['name'].toString());
-          idController = TextEditingController(text: studentData['id'].toString());
+          nameController = TextEditingController(text: teacherData['name'].toString());
+          idController = TextEditingController(text: teacherData['id'].toString());
 
           if (selectedItems.isNotEmpty) {
             selectedItems = List.empty(growable: true);
           }
           
-          List subjects = studentData["subjects"];
+          List subjects = teacherData["subjects"];
           for (int i=0; i<subjects.length; i++) {
             selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
           }
@@ -95,7 +95,7 @@ class _EditStudentState extends State<EditStudent> {
         actions: [
           IconButton(
             onPressed: () async {
-              await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
+              await deleteDialog(context: context, docID: widget.docID, type: 1, email: teacherData['email'].toString());
             },
             icon: const Icon(Icons.delete),
           )
@@ -120,7 +120,7 @@ class _EditStudentState extends State<EditStudent> {
                     icon: Icon(Icons.email),
                     labelText: "Email"
                   ),
-                  controller: TextEditingController(text: studentData['email'].toString()),
+                  controller: TextEditingController(text: teacherData['email'].toString()),
                   // if isValid then value is null
                   validator: (value) => value!.isEmpty ? "Enter an email." : null,
                 ),
@@ -144,12 +144,12 @@ class _EditStudentState extends State<EditStudent> {
                   readOnly: isReadOnly,
                   controller: idController,
                   decoration: const InputDecoration(
-                    hintText: 'S12345',
+                    hintText: 'T123',
                     icon: Icon(Icons.badge),
-                    labelText: "Student ID"
+                    labelText: "Lecturer ID"
                   ),
                   // if isValid then value is null
-                  validator: (value) => value!.isEmpty ? "Enter a student ID." : null,
+                  validator: (value) => value!.isEmpty ? "Enter a lecturer ID." : null,
                 ),
       
                 // add subjects
@@ -252,7 +252,7 @@ class _EditStudentState extends State<EditStudent> {
                                 )
                               );
                             }
-                          } else {
+                          } else { // if exists
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 duration: Duration(seconds: 5),
@@ -275,7 +275,7 @@ class _EditStudentState extends State<EditStudent> {
       floatingActionButton: isReadOnly ? editButton : cancelButton
     );
   }
-  
+
   void _navigateAddSubjects(BuildContext context) async {
     final List<CheckBoxState>? result;
 

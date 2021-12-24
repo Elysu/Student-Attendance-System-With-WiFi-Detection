@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
+import 'package:student_attendance_fyp/services/database.dart';
 
 class AddStudent extends StatefulWidget {
   const AddStudent({ Key? key }) : super(key: key);
@@ -13,6 +14,7 @@ class AddStudent extends StatefulWidget {
 class _AddStudentState extends State<AddStudent> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  DatabaseService dbService = DatabaseService();
 
   // TextEditingController to get text value from TextFormField
   TextEditingController emailController = TextEditingController();
@@ -165,41 +167,53 @@ class _AddStudentState extends State<AddStudent> {
 
                       // if everything is valid
                       if (_formKey.currentState!.validate()) {
-                        dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectList);
+                        bool checkID = await dbService.checkIDExist(idController.text);
 
-                        switch (result) {
-                          case 'email-already-in-use':
-                            setState(() {
-                              error = 'This email is already in-use.';
-                              print(error);
-                            });
-                            break;
-                          case 'invalid-email':
-                            setState(() {
-                              error = 'Invalid email.';
-                              print(error);
-                            });
-                            break;
-                          case 'weak-password':
-                            setState(() {
-                              error = 'Weak password, try using a stronger password.';
-                              print(error);
-                            });
-                            break;
-                          case false:
-                            error = 'Failed to add student.';
-                            print('Failed');
-                            break;
-                          case true:
-                            Navigator.pop(context, true);
-                            break;
-                        }
+                        // true = exist, false = not exist
+                        if (!checkID) {
+                          dynamic result = await _auth.registerStudent(emailController.text, passwordController.text, nameController.text, idController.text, subjectList);
 
-                        if (result != true) {
+                          switch (result) {
+                            case 'email-already-in-use':
+                              setState(() {
+                                error = 'This email is already in-use.';
+                                print(error);
+                              });
+                              break;
+                            case 'invalid-email':
+                              setState(() {
+                                error = 'Invalid email.';
+                                print(error);
+                              });
+                              break;
+                            case 'weak-password':
+                              setState(() {
+                                error = 'Weak password, try using a stronger password.';
+                                print(error);
+                              });
+                              break;
+                            case false:
+                              error = 'Failed to add student.';
+                              print('Failed');
+                              break;
+                            case true:
+                              Navigator.pop(context, true);
+                              break;
+                          }
+
+                          if (result != true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                duration: const Duration(seconds: 5),
+                                content: Text(error, style: const TextStyle(color: Colors.red)),
+                              )
+                            );
+                          }
+                        } else { // if exists
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              duration: const Duration(seconds: 5),
-                              content: Text(error, style: const TextStyle(color: Colors.red)),
+                            const SnackBar(
+                              duration: Duration(seconds: 5),
+                              content: Text("A user with this ID has already exist in the system.", style: TextStyle(color: Colors.red)),
                             )
                           );
                         }

@@ -5,6 +5,7 @@ import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/class/class_attendance/class_attendance.dart';
 import 'package:student_attendance_fyp/screens/class/edit_class.dart';
 import 'package:student_attendance_fyp/services/database.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ClassDetails extends StatefulWidget {
   const ClassDetails({ Key? key, required this.docID }) : super(key: key);
@@ -323,5 +324,9 @@ class _ClassDetailsState extends State<ClassDetails> {
         content: Text("Failed to take attendace, please try again.", style: TextStyle(color: Colors.red)),
       ));
     }
+  }
+
+  requestPermission() async {
+
   }
 }

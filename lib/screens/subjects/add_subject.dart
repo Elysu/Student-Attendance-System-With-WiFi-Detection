@@ -109,7 +109,7 @@ class _AddSubjectState extends State<AddSubject> {
                         bool isExist = await dbService.checkSubjectExist(subCodeController.text);
 
                         if (isExist) {
-                          error = 'A subject with this subject code has already exist in the system';
+                          error = 'A subject with this subject code has already exist in the system.';
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               duration: const Duration(seconds: 5),

@@ -55,6 +55,15 @@ class DatabaseService {
 
     return status;
   }
+  // check if ID exists
+  Future checkIDExist(String studentID) async {
+    var data = await userCollection.where('id', isEqualTo: studentID).get();
+    if (data.docs.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   // add subject into database
   Future<bool> addSubject(String subCode, String subName, Map subTeacher) async {
