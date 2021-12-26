@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/screens/teacher/edit_teacher.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
+import 'add_teacher.dart';
+
 class AllTeacher extends StatefulWidget {
   const AllTeacher({ Key? key }) : super(key: key);
 
@@ -139,20 +141,20 @@ class _AllTeacherState extends State<AllTeacher> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => const AddTeacher())
-          // ).then((value) {
-          //   if (value != null) {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       const SnackBar(
-          //         content: Text("Lecturer successfully added.", style: TextStyle(color: Colors.green)),
-          //       )
-          //     );
-          //   }
-          //   didChangeDependencies();
-          //   setState(() {});
-          // });
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddTeacher())
+          ).then((value) {
+            if (value != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Lecturer successfully added.", style: TextStyle(color: Colors.green)),
+                )
+              );
+            }
+            didChangeDependencies();
+            setState(() {});
+          });
         },
         child: const Icon(Icons.person_add),
       ),

@@ -4,14 +4,14 @@ import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
-class AddStudent extends StatefulWidget {
-  const AddStudent({ Key? key }) : super(key: key);
+class AddTeacher extends StatefulWidget {
+  const AddTeacher({ Key? key }) : super(key: key);
 
   @override
-  _AddStudentState createState() => _AddStudentState();
+  _AddTeacherState createState() => _AddTeacherState();
 }
 
-class _AddStudentState extends State<AddStudent> {
+class _AddTeacherState extends State<AddTeacher> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   DatabaseService dbService = DatabaseService();
@@ -35,7 +35,7 @@ class _AddStudentState extends State<AddStudent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Student"),
+        title: const Text("Add Lecturer"),
         centerTitle: true,
       ),
       body: SingleChildScrollView( // make contents scrollable when keyboard appears
@@ -92,10 +92,10 @@ class _AddStudentState extends State<AddStudent> {
                   decoration: const InputDecoration(
                     hintText: 'S12345',
                     icon: Icon(Icons.person_pin_rounded),
-                    labelText: "Student ID"
+                    labelText: "Lecturer ID"
                   ),
                   // if isValid then value is null
-                  validator: (value) => value!.isEmpty ? "Enter a student ID." : null,
+                  validator: (value) => value!.isEmpty ? "Enter a lecturer ID." : null,
                 ),
       
                 // add subjects
@@ -171,7 +171,7 @@ class _AddStudentState extends State<AddStudent> {
 
                         // true = exist, false = not exist
                         if (!checkID) {
-                          dynamic result = await _auth.registerUser(emailController.text, passwordController.text, nameController.text, idController.text, subjectList, false);
+                          dynamic result = await _auth.registerUser(emailController.text, passwordController.text, nameController.text, idController.text, subjectList, true);
 
                           switch (result) {
                             case 'email-already-in-use':
@@ -219,7 +219,7 @@ class _AddStudentState extends State<AddStudent> {
                         }
                       }
                     },
-                    child: const Text("Add Student"),
+                    child: const Text("Add Lecturer"),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -237,12 +237,12 @@ class _AddStudentState extends State<AddStudent> {
     if (selectedItems.isEmpty) {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: [], teacherScreen: false))
+        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: [], teacherScreen: true))
       );
     } else {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: false))
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: true))
       );
     }
 

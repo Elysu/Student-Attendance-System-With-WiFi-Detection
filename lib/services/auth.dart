@@ -44,17 +44,17 @@ class AuthService {
   }
 
   // teacher register student
-  Future registerStudent(String email, String password, String name, String id, List subjects) async {
+  Future registerUser(String email, String password, String name, String id, List subjects, bool isTeacher) async {
     try {
       FirebaseApp app = await Firebase.initializeApp(name: 'Secondary', options: Firebase.app().options);
       UserCredential userCredential = await FirebaseAuth.instanceFor(app: app)
       .createUserWithEmailAndPassword(email: email, password: password);
 
       // create a document for the newly added student with their uid
-      bool addStudentStatus = await _dbService.addUser(userCredential.user!.uid, email, password, name, id, subjects);
+      bool addUserStatus = await _dbService.addUser(userCredential.user!.uid, email, password, name, id, subjects, isTeacher);
 
       await app.delete();
-      return addStudentStatus;
+      return addUserStatus;
     }
     on FirebaseAuthException catch (e) {
       // Do something with exception. This try/catch is here to make sure 

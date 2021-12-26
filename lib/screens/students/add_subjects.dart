@@ -3,9 +3,10 @@ import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class AddSubjects extends StatefulWidget {
-  const AddSubjects({ Key? key, required this.selectedList }) : super(key: key);
+  const AddSubjects({ Key? key, required this.selectedList, required this.teacherScreen }) : super(key: key);
 
   final List<CheckBoxState> selectedList;
+  final bool teacherScreen;
 
   @override
   _AddSubjectsState createState() => _AddSubjectsState();
@@ -19,12 +20,18 @@ class _AddSubjectsState extends State<AddSubjects> {
   bool loading = true;
   
   Future getSubjectDetailsAndSetIntoList() async {
-    docs = await dbService.getSubjects();
+    if (widget.teacherScreen) {
+      docs = await dbService.getSubjectsWithNoTeacher();
+    } else {
+      docs = await dbService.getSubjects();
+    }
 
-    for (int i=0; i<docs.length; i++) {
-      Map data = await dbService.getSubjectDetails(docs[i].toString());
-      bool value = widget.selectedList.map((e) => e.subCode).contains(data['sub_code']);
-      subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code'], value: value));
+    if (docs.isNotEmpty) {
+      for (int i=0; i<docs.length; i++) {
+        Map data = await dbService.getSubjectDetails(docs[i].toString());
+        bool value = widget.selectedList.map((e) => e.subCode).contains(data['sub_code']);
+        subjects.add(CheckBoxState(title: data['sub_name'], subCode: data['sub_code'], value: value));
+      }
     }
   }
 

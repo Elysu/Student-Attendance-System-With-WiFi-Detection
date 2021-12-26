@@ -18,14 +18,14 @@ class DatabaseService {
   // get users stream
 
   // register student from teacher side
-  Future<bool> addUser(String uid, String email, String password, String name, String id, List subjects) async {
+  Future<bool> addUser(String uid, String email, String password, String name, String id, List subjects, bool isTeacher) async {
     bool status = await userCollection.doc(uid).set({
       'last_deviceID': null,
       'current_deviceID': null,
       'email': email,
       'password': password,
       'id': id,
-      'isTeacher': false,
+      'isTeacher': isTeacher,
       'name': name,
       'subjects': subjects
     }).then((value) => true)
@@ -56,12 +56,25 @@ class DatabaseService {
     return status;
   }
   // check if ID exists
-  Future checkIDExist(String studentID) async {
-    var data = await userCollection.where('id', isEqualTo: studentID).get();
-    if (data.docs.isNotEmpty) {
-      return true;
+  Future checkIDExist(String ID, [String? oldID]) async {
+    if (oldID != null) {
+      if (ID == oldID) {
+        return false;
+      } else {
+        var data = await userCollection.where('id', isEqualTo: ID).get();
+        if (data.docs.isNotEmpty) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     } else {
-      return false;
+      var data = await userCollection.where('id', isEqualTo: ID).get();
+      if (data.docs.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -252,6 +265,16 @@ class DatabaseService {
   Future getSubjects() async {
     List docs = [];
     await subjectCollection.get().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        docs.add(doc.id);
+      }
+    });
+    return docs;
+  }
+  // get all subjects document as a list
+  Future getSubjectsWithNoTeacher() async {
+    List docs = [];
+    await subjectCollection.where("sub_teacher", isEqualTo: null).get().then((snapshot) {
       for (var doc in snapshot.docs) {
         docs.add(doc.id);
       }

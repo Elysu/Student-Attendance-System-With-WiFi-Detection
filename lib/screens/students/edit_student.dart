@@ -227,7 +227,7 @@ class _EditStudentState extends State<EditStudent> {
 
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
-                          bool checkID = await dbService.checkIDExist(idController.text);
+                          bool checkID = await dbService.checkIDExist(idController.text, studentData["id"].toString());
 
                           // true = exist, false = not exist
                           if (!checkID) {
@@ -282,12 +282,12 @@ class _EditStudentState extends State<EditStudent> {
     if (selectedItems.isEmpty) {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: []))
+        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: [], teacherScreen: false))
       );
     } else {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems))
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: false))
       );
     }
 

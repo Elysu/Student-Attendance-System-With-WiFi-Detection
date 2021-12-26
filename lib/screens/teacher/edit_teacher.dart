@@ -95,7 +95,7 @@ class _EditTeacherState extends State<EditTeacher> {
         actions: [
           IconButton(
             onPressed: () async {
-              await deleteDialog(context: context, docID: widget.docID, type: 1, email: teacherData['email'].toString());
+              // delete for teacher
             },
             icon: const Icon(Icons.delete),
           )
@@ -227,7 +227,7 @@ class _EditTeacherState extends State<EditTeacher> {
 
                         // if everything is valid
                         if (_formKey.currentState!.validate()) {
-                          bool checkID = await dbService.checkIDExist(idController.text);
+                          bool checkID = await dbService.checkIDExist(idController.text, teacherData['id'].toString());
 
                           // true = exist, false = not exist
                           if (!checkID) {
@@ -282,12 +282,12 @@ class _EditTeacherState extends State<EditTeacher> {
     if (selectedItems.isEmpty) {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: []))
+        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: [], teacherScreen: true))
       );
     } else {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems))
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: true))
       );
     }
 
