@@ -25,7 +25,7 @@ class _EditTeacherState extends State<EditTeacher> {
   String name = '';
   String id = '';
   List<CheckBoxState> selectedItems = [];
-  List subjectList = [];
+  List subjectList = [], subjectDocID = [];
   bool isReadOnly = true;
   bool visibility = false;
   Icon editIcon = const Icon(Icons.edit);
@@ -36,7 +36,7 @@ class _EditTeacherState extends State<EditTeacher> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getStudentData().whenComplete(() {
+    getUserData().whenComplete(() {
       setState((){
         loading = false;
         nameController = TextEditingController(text: teacherData['name'].toString());
@@ -51,8 +51,8 @@ class _EditTeacherState extends State<EditTeacher> {
     });
   }
 
-  Future getStudentData() async {
-    teacherData = await dbService.getStudentDetails(widget.docID);
+  Future getUserData() async {
+    teacherData = await dbService.getUserDetails(widget.docID);
   }
 
   @override
@@ -90,12 +90,13 @@ class _EditTeacherState extends State<EditTeacher> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Student"),
+        title: const Text("Edit Lecturer"),
         centerTitle: true,
         actions: [
           IconButton(
             onPressed: () async {
               // delete for teacher
+              deleteDialog(context: context, docID: widget.docID, type: 4, email: teacherData["email"].toString(), id: teacherData['id'], name: teacherData['name']);
             },
             icon: const Icon(Icons.delete),
           )

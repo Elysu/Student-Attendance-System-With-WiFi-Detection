@@ -119,7 +119,6 @@ class _AddSubjectState extends State<AddSubject> {
                         } else {
                           bool result = await dbService.addSubject(subCodeController.text, subNameController.text, subjectTeacher);
 
-                          // check if subject has teachers
                           if (result) {
                             // teacher is empty, just pop true
                             if (subjectTeacher.isEmpty) {

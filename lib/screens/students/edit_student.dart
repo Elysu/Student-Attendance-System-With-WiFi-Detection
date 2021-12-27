@@ -52,7 +52,7 @@ class _EditStudentState extends State<EditStudent> {
   }
 
   Future getStudentData() async {
-    studentData = await dbService.getStudentDetails(widget.docID);
+    studentData = await dbService.getUserDetails(widget.docID);
   }
 
   @override

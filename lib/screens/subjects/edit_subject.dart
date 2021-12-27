@@ -187,34 +187,55 @@ class _EditSubjectState extends State<EditSubject> {
                           String newSubCode = subCodeController.text;
                           String newSubName = subNameController.text;
 
-                          bool updateSubject = await dbService.updateSubject(widget.docID, newSubCode, newSubName, subjectTeacher);
+                          bool checkSubCodeExists = await dbService.checkSubCodeExists(newSubCode, subjectData!['sub_code'].toString());
 
-                          if (updateSubject) {
-                            bool updateTeacherSubject = await dbService.updateTeacherSubject(widget.docID, subjectData!['sub_code'], subjectData!['sub_name'], newSubCode, newSubName, subjectData!["sub_teacher"], subjectTeacher);
+                          if (!checkSubCodeExists) {
+                            bool updateSubject = await dbService.updateSubject(widget.docID, newSubCode, newSubName, subjectTeacher);
 
-                            if (updateTeacherSubject) {
-                              getSubjectData().whenComplete(() {
-                                setState((){
-                                  isReadOnly = true;
-                                  visibility = false;
-                                  subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
-                                  subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
-                                  subjectTeacher = subjectData!['sub_teacher'];
+                            if (updateSubject) { // if subject update success, update on teacher side too
+                              bool updateTeacherSubject = await dbService.updateTeacherSubject(widget.docID, subjectData!['sub_code'], subjectData!['sub_name'], newSubCode, newSubName, subjectData!["sub_teacher"], subjectTeacher);
+
+                              if (updateTeacherSubject) {
+                                // success
+                                getSubjectData().whenComplete(() {
+                                  setState((){
+                                    isReadOnly = true;
+                                    visibility = false;
+                                    subNameController = TextEditingController(text: subjectData!['sub_name'].toString());
+                                    subCodeController = TextEditingController(text: subjectData!['sub_code'].toString());
+                                    subjectTeacher = subjectData!['sub_teacher'];
+                                  });
                                 });
-                              });
 
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Subject successfully updated.", style: TextStyle(color: Colors.green)),
+                                  )
+                                );
+                              } else {
+                                // failed to remove subject from old teacher
+                                error = 'Subject successfully updated but failed to remove subject from old teacher.';
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: const Duration(seconds: 5),
+                                    content: Text(error, style: const TextStyle(color: Colors.red)),
+                                  )
+                                );
+                              }
+                            } else {
+                              error = 'Subject update failed.';
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Subject successfully updated.", style: TextStyle(color: Colors.green)),
+                                SnackBar(
+                                  duration: const Duration(seconds: 5),
+                                  content: Text(error, style: const TextStyle(color: Colors.red)),
                                 )
                               );
                             }
                           } else {
-                            error = 'Subject update failed.';
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                duration: const Duration(seconds: 5),
-                                content: Text(error, style: const TextStyle(color: Colors.red)),
+                              const SnackBar(
+                                duration: Duration(seconds: 5),
+                                content: Text("A subject with this subject code has already exist in the system.", style: TextStyle(color: Colors.red)),
                               )
                             );
                           }

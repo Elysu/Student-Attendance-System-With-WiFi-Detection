@@ -45,7 +45,7 @@ class DatabaseService {
     return status;
   }
   // delete student based on docID
-  Future deleteStudent(String docID) async {
+  Future deleteUser(String docID) async {
     bool status = await userCollection.doc(docID).delete()
     .then((value) => true)
     .catchError((error) {
@@ -70,6 +70,31 @@ class DatabaseService {
       }
     } else {
       var data = await userCollection.where('id', isEqualTo: ID).get();
+      if (data.docs.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+
+  // check subCode exists
+  // check if ID exists
+  Future checkSubCodeExists(String subCode, [String? oldSubCode]) async {
+    if (oldSubCode != null) {
+      if (subCode == oldSubCode) {
+        return false;
+      } else {
+        var data = await subjectCollection.where('sub_code', isEqualTo: subCode).get();
+        if (data.docs.isNotEmpty) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      var data = await subjectCollection.where('sub_code', isEqualTo: subCode).get();
       if (data.docs.isNotEmpty) {
         return true;
       } else {
@@ -143,7 +168,7 @@ class DatabaseService {
       return status;
     } else {
       print("No document with this sub_code in Users collection");
-      return false;
+      return true;
     }
   }
   // update subject details
@@ -171,52 +196,93 @@ class DatabaseService {
       if (isSubCodeSame && isSubNameSame) {
         return true;
       } else {
-        // remove old sub code and sub name from teacher
-        bool removeOldSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
-        'subjects': FieldValue.arrayRemove(oldSubject),
-        }).then((value) => true)
-        .catchError((error) {
-          return false;
-        });
+        // if teacher is not empty
+        if (currentTeacher.isNotEmpty) {
+          // remove old sub code and sub name from teacher
+          bool removeOldSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
+          'subjects': FieldValue.arrayRemove(oldSubject),
+          }).then((value) => true)
+          .catchError((error) {
+            return false;
+          });
 
-        // update new sub code and sub name for teacher
-        bool addNewSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
-        'subjects': FieldValue.arrayUnion(newSubject),
-        }).then((value) => true)
-        .catchError((error) {
-          return false;
-        });
+          // update new sub code and sub name for teacher
+          bool addNewSubject = await userCollection.doc(currentTeacher["t_uid"]).update({
+          'subjects': FieldValue.arrayUnion(newSubject),
+          }).then((value) => true)
+          .catchError((error) {
+            return false;
+          });
 
-        if (removeOldSubject && addNewSubject) {
-          return true;
+          if (removeOldSubject && addNewSubject) {
+            return true;
+          } else {
+            return false;
+          }
         } else {
-          return false;
+          return true;
         }
       }
     } else {
       // remove old sub code and sub name for old teacher
-      bool statusCurrentTeacher = await userCollection.doc(currentTeacher["t_uid"]).update({
-        'subjects': FieldValue.arrayRemove(oldSubject),
-      }).then((value) => true)
-      .catchError((error) {
-        print(error.toString());
-        return false;
-      });
+      bool statusCurrentTeacher, statusNewTeacher;
 
-      // update new sub code and sub name to new teacher
-      bool statusNewTeacher = await userCollection.doc(newTeacher["t_uid"]).update({
-        'subjects': FieldValue.arrayUnion(newSubject),
-      }).then((value) => true)
-      .catchError((error) {
-        print(error.toString());
-        return false;
-      });
+      if (currentTeacher.isNotEmpty) {
+        statusCurrentTeacher = await userCollection.doc(currentTeacher["t_uid"]).update({
+          'subjects': FieldValue.arrayRemove(oldSubject),
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+      } else {
+        statusCurrentTeacher = true;
+      }
+
+      if (newTeacher.isNotEmpty) {
+        // update new sub code and sub name to new teacher
+        statusNewTeacher = await userCollection.doc(newTeacher["t_uid"]).update({
+          'subjects': FieldValue.arrayUnion(newSubject),
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+      } else {
+        statusNewTeacher = true;
+      }
 
       if (statusCurrentTeacher && statusNewTeacher) {
         return true;
       } else {
         return false;
       }
+    }
+  }
+  // for all subjects with this teacher, remove sub_teacher if teacher is deleted
+  Future deleteSubjectTeacher(String uid, String id, String name) async {
+    var docList = await subjectCollection.where("sub_teacher", isEqualTo: {"t_id": id, "t_name": name, "t_uid": uid}).get();
+
+    if (docList.docs.isNotEmpty) {
+      bool? status;
+
+      for (int i=0; i<docList.docs.length; i++) {
+        status = await subjectCollection.doc(docList.docs[i].id).update({
+          "sub_teacher": {}
+        }).then((value) => true)
+        .catchError((error) {
+          print(error.toString());
+          return false;
+        });
+
+        if (status == false) {
+          break;
+        }
+      }
+
+      return status;
+    } else {
+      return true;
     }
   }
 
@@ -229,7 +295,7 @@ class DatabaseService {
     List subjects = data['subjects'];
     userModel.setData(uid, currentDeviceID, lastDeviceID, data['email'], data['id'], data['name'], data['isTeacher'], subjects);
   }
-
+  // get current user data
   Future getUserData() async {
     final uid = await _auth.currentUser!.uid;
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
@@ -254,8 +320,8 @@ class DatabaseService {
     var data = await userCollection.where('isTeacher', isNotEqualTo: true).get();
     return data.docs;
   }
-  // get a student detail
-  Future getStudentDetails(String uid) async {
+  // get user detail based on document ID
+  Future getUserDetails(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
     return data;

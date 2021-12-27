@@ -45,8 +45,8 @@ class AuthService {
 
   // teacher register student
   Future registerUser(String email, String password, String name, String id, List subjects, bool isTeacher) async {
+    FirebaseApp app = await Firebase.initializeApp(name: 'Register', options: Firebase.app().options);
     try {
-      FirebaseApp app = await Firebase.initializeApp(name: 'Secondary', options: Firebase.app().options);
       UserCredential userCredential = await FirebaseAuth.instanceFor(app: app)
       .createUserWithEmailAndPassword(email: email, password: password);
 
@@ -61,6 +61,7 @@ class AuthService {
       // that even if the user creation fails, app.delete() runs, if is not, 
       // next time Firebase.initializeApp() will fail as the previous one was
       // not deleted.
+      await app.delete();
       return e.code;
     }
   }
@@ -90,8 +91,8 @@ class AuthService {
   Future deleteUser(String email) async {
     dynamic password = await _dbService.getUserPasswordWithEmail(email);
     if (password != null) {
+      FirebaseApp app = await Firebase.initializeApp(name: 'Delete', options: Firebase.app().options);
       try {
-        FirebaseApp app = await Firebase.initializeApp(name: 'Delete', options: Firebase.app().options);
         UserCredential userCredential = await FirebaseAuth.instanceFor(app: app).signInWithEmailAndPassword(email: email, password: password);
         User? currentUser = FirebaseAuth.instanceFor(app: app).currentUser;
         await currentUser!.delete();
@@ -103,6 +104,7 @@ class AuthService {
         // that even if the user deletion fails, app.delete() runs, if is not, 
         // next time Firebase.initializeApp() will fail as the previous one was
         // not deleted.
+        await app.delete();
         return e.code;
       }
     } else {
