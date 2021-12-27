@@ -5,14 +5,14 @@ import 'package:student_attendance_fyp/services/database.dart';
 
 import 'add_teacher.dart';
 
-class AllTeacher extends StatefulWidget {
-  const AllTeacher({ Key? key }) : super(key: key);
+class AllTeachers extends StatefulWidget {
+  const AllTeachers({ Key? key }) : super(key: key);
 
   @override
   _AllTeacherState createState() => _AllTeacherState();
 }
 
-class _AllTeacherState extends State<AllTeacher> {
+class _AllTeacherState extends State<AllTeachers> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
   String _searchText = "";

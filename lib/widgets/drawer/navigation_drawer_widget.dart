@@ -74,7 +74,7 @@ class NavigationDrawerWidget extends StatelessWidget {
           case "All Teachers":
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AllTeacher())
+              MaterialPageRoute(builder: (context) => const AllTeachers())
             );
             break;
         }

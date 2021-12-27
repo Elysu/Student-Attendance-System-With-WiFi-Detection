@@ -271,10 +271,10 @@ class DatabaseService {
     });
     return docs;
   }
-  // get all subjects document as a list
+  // get all subjects where sub_teacher is null
   Future getSubjectsWithNoTeacher() async {
     List docs = [];
-    await subjectCollection.where("sub_teacher", isEqualTo: null).get().then((snapshot) {
+    await subjectCollection.where("sub_teacher", isEqualTo: {}).get().then((snapshot) {
       for (var doc in snapshot.docs) {
         docs.add(doc.id);
       }

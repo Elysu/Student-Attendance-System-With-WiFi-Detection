@@ -162,10 +162,13 @@ class _EditSubjectState extends State<EditSubject> {
                 const SizedBox(height: 10),
                 Container(
                   width: double.infinity,
+                  padding: subjectTeacher.isEmpty ? const EdgeInsets.all(20) : const EdgeInsets.all(0),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black)
                   ),
-                  child: ListTile(
+                  child: subjectTeacher.isEmpty
+                  ? const Center(child: Text("No teacher is assigned to this subject."))
+                  : ListTile(
                     title: Text(subjectTeacher["t_name"].toString()),
                     subtitle: Text(subjectTeacher["t_id"].toString()),
                   )

@@ -20,7 +20,7 @@ class _AddSubjectsState extends State<AddSubjects> {
   bool loading = true;
   
   Future getSubjectDetailsAndSetIntoList() async {
-    if (widget.teacherScreen) {
+    if (widget.teacherScreen == true) {
       docs = await dbService.getSubjectsWithNoTeacher();
     } else {
       docs = await dbService.getSubjects();

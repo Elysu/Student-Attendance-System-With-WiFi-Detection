@@ -104,7 +104,7 @@ class _AddSubjectState extends State<AddSubject> {
                   child: ElevatedButton(
                     onPressed: () async {
                       // if everything is valid
-                      if (_formKey.currentState!.validate() && subjectTeacher.isNotEmpty) {
+                      if (_formKey.currentState!.validate()) {
                         error = '';
                         bool isExist = await dbService.checkSubjectExist(subCodeController.text);
 
@@ -119,20 +119,26 @@ class _AddSubjectState extends State<AddSubject> {
                         } else {
                           bool result = await dbService.addSubject(subCodeController.text, subNameController.text, subjectTeacher);
 
+                          // check if subject has teachers
                           if (result) {
-                            List subject = [{"sub_code": subCodeController.text, "sub_name": subNameController.text}];
-                            bool insertStatus = await dbService.updateUserTeacherSubject(subjectTeacher["t_uid"].toString(), subject);
-
-                            if (insertStatus) {
+                            // teacher is empty, just pop true
+                            if (subjectTeacher.isEmpty) {
                               Navigator.pop(context, true);
-                            } else {
-                              error = "Subject added but doesn't appear under the selected teacher";
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  duration: const Duration(seconds: 5),
-                                  content: Text(error, style: const TextStyle(color: Colors.red)),
-                                )
-                              );
+                            } else { // else add subject into user in the user collection
+                              List subject = [{"sub_code": subCodeController.text, "sub_name": subNameController.text}];
+                              bool insertStatus = await dbService.updateUserTeacherSubject(subjectTeacher["t_uid"].toString(), subject);
+
+                              if (insertStatus) {
+                                Navigator.pop(context, true);
+                              } else {
+                                error = "Subject added but doesn't appear under the selected teacher";
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    duration: const Duration(seconds: 5),
+                                    content: Text(error, style: const TextStyle(color: Colors.red)),
+                                  )
+                                );
+                              }
                             }
                           } else {
                             error = 'Failed to add subject.';
@@ -143,18 +149,6 @@ class _AddSubjectState extends State<AddSubject> {
                               )
                             );
                           }
-                        }
-                      } else {
-                        error = '';
-                          
-                        if (subjectTeacher.isEmpty) {
-                          error = 'Select a teacher for this subject';
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              duration: const Duration(seconds: 5),
-                              content: Text(error, style: const TextStyle(color: Colors.red)),
-                            )
-                          );
                         }
                       }
                     },
