@@ -3,10 +3,11 @@ import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class AddSubjects extends StatefulWidget {
-  const AddSubjects({ Key? key, required this.selectedList, required this.teacherScreen }) : super(key: key);
+  const AddSubjects({ Key? key, required this.selectedList, required this.teacherScreen, this.docID, this.name, this.id }) : super(key: key);
 
   final List<CheckBoxState> selectedList;
   final bool teacherScreen;
+  final docID, name, id;
 
   @override
   _AddSubjectsState createState() => _AddSubjectsState();
@@ -21,7 +22,7 @@ class _AddSubjectsState extends State<AddSubjects> {
   
   Future getSubjectDetailsAndSetIntoList() async {
     if (widget.teacherScreen == true) {
-      docs = await dbService.getSubjectsWithNoTeacher();
+      docs = await dbService.getSubjectsWithNoTeacher(widget.id, widget.name, widget.docID);
     } else {
       docs = await dbService.getSubjects();
     }

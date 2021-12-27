@@ -69,20 +69,22 @@ class _EditStudentState extends State<EditStudent> {
 
     FloatingActionButton cancelButton = FloatingActionButton(
       onPressed: () {
-        setState(() {
-          isReadOnly = true;
-          visibility = false;
-          nameController = TextEditingController(text: studentData['name'].toString());
-          idController = TextEditingController(text: studentData['id'].toString());
+        getStudentData().whenComplete(() {
+          setState(() {
+            isReadOnly = true;
+            visibility = false;
+            nameController = TextEditingController(text: studentData['name'].toString());
+            idController = TextEditingController(text: studentData['id'].toString());
 
-          if (selectedItems.isNotEmpty) {
-            selectedItems = List.empty(growable: true);
-          }
-          
-          List subjects = studentData["subjects"];
-          for (int i=0; i<subjects.length; i++) {
-            selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
-          }
+            if (selectedItems.isNotEmpty) {
+              selectedItems = List.empty(growable: true);
+            }
+            
+            List subjects = studentData["subjects"];
+            for (int i=0; i<subjects.length; i++) {
+              selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
+            }
+          });
         });
       },
       child: const Icon(Icons.cancel_outlined),

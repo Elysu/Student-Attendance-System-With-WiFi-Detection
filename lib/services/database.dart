@@ -78,9 +78,7 @@ class DatabaseService {
     }
   }
 
-
-  // check subCode exists
-  // check if ID exists
+  // check if subCode exists
   Future checkSubCodeExists(String subCode, [String? oldSubCode]) async {
     if (oldSubCode != null) {
       if (subCode == oldSubCode) {
@@ -285,6 +283,83 @@ class DatabaseService {
       return true;
     }
   }
+  // change teacher on subject collection
+  Future changeTeacherUnderSubject(List oldSubjects, List newSubjects, String id, String name, String uid) async {
+    bool? oldSubStatus, newSubStatus;
+
+    // query old sub code first then get the ID
+    if (oldSubjects.isNotEmpty) { // check old subject is empty, if yes then just return true
+      for (int i=0; i<oldSubjects.length; i++) {
+        var docList = await subjectCollection.where("sub_code", isEqualTo: oldSubjects[i]["sub_code"].toString()).get();
+
+        // remove teacher on old subject
+        if (docList.docs.isNotEmpty) {
+          oldSubStatus = await subjectCollection.doc(docList.docs[0].id).update({
+            "sub_teacher": {}
+          }).then((value) => true)
+          .catchError((error) {
+            print(error.toString());
+            return false;
+          });
+        } else {
+          print("Old doc list is empty");
+        }
+
+        if (oldSubStatus == false) {
+          break;
+        }
+      }
+    } else {
+      print("Old subject is empty, return true");
+      oldSubStatus = true;
+    }
+
+    // query new sub code first then get the ID
+    if (newSubjects.isNotEmpty) { // check old subject is empty, if yes then just return true
+      for (int i=0; i<newSubjects.length; i++) {
+        var docList = await subjectCollection.where("sub_code", isEqualTo: newSubjects[i]["sub_code"].toString()).get();
+
+        // add teacher on new subject
+        if (docList.docs.isNotEmpty) {
+          newSubStatus = await subjectCollection.doc(docList.docs[0].id).update({
+            "sub_teacher": {"t_id": id, "t_name": name, "t_uid": uid}
+          }).then((value) => true)
+          .catchError((error) {
+            print(error.toString());
+            return false;
+          });
+        } else {
+          print("New doc list is empty");
+        }
+
+        if (newSubStatus == false) {
+          break;
+        }
+      }
+    } else {
+      print("New subject is empty, return true");
+      newSubStatus = true;
+    }
+
+    if (oldSubStatus! && newSubStatus!) {
+      return true;
+    } else {
+      if (!oldSubStatus && !newSubStatus!) {
+        print("Both problem");
+        return false;
+      } else {
+        if (!oldSubStatus) {
+          print("Old Subject problem");
+          return false;
+        }
+
+        if (!newSubStatus!) {
+          print("New Subject problem");
+          return false;
+        }
+      }
+    }
+  }
 
   // get current user data and set it into UserModel
   Future getUserDataAndSetIntoModel(String uid) async {
@@ -338,9 +413,14 @@ class DatabaseService {
     return docs;
   }
   // get all subjects where sub_teacher is null
-  Future getSubjectsWithNoTeacher() async {
+  Future getSubjectsWithNoTeacher(String id, String name, String uid) async {
     List docs = [];
     await subjectCollection.where("sub_teacher", isEqualTo: {}).get().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        docs.add(doc.id);
+      }
+    });
+    await subjectCollection.where("sub_teacher", isEqualTo: {"t_id": id, "t_name": name, "t_uid": uid}).get().then((snapshot) {
       for (var doc in snapshot.docs) {
         docs.add(doc.id);
       }

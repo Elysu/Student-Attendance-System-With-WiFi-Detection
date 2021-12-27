@@ -69,20 +69,22 @@ class _EditTeacherState extends State<EditTeacher> {
 
     FloatingActionButton cancelButton = FloatingActionButton(
       onPressed: () {
-        setState(() {
-          isReadOnly = true;
-          visibility = false;
-          nameController = TextEditingController(text: teacherData['name'].toString());
-          idController = TextEditingController(text: teacherData['id'].toString());
+        getUserData().whenComplete((){
+          setState(() {
+            isReadOnly = true;
+            visibility = false;
+            nameController = TextEditingController(text: teacherData['name'].toString());
+            idController = TextEditingController(text: teacherData['id'].toString());
 
-          if (selectedItems.isNotEmpty) {
-            selectedItems = List.empty(growable: true);
-          }
-          
-          List subjects = teacherData["subjects"];
-          for (int i=0; i<subjects.length; i++) {
-            selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
-          }
+            if (selectedItems.isNotEmpty) {
+              selectedItems = List.empty(growable: true);
+            }
+            
+            List subjects = teacherData["subjects"];
+            for (int i=0; i<subjects.length; i++) {
+              selectedItems.add(CheckBoxState(subCode: subjects[i]['sub_code'], title: subjects[i]['sub_name'], value: true));
+            }
+          });
         });
       },
       child: const Icon(Icons.cancel_outlined),
@@ -163,7 +165,7 @@ class _EditTeacherState extends State<EditTeacher> {
                       visible: visibility,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          _navigateAddSubjects(context);
+                          _navigateAddSubjects(context, widget.docID, teacherData['id'], teacherData['name']);
                         },
                         icon: const Icon(Icons.add),
                         label: const Text('Add Subjects')
@@ -235,16 +237,27 @@ class _EditTeacherState extends State<EditTeacher> {
                             bool result = await dbService.updateUserData(widget.docID, nameController.text, idController.text, subjectList);
 
                             if (result) {
-                              setState(() {
-                                isReadOnly = true;
-                                visibility = false;
-                              });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  duration: Duration(seconds: 5),
-                                  content: Text("Student details successfully updated", style: TextStyle(color: Colors.green)),
-                                )
-                              );
+                              bool resetSubjectTeacher = await dbService.changeTeacherUnderSubject(teacherData["subjects"], subjectList, teacherData["id"], teacherData["name"], widget.docID);
+
+                              if (resetSubjectTeacher) {
+                                setState(() {
+                                  isReadOnly = true;
+                                  visibility = false;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    duration: Duration(seconds: 5),
+                                    content: Text("Lecturer details successfully updated", style: TextStyle(color: Colors.green)),
+                                  )
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    duration: Duration(seconds: 5),
+                                    content: Text("Lecturer details successfully updated but failed to reset lecturer under some subjects.", style: TextStyle(color: Colors.red)),
+                                  )
+                                );
+                              }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -277,18 +290,18 @@ class _EditTeacherState extends State<EditTeacher> {
     );
   }
 
-  void _navigateAddSubjects(BuildContext context) async {
+  void _navigateAddSubjects(BuildContext context, String docID, String id, String name) async {
     final List<CheckBoxState>? result;
 
     if (selectedItems.isEmpty) {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const AddSubjects(selectedList: [], teacherScreen: true))
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: [], teacherScreen: true, docID: docID, id: id, name: name))
       );
     } else {
       result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: true))
+        MaterialPageRoute(builder: (context) => AddSubjects(selectedList: selectedItems, teacherScreen: true, docID: docID, id: id, name: name))
       );
     }
 

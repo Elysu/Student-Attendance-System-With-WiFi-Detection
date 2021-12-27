@@ -17,7 +17,7 @@ class _AllTeacherState extends State<AllTeachers> {
   TextEditingController _searchController = TextEditingController();
   String _searchText = "";
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'Lecturer List' );
+  Widget _appBarTitle = const Text( 'Lecturers List' );
 
   Future? resultsLoaded;
   List _allResults = [];
