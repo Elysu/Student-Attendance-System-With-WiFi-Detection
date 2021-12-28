@@ -118,33 +118,31 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ListView.separated(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _resultsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(_resultsList[index]["sub_name"]),
-              subtitle: Text(_resultsList[index]["sub_code"]),
-              onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
-                ).then((value) {
-                  didChangeDependencies();
-                  setState(() {});
-                });
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              color: Colors.black38,
-            );
-          },
-        ),
+      body: ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: _resultsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text(_resultsList[index]["sub_name"]),
+            subtitle: Text(_resultsList[index]["sub_code"]),
+            onTap: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditSubject(docID: _resultsList[index].id))
+              ).then((value) {
+                didChangeDependencies();
+                setState(() {});
+              });
+            },
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 0,
+            color: Colors.black38,
+          );
+        },
       ),
       resizeToAvoidBottomInset: false
     );

@@ -122,37 +122,35 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         ],
       ),
       body: loading ? const Text("Loading...")
-      : SingleChildScrollView(
-        child: ListView.separated(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _resultsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(_resultsList[index]["name"]),
-              subtitle: Text(_resultsList[index]["id"]),
-              trailing: attendanceText(_resultsList[index]["status"]),
-              onTap: () {
-                if (UserModel().getTeacher) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
-                  ).then((value) {
-                    setState(() {
-                      didChangeDependencies();
-                    });
+      : ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: _resultsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text(_resultsList[index]["name"]),
+            subtitle: Text(_resultsList[index]["id"]),
+            trailing: attendanceText(_resultsList[index]["status"]),
+            onTap: () {
+              if (UserModel().getTeacher) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
+                ).then((value) {
+                  setState(() {
+                    didChangeDependencies();
                   });
-                }
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              color: Colors.black38,
-            );
-          },
-        ),
+                });
+              }
+            },
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 0,
+            color: Colors.black38,
+          );
+        },
       )
     );
   }

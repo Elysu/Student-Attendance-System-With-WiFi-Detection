@@ -111,33 +111,31 @@ class _AllTeacherState extends State<AllTeachers> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ListView.separated(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: _resultsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(_resultsList[index]["name"]),
-              subtitle: Text(_resultsList[index]["id"]),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => EditTeacher(docID: _resultsList[index].id))
-                ).then((value) {
-                  didChangeDependencies();
-                  setState(() {});
-                });
-              },
-            );
-          },
-          separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              color: Colors.black38,
-            );
-          },
-        ),
+      body: ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: _resultsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Text(_resultsList[index]["name"]),
+            subtitle: Text(_resultsList[index]["id"]),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditTeacher(docID: _resultsList[index].id))
+              ).then((value) {
+                didChangeDependencies();
+                setState(() {});
+              });
+            },
+          );
+        },
+        separatorBuilder: (context, index) {
+          return const Divider(
+            height: 0,
+            color: Colors.black38,
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

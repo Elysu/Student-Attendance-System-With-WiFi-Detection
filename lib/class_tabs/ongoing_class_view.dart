@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
@@ -19,11 +17,13 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        ongoingStreamBuilder(),
-        upcomingStreamBuilder()
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          ongoingStreamBuilder(),
+          upcomingStreamBuilder()
+        ],
+      ),
     );
   }
 
@@ -47,7 +47,7 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
             subtitle: Text(snapshot.data!.docs.length.toString() + " ongoing classes.", style: const TextStyle(color: Colors.green)),
             children: [
               ListView.builder(
-                scrollDirection: Axis.vertical,
+                physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (builder, index) {
@@ -81,7 +81,7 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
             subtitle: Text(snapshot.data!.docs.length.toString() + " upcoming classes.", style: const TextStyle(color: Colors.grey)),
             children: [
               ListView.builder(
-                scrollDirection: Axis.vertical,
+                physics: const ClampingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (builder, index) {

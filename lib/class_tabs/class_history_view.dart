@@ -27,15 +27,13 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
           if (snapshot.data!.docs.isEmpty) {
             return const Center(child: Text("No recent class."));
           } else {
-            return SingleChildScrollView(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[index].id, snapshot.data!.docs[index]);
-                }
-              ),
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return checkTeacherOrStudentStreamBuilder(snapshot.data!.docs[index].id, snapshot.data!.docs[index]);
+              }
             );
           }
         }
