@@ -669,6 +669,13 @@ class DatabaseService {
     }
   }
 
+  // get attendance details based on single doc ID
+  Future getAttendanceDetails(String classID, String uid) async {
+    DocumentSnapshot snapshot = await classCollection.doc(classID).collection('students').doc(uid).get();
+    var data = snapshot.data() as Map;
+    return data;
+  }
+
   // check if student's UID has a document in attendance subcollection
   // 0 = absent, 1 = present, 2 = late
   Stream<int> streamGetAttendance(String docID) async* {

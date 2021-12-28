@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
-import 'package:student_attendance_fyp/screens/students/edit_student.dart';
+import 'package:student_attendance_fyp/screens/class/class_attendance/edit_attendance.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
 class ClassAttendance extends StatefulWidget {
@@ -23,7 +23,6 @@ class _ClassAttendanceState extends State<ClassAttendance> {
   Future? resultsLoaded;
   List _allResults = [];
   List _resultsList = [];
-  List<String> allAttendance = [];
 
   @override
   void initState() {
@@ -131,25 +130,12 @@ class _ClassAttendanceState extends State<ClassAttendance> {
           return ListTile(
             title: Text(_resultsList[index]["name"]),
             subtitle: Text(_resultsList[index]["id"]),
-            trailing: DropdownButton(
-                        value: allAttendance[index],
-                        items: <String>["PRESENT", "LATE", "N/A"].map<DropdownMenuItem<String>>((String val) {
-                          return DropdownMenuItem<String>(
-                            value: val,
-                            child: Text(val),  
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            allAttendance[index] = newValue!;
-                          });
-                        },
-                      ),
+            trailing: attendanceText(_resultsList[index]["status"]),
             onTap: () {
               if (UserModel().getTeacher) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditStudent(docID: _resultsList[index].id))
+                  MaterialPageRoute(builder: (context) => EditAttendance(classID: widget.classDocID, uid: _resultsList[index].id))
                 ).then((value) {
                   setState(() {
                     didChangeDependencies();
@@ -184,6 +170,6 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         break;
     }
 
-    return strAttendance;
+    return Text(strAttendance);
   }
 }
