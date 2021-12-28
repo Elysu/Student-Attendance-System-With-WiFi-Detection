@@ -37,7 +37,7 @@ class NavigationDrawerWidget extends StatelessWidget {
         children: <Widget>[
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
           buildMenuItem(context, text: "All Students", icon: Icons.person),
-          buildMenuItem(context, text: "All Teachers", icon: FontAwesomeIcons.chalkboardTeacher),
+          buildMenuItem(context, text: "All Lecturers", icon: FontAwesomeIcons.chalkboardTeacher),
         ],
       );
     } else {
@@ -72,7 +72,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const AllSubjects())
             );
             break;
-          case "All Teachers":
+          case "All Lecturers":
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AllTeachers())

@@ -23,6 +23,7 @@ class _ClassAttendanceState extends State<ClassAttendance> {
   Future? resultsLoaded;
   List _allResults = [];
   List _resultsList = [];
+  List<String> allAttendance = [];
 
   @override
   void initState() {
@@ -130,7 +131,20 @@ class _ClassAttendanceState extends State<ClassAttendance> {
           return ListTile(
             title: Text(_resultsList[index]["name"]),
             subtitle: Text(_resultsList[index]["id"]),
-            trailing: attendanceText(_resultsList[index]["status"]),
+            trailing: DropdownButton(
+                        value: allAttendance[index],
+                        items: <String>["PRESENT", "LATE", "N/A"].map<DropdownMenuItem<String>>((String val) {
+                          return DropdownMenuItem<String>(
+                            value: val,
+                            child: Text(val),  
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            allAttendance[index] = newValue!;
+                          });
+                        },
+                      ),
             onTap: () {
               if (UserModel().getTeacher) {
                 Navigator.push(
@@ -170,6 +184,6 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         break;
     }
 
-    return Text(strAttendance);
+    return strAttendance;
   }
 }

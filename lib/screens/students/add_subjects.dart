@@ -22,7 +22,11 @@ class _AddSubjectsState extends State<AddSubjects> {
   
   Future getSubjectDetailsAndSetIntoList() async {
     if (widget.teacherScreen == true) {
-      docs = await dbService.getSubjectsWithNoTeacher(widget.id, widget.name, widget.docID);
+      if (widget.id != null) {
+        docs = await dbService.getSubjectsWithSameAndNoTeacher(widget.id, widget.name, widget.docID);
+      } else {
+        docs = await dbService.getSubjectsWithNoTeacher();
+      }
     } else {
       docs = await dbService.getSubjects();
     }

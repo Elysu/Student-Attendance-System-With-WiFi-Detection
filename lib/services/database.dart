@@ -412,8 +412,8 @@ class DatabaseService {
     });
     return docs;
   }
-  // get all subjects where sub_teacher is null
-  Future getSubjectsWithNoTeacher(String id, String name, String uid) async {
+  // get all subjects where sub_teacher is {} and with same teacher
+  Future getSubjectsWithSameAndNoTeacher(String id, String name, String uid) async {
     List docs = [];
     await subjectCollection.where("sub_teacher", isEqualTo: {}).get().then((snapshot) {
       for (var doc in snapshot.docs) {
@@ -427,6 +427,17 @@ class DatabaseService {
     });
     return docs;
   }
+  // get all subjects without a teacher (sub_teacher == {})
+  Future getSubjectsWithNoTeacher() async {
+    List docs = [];
+    await subjectCollection.where("sub_teacher", isEqualTo: {}).get().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        docs.add(doc.id);
+      }
+    });
+    return docs;
+  }
+
   // get subject details based on single document
   Future getSubjectDetails(String subjectID) async {
     DocumentSnapshot snapshot = await subjectCollection.doc(subjectID).get();
