@@ -43,6 +43,7 @@ dependencies:
   cloud_functions: ^3.2.4
   permission_handler: ^8.1.6
   network_info_plus: ^2.1.2
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_test:

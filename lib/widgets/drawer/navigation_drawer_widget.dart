@@ -5,6 +5,7 @@ import 'package:student_attendance_fyp/screens/subjects/all_subjects.dart';
 import 'package:student_attendance_fyp/screens/subjects/selected_subjects.dart';
 import 'package:student_attendance_fyp/screens/teacher/all_teachers.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   NavigationDrawerWidget({ Key? key }) : super(key: key);
@@ -36,7 +37,7 @@ class NavigationDrawerWidget extends StatelessWidget {
         children: <Widget>[
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
           buildMenuItem(context, text: "All Students", icon: Icons.person),
-          buildMenuItem(context, text: "All Teachers", icon: Icons.person),
+          buildMenuItem(context, text: "All Teachers", icon: FontAwesomeIcons.chalkboardTeacher),
         ],
       );
     } else {
