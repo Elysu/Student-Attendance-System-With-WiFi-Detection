@@ -437,6 +437,16 @@ class DatabaseService {
     });
     return docs;
   }
+  // get all subjects with a teacher
+  Future getSubjectsWithTeacher() async {
+    List docs = [];
+    await subjectCollection.where("sub_teacher", isNotEqualTo: {}).get().then((snapshot) {
+      for (var doc in snapshot.docs) {
+        docs.add(doc.id);
+      }
+    });
+    return docs;
+  }
 
   // get subject details based on single document
   Future getSubjectDetails(String subjectID) async {
@@ -556,6 +566,7 @@ class DatabaseService {
           "id": ds["id"],
           "name": ds["name"],
           "status": "n/a",
+          "manual_status": false,
           "uid": docList.docs[i].id
         }).then((value) => true)
         .catchError((error) {
@@ -747,6 +758,7 @@ class DatabaseService {
     }
   }
 
+  // student take attendance themselves
   Future takeAttendance(String classID, String attendance) async {
     final uid = await _auth.currentUser!.uid;
     bool status = await classCollection.doc(classID).collection('students').doc(uid).update({
@@ -754,6 +766,20 @@ class DatabaseService {
       'datetime': DateTime.now()
     }).then((value) => true)
     .catchError((error) => false);
+
+    return status;
+  }
+
+  // teacher edit student's attendance in a class
+  Future editAttendance(String classID, String uid, String attendance) async {
+    bool status = await classCollection.doc(classID).collection('students').doc(uid).update({
+      'status': attendance,
+      'manual_status': true
+    }).then((value) => true)
+    .catchError((error) {
+      print(error.toString());
+      return false;
+    });
 
     return status;
   }

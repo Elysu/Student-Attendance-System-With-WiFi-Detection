@@ -63,7 +63,7 @@ class _ClassHistoryViewState extends State<ClassHistoryView> with AutomaticKeepA
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ClassDetails(docID: classDocID))
-                            );
+                            ).then((value) => setState((){}));
                           },
                         );
                       } else {

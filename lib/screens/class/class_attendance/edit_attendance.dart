@@ -30,7 +30,7 @@ class _EditAttendanceState extends State<EditAttendance> {
       setState(() {
         loading = false;
         strAttendance = attendanceText(attendanceDetails["status"].toString());
-        
+
         if (attendanceDetails["datetime"] != null) {
           tAttendance = attendanceDetails["datetime"];
           dAttendance = tAttendance!.toDate();
@@ -50,7 +50,7 @@ class _EditAttendanceState extends State<EditAttendance> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Class Details"),
+        title: const Text("Edit Attendance"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -71,6 +71,7 @@ class _EditAttendanceState extends State<EditAttendance> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               // student name
               const SizedBox(height: 20),
@@ -82,7 +83,7 @@ class _EditAttendanceState extends State<EditAttendance> {
               ),
 
               // student ID
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               const Text("Student ID:"),
               const SizedBox(height: 5),
               Text(
@@ -91,7 +92,7 @@ class _EditAttendanceState extends State<EditAttendance> {
               ),
 
               // attendance datetime
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               const Text("Attendance Date and Time:"),
               const SizedBox(height: 5),
               Text(
@@ -99,8 +100,17 @@ class _EditAttendanceState extends State<EditAttendance> {
                 style: const TextStyle(fontSize: 20),
               ),
 
+              // manual attendance by teacher: YES OR NO
+              const SizedBox(height: 30),
+              const Text("Manual Attendance:"),
+              const SizedBox(height: 5),
+              Text(
+                attendanceDetails['manual_status'] ? "Yes" : "No",
+                style: const TextStyle(fontSize: 20),
+              ),
+
               // attendance status
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               DropdownButtonFormField(
                 decoration: const InputDecoration(
                   label: Text("Attendance")
@@ -124,11 +134,43 @@ class _EditAttendanceState extends State<EditAttendance> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
+                    String attendance = "";
 
+                    switch (strAttendance) {
+                      case "PRESENT":
+                        attendance = "present";
+                        break;
+                      case "LATE":
+                        attendance = "late";
+                        break;
+                      case "N/A":
+                        attendance = "n/a";
+                        break;
+                    }
+
+                    bool status = await dbService.editAttendance(widget.classID, widget.uid, attendance);
+
+                    if (status) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text("Attendance has been updated.", style: TextStyle(color: Colors.green)),
+                      ));
+
+                      getAttendance().whenComplete(() {
+                        setState(() {});
+                      });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        duration: Duration(seconds: 5),
+                        content: Text("Failed to save attendance, please try again.", style: TextStyle(color: Colors.red)),
+                      ));
+                    }
                   },
                   child: const Text("Save"),
                 ),
-              )
+              ),
+
+              const SizedBox(height: 20)
             ],
           ),
         ),

@@ -185,6 +185,7 @@ class _EditTeacherState extends State<EditTeacher> {
                   child: selectedItems.isEmpty
                   ? const Center(child: Text("No subject selected"))
                   : ListView.separated(
+                    physics: const ClampingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: selectedItems.length,
                     itemBuilder: (BuildContext context, int index) {

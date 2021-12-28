@@ -117,7 +117,7 @@ class _OngoingClassViewState extends State<OngoingClassView> with AutomaticKeepA
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => ClassDetails(docID: classDocID))
-                            );
+                            ).then((value) => setState((){}));
                           },
                         );
                       } else {

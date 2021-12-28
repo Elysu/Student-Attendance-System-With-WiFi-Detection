@@ -29,7 +29,7 @@ class _SelectSubjectState extends State<SelectSubject> {
   }
 
   Future getAllSubjects() async {
-    docs = await dbService.getSubjects();
+    docs = await dbService.getSubjectsWithTeacher();
 
     for (int i=0; i<docs.length; i++) {
       Map data = await dbService.getSubjectDetails(docs[i].toString());

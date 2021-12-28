@@ -107,14 +107,6 @@ class _ClassAttendanceState extends State<ClassAttendance> {
         title: _appBarTitle,
         centerTitle: true,
         actions: <Widget>[
-          // show edit button if logged in user is teacher
-          UserModel().getTeacher
-          ? IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {},
-          )
-          : const SizedBox.shrink(),
-
           IconButton(
             icon: _searchIcon,
             onPressed: _searchPressed,

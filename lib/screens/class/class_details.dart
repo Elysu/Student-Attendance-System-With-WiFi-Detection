@@ -303,7 +303,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   takeAttendance() async {
     String dbAttendance = "";
 
-    if (DateTime.now().isAfter(dOngoingTime!.add(const Duration(minutes: 5)))) {
+    if (DateTime.now().isAfter(dOngoingTime!.add(const Duration(minutes: 15)))) {
       dbAttendance = "late";
     } else {
       dbAttendance = "present";
