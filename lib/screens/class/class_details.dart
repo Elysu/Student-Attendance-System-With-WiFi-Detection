@@ -289,7 +289,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      await takeAttendance();
+                      await checkDeviceID();
                     },
                     icon: const Icon(Icons.note_alt),
                     label: const Text("Mark Attendance")
@@ -302,6 +302,24 @@ class _ClassDetailsState extends State<ClassDetails> {
       }
     }
     return const SizedBox.shrink();
+  }
+
+  checkDeviceID() async {
+    // check current deviceID and last attendance deviceID
+    Map currentUserData = await dbService.getUserData();
+
+    if (currentUserData["last_deviceID"] == null) {
+      takeAttendance();
+    } else {
+      if (currentUserData["last_deviceID"] == currentUserData["current_deviceID"]) {
+        takeAttendance();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          duration: Duration(seconds: 5),
+          content: Text("Please take attendance with the device that is used for your previous attendance or ask your lecturer to reset the device owner.", style: TextStyle(color: Colors.red)),
+        ));
+      }
+    }
   }
 
   takeAttendance() async {
@@ -328,9 +346,5 @@ class _ClassDetailsState extends State<ClassDetails> {
         content: Text("Failed to take attendace, please try again.", style: TextStyle(color: Colors.red)),
       ));
     }
-  }
-
-  getDeviceID() async {
-
   }
 }
