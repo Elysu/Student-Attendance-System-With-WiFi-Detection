@@ -392,7 +392,7 @@ class _CreateClassState extends State<CreateClass> {
                         }
                       }
                     },
-                    child: const Text("Save"),
+                    child: const Text("Create Class"),
                   ),
                 ),
 

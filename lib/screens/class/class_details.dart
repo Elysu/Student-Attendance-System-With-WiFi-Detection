@@ -57,13 +57,16 @@ class _ClassDetailsState extends State<ClassDetails> {
             attendanceLabel = "Your attendance:";
             switch (attendance) {
               case 0: {
-                if (classDetails['c_ongoing']) {
-                  attendanceText = "N/A";
-                  attendanceColor = Colors.grey;
-                } else {
-                  attendanceText = "ABSENT";
-                  attendanceColor = Colors.red;
-                }
+                attendanceText = "N/A";
+                attendanceColor = Colors.grey;
+
+                // if (classDetails['c_ongoing']) {
+                //   attendanceText = "N/A";
+                //   attendanceColor = Colors.grey;
+                // } else {
+                //   attendanceText = "ABSENT";
+                //   attendanceColor = Colors.red;
+                // }
                 break;
               }
               case 1:
@@ -326,7 +329,7 @@ class _ClassDetailsState extends State<ClassDetails> {
     }
   }
 
-  requestPermission() async {
+  getDeviceID() async {
 
   }
 }

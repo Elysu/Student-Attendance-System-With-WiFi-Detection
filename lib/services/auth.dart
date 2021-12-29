@@ -11,6 +11,7 @@ class AuthService {
 
   getAndSetUserDataIntoModel(String uid) async {
     await _dbService.getUserDataAndSetIntoModel(uid);
+    await _dbService.setCurrentDeviceID();
   }
 
   // use user data model to create user object based on firebase User

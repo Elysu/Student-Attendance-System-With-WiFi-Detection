@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class DatabaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,10 +14,29 @@ class DatabaseService {
   final CollectionReference classCollection = FirebaseFirestore.instance.collection('class');
   final CollectionReference subjectCollection = FirebaseFirestore.instance.collection('subjects');
   UserModel userModel = UserModel();
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
   // firestore streams
   // always listening to changes in the database
   // get users stream
+
+  // set currently singed-in device ID into DB
+  Future setCurrentDeviceID() async {
+    final uid = await _auth.currentUser!.uid;
+    String currentDeviceID = "";
+
+    if (Platform.isAndroid) {
+      var build = await deviceInfo.androidInfo;
+      currentDeviceID = build.androidId!; // unique ID for android
+    } else if (Platform.isIOS) {
+      var build = await deviceInfo.iosInfo;
+      currentDeviceID = build.identifierForVendor!; // unique ID for IOS
+    }
+
+    await userCollection.doc(uid).update({
+      'current_deviceID': currentDeviceID,
+    });
+  }
 
   // register student from teacher side
   Future<bool> addUser(String uid, String email, String password, String name, String id, List subjects, bool isTeacher) async {
