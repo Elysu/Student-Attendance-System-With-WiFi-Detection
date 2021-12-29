@@ -18,10 +18,10 @@ class ClassDetails extends StatefulWidget {
 
 class _ClassDetailsState extends State<ClassDetails> {
   DatabaseService dbService = DatabaseService();
-  bool isTeacher = UserModel().getTeacher;
+  bool isTeacher = UserModel().getTeacher, loading = true;
+  bool? manualStatus;
   dynamic classDetails;
   Map classTeacher = {};
-  bool loading = true;
   int? attendance, totalAttendance, totalStudent;
   String attendanceText = "", attendanceLabel = "", strTotalAttendance = "", strOngoingTime = "";
   Color? attendanceColor;
@@ -93,6 +93,7 @@ class _ClassDetailsState extends State<ClassDetails> {
 
     if (!isTeacher) {
       attendance = await dbService.futureGetAttendance(widget.docID);
+      manualStatus = await dbService.getManualAttendance(widget.docID);
     }
   }
 
@@ -277,7 +278,7 @@ class _ClassDetailsState extends State<ClassDetails> {
 
   checkClassOngoing() {
     if (classDetails["c_ongoing"]) {
-      if (attendance == 0) {
+      if (attendance == 0 && manualStatus == false) {
         return Visibility(
           visible: isTeacher ? false : true,
           child: Expanded(

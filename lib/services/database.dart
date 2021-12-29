@@ -20,7 +20,7 @@ class DatabaseService {
   // always listening to changes in the database
   // get users stream
 
-  // set currently singed-in device ID into DB
+  // set currently signed-in device ID into DB
   Future setCurrentDeviceID() async {
     final uid = await _auth.currentUser!.uid;
     String currentDeviceID = "";
@@ -741,6 +741,16 @@ class DatabaseService {
       }
     }
   }
+  // get manual attendace by teacher, true or false
+  Future getManualAttendance(String docID) async {
+    final uid = await _auth.currentUser!.uid;
+    DocumentSnapshot snapshot = await classCollection.doc(docID).collection('students').doc(uid).get();
+
+    if (snapshot.exists) {
+      var data = snapshot.data() as Map;
+      return data['manual_status'];
+    }
+  }
 
   // get user data based on email
   Future getUserPasswordWithEmail(String email) async {
@@ -782,11 +792,29 @@ class DatabaseService {
   // student take attendance themselves
   Future takeAttendance(String classID, String attendance) async {
     final uid = await _auth.currentUser!.uid;
+    String currentDeviceID = "";
+
+    if (Platform.isAndroid) {
+      var build = await deviceInfo.androidInfo;
+      currentDeviceID = build.androidId!; // unique ID for android
+    } else if (Platform.isIOS) {
+      var build = await deviceInfo.iosInfo;
+      currentDeviceID = build.identifierForVendor!; // unique ID for IOS
+    }
+
     bool status = await classCollection.doc(classID).collection('students').doc(uid).update({
       'status': attendance,
-      'datetime': DateTime.now()
+      'datetime': DateTime.now(),
+      'deviceID': currentDeviceID
     }).then((value) => true)
     .catchError((error) => false);
+
+    // if mark attendance success, update device ID to last_deviceID to record last attendance device ID
+    if (status) {
+      await userCollection.doc(uid).update({
+        'last_deviceID': currentDeviceID,
+      });
+    }
 
     return status;
   }
