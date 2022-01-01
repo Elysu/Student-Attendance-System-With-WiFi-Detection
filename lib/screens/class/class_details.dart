@@ -307,6 +307,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   checkDeviceID() async {
     // check current deviceID and last attendance deviceID
     Map currentUserData = await dbService.getUserData();
+    Map deviceData = await dbService.getDeviceData(currentUserData['current_deviceID']);
 
     if (currentUserData["last_deviceID"] == null) {
       takeAttendance();
@@ -316,7 +317,10 @@ class _ClassDetailsState extends State<ClassDetails> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           duration: Duration(seconds: 5),
-          content: Text("Please take attendance with the device that is used for your previous attendance or ask your lecturer to reset the device owner.", style: TextStyle(color: Colors.red)),
+          content: Text(
+            "Please take attendance with the device that is used for your previous attendance or ask your lecturer to reset the device owner.",
+            style: TextStyle(color: Colors.red)
+          ),
         ));
       }
     }

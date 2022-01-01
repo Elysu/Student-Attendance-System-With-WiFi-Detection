@@ -13,6 +13,7 @@ class DatabaseService {
   final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
   final CollectionReference classCollection = FirebaseFirestore.instance.collection('class');
   final CollectionReference subjectCollection = FirebaseFirestore.instance.collection('subjects');
+  final CollectionReference deviceCollection = FirebaseFirestore.instance.collection('devices');
   UserModel userModel = UserModel();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
@@ -831,5 +832,14 @@ class DatabaseService {
     });
 
     return status;
+  }
+
+  // get device data to check if device last attendance is the same user with currently logged in user
+  Future getDeviceData(String deviceID) async {
+    var docList = await deviceCollection.where("deviceID", isEqualTo: deviceID).get();
+
+    if (docList.docs.isNotEmpty) {
+
+    }
   }
 }
