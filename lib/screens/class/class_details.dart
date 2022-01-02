@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
@@ -17,6 +18,7 @@ class ClassDetails extends StatefulWidget {
 }
 
 class _ClassDetailsState extends State<ClassDetails> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   DatabaseService dbService = DatabaseService();
   bool isTeacher = UserModel().getTeacher, loading = true;
   bool? manualStatus;
@@ -307,26 +309,51 @@ class _ClassDetailsState extends State<ClassDetails> {
   checkDeviceID() async {
     // check current deviceID and last attendance deviceID
     Map currentUserData = await dbService.getUserData();
-    Map deviceData = await dbService.getDeviceData(currentUserData['current_deviceID']);
+    var deviceData = await dbService.getDeviceData(currentUserData['current_deviceID']);
 
-    if (currentUserData["last_deviceID"] == null) {
-      takeAttendance();
-    } else {
-      if (currentUserData["last_deviceID"] == currentUserData["current_deviceID"]) {
-        takeAttendance();
+    // no last device ID means the signed in device is the first device for attendance
+    // check if last device is null or is the same as current device
+    if (currentUserData["last_deviceID"] == null || currentUserData["last_deviceID"] == currentUserData["current_deviceID"]) {
+      if (deviceData == 0) {
+        // if there's no document with this deviceID in devices collection, then straight away take attendance as this is the new device on the db
+        takeAttendance(currentUserData["id"], currentUserData["name"]);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          duration: Duration(seconds: 5),
-          content: Text(
-            "Please take attendance with the device that is used for your previous attendance or ask your lecturer to reset the device owner.",
-            style: TextStyle(color: Colors.red)
-          ),
-        ));
+        final uid = await _auth.currentUser!.uid;
+        Map lastAttendance = deviceData["last_attendance"];
+
+        if (lastAttendance["uid"] == uid) { // if last attendance uid is the same with currently signed in UID, then user can take attendance right away
+          takeAttendance(currentUserData["id"], currentUserData["name"]);
+        } else { // if last attendance uid is not the same as current UID
+          Timestamp tLastAttendance = lastAttendance["datetime"];
+          DateTime dLastAttendance = tLastAttendance.toDate();
+
+          // check if last attendance taken with this device has passed 15
+          if (DateTime.now().isAfter(dLastAttendance.add(const Duration(minutes: 15)))) { // passed 15 minutes, so can take attendance
+            takeAttendance(currentUserData["id"], currentUserData["name"]);
+          } else {
+            // 15 minutes haven't passed yet, so user cannot take attendance unless they log in to the account with the same UID as last_attendance UID
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              duration: Duration(seconds: 5),
+              content: Text(
+                "This device is used to take attendance on another account not more than 15 minutes. You cannot take attendance now unless it is after 15 minutes or currently signed-in account is the same as previous attendance taken with this device.",
+                style: TextStyle(color: Colors.red)
+              ),
+            ));
+          }
+        }
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 5),
+        content: Text(
+          "Please take attendance with the device that is used for your previous attendance or ask your lecturer to reset the device owner.",
+          style: TextStyle(color: Colors.red)
+        ),
+      ));
     }
   }
 
-  takeAttendance() async {
+  takeAttendance(String id, String name) async {
     String dbAttendance = "";
 
     if (DateTime.now().isAfter(dOngoingTime!.add(const Duration(minutes: 15)))) {
@@ -335,7 +362,7 @@ class _ClassDetailsState extends State<ClassDetails> {
       dbAttendance = "present";
     }
 
-    bool status = await dbService.takeAttendance(widget.docID, dbAttendance);
+    bool status = await dbService.takeAttendance(widget.docID, dbAttendance, id, name);
 
     if (status) {
       didChangeDependencies();

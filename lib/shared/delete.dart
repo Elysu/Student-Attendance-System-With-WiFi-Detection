@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_attendance_fyp/screens/home/home.dart';
+import 'package:student_attendance_fyp/main.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 
@@ -173,9 +173,9 @@ deleteClass(BuildContext context, String docID) async {
     Navigator.pushAndRemoveUntil(
       context, 
       MaterialPageRoute(
-        builder: (context) => Home()
+        builder: (context) => const Main()
       ),
-     ModalRoute.withName("/Home")
+     ModalRoute.withName("/Main")
     );
 
     ScaffoldMessenger.of(context).showSnackBar(

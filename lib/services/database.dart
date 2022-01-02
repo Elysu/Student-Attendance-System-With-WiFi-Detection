@@ -791,7 +791,7 @@ class DatabaseService {
   }
 
   // student take attendance themselves
-  Future takeAttendance(String classID, String attendance) async {
+  Future takeAttendance(String classID, String attendance, String id, String name) async {
     final uid = await _auth.currentUser!.uid;
     String currentDeviceID = "";
 
@@ -803,9 +803,10 @@ class DatabaseService {
       currentDeviceID = build.identifierForVendor!; // unique ID for IOS
     }
 
+    DateTime currentTime = DateTime.now();
     bool status = await classCollection.doc(classID).collection('students').doc(uid).update({
       'status': attendance,
-      'datetime': DateTime.now(),
+      'datetime': currentTime,
       'deviceID': currentDeviceID
     }).then((value) => true)
     .catchError((error) => false);
@@ -815,6 +816,13 @@ class DatabaseService {
       await userCollection.doc(uid).update({
         'last_deviceID': currentDeviceID,
       });
+
+      Map lastAttendance = {'datetime': currentTime, 'id': id, 'name': name, "uid": uid};
+
+      await deviceCollection.doc(currentDeviceID).set({
+        'deviceID': currentDeviceID,
+        'last_attendance': lastAttendance
+      }, SetOptions(merge: true));
     }
 
     return status;
@@ -836,10 +844,13 @@ class DatabaseService {
 
   // get device data to check if device last attendance is the same user with currently logged in user
   Future getDeviceData(String deviceID) async {
-    var docList = await deviceCollection.where("deviceID", isEqualTo: deviceID).get();
+    DocumentSnapshot ds = await deviceCollection.doc(deviceID).get();
 
-    if (docList.docs.isNotEmpty) {
-
+    // if exists
+    if (ds.exists) {
+      return ds.data() as Map;
+    } else {
+      return 0;
     }
   }
 }
