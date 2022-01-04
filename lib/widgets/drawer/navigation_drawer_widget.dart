@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/class/all_class.dart';
 import 'package:student_attendance_fyp/screens/students/student_list.dart';
 import 'package:student_attendance_fyp/screens/subjects/all_subjects.dart';
 import 'package:student_attendance_fyp/screens/subjects/selected_subjects.dart';
@@ -35,6 +36,7 @@ class NavigationDrawerWidget extends StatelessWidget {
     if (UserModel().getTeacher) {
       return Column(
         children: <Widget>[
+          buildMenuItem(context, text: "All Class Sessions", icon: Icons.class_),
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
           buildMenuItem(context, text: "All Students", icon: Icons.person),
           buildMenuItem(context, text: "All Lecturers", icon: FontAwesomeIcons.chalkboardTeacher),
@@ -76,6 +78,12 @@ class NavigationDrawerWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AllTeachers())
+            );
+            break;
+          case "All Class Sessions":
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AllClass())
             );
             break;
         }
