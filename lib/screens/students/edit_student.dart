@@ -91,6 +91,20 @@ class _EditStudentState extends State<EditStudent> {
       child: const Icon(Icons.cancel_outlined),
     );
 
+    IconButton btnDelete = IconButton(
+      onPressed: () async {
+        await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
+      },
+      icon: const Icon(Icons.delete),
+    );
+
+    IconButton btnClass = IconButton(
+      onPressed: () async {
+        
+      },
+      icon: const Icon(Icons.delete),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Student"),
@@ -248,7 +262,7 @@ class _EditStudentState extends State<EditStudent> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   duration: Duration(seconds: 5),
-                                  content: Text("Student details successfully updated", style: TextStyle(color: Colors.green)),
+                                  content: Text("Student details successfully updated.", style: TextStyle(color: Colors.green)),
                                 )
                               );
                             } else {

@@ -27,7 +27,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
-          buildMenuItem(context, text: "Profile", icon: Icons.person),
+          buildMenuItem(context, text: "Profile", icon: FontAwesomeIcons.solidUserCircle),
           buildMenuItem(context, text: "My Subjects", icon: Icons.book),
           isTeacher(context),
           buildMenuItem(context, text: "Logout", icon: Icons.logout),
@@ -40,10 +40,10 @@ class NavigationDrawerWidget extends StatelessWidget {
     if (UserModel().getTeacher) {
       return Column(
         children: <Widget>[
-          buildMenuItem(context, text: "All Class Sessions", icon: Icons.class_),
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
-          buildMenuItem(context, text: "All Students", icon: Icons.people_alt),
-          buildMenuItem(context, text: "All Lecturers", icon: FontAwesomeIcons.chalkboardTeacher),
+          buildMenuItem(context, text: "All Class Sessions", icon: FontAwesomeIcons.chalkboardTeacher),
+          buildMenuItem(context, text: "All Students", icon: FontAwesomeIcons.userGraduate),
+          buildMenuItem(context, text: "All Lecturers", icon: FontAwesomeIcons.userTie),
         ],
       );
     } else {
