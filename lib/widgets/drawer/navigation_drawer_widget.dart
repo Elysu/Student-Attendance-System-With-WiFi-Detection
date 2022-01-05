@@ -1,10 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/class/all_class.dart';
+import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/screens/students/student_list.dart';
 import 'package:student_attendance_fyp/screens/subjects/all_subjects.dart';
 import 'package:student_attendance_fyp/screens/subjects/selected_subjects.dart';
 import 'package:student_attendance_fyp/screens/teacher/all_teachers.dart';
+import 'package:student_attendance_fyp/screens/teacher/edit_teacher.dart';
 import 'package:student_attendance_fyp/services/auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -24,6 +27,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             ),
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
+          buildMenuItem(context, text: "Profile", icon: Icons.person),
           buildMenuItem(context, text: "My Subjects", icon: Icons.book),
           isTeacher(context),
           buildMenuItem(context, text: "Logout", icon: Icons.logout),
@@ -38,7 +42,7 @@ class NavigationDrawerWidget extends StatelessWidget {
         children: <Widget>[
           buildMenuItem(context, text: "All Class Sessions", icon: Icons.class_),
           buildMenuItem(context, text: "All Subjects", icon: Icons.menu_book),
-          buildMenuItem(context, text: "All Students", icon: Icons.person),
+          buildMenuItem(context, text: "All Students", icon: Icons.people_alt),
           buildMenuItem(context, text: "All Lecturers", icon: FontAwesomeIcons.chalkboardTeacher),
         ],
       );
@@ -55,6 +59,12 @@ class NavigationDrawerWidget extends StatelessWidget {
         switch (text) {
           case "Logout":
             await _auth.userSignOut();
+            break;
+          case "Profile":
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UserModel().getTeacher ? EditTeacher(docID: FirebaseAuth.instance.currentUser!.uid) : EditStudent(docID: FirebaseAuth.instance.currentUser!.uid))
+            );
             break;
           case "All Students":
             Navigator.push(

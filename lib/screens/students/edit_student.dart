@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
+import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 import 'package:student_attendance_fyp/shared/delete.dart';
@@ -95,11 +96,14 @@ class _EditStudentState extends State<EditStudent> {
         title: const Text("Edit Student"),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () async {
-              await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
-            },
-            icon: const Icon(Icons.delete),
+          Visibility(
+            visible: UserModel().getTeacher,
+            child: IconButton(
+              onPressed: () async {
+                await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
+              },
+              icon: const Icon(Icons.delete),
+            ),
           )
         ],
       ),
@@ -275,7 +279,10 @@ class _EditStudentState extends State<EditStudent> {
           ),
         ),
       ),
-      floatingActionButton: isReadOnly ? editButton : cancelButton
+      floatingActionButton: Visibility(
+        visible: UserModel().getTeacher,
+        child: isReadOnly ? editButton : cancelButton
+      )
     );
   }
   

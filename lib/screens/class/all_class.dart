@@ -77,7 +77,27 @@ class _AllClassState extends State<AllClass> {
         showResults.add(notOngoing[i]);
       }
     } else {
-      showResults = List.from(_allResults);
+      for(int i=0; i<_allResults.length; i++) {
+        DocumentSnapshot ds = _allResults[i];
+        var subName = ds['c_sub-name'].toString().toLowerCase();
+        var subCode = ds['c_sub-code'].toString().toLowerCase();
+
+        if (ds['c_ongoing']) {
+          ongoing.add(_allResults[i]);
+        } else {
+          notOngoing.add(_allResults[i]);
+        }
+      }
+
+      // add ongoing
+      for (int i=0; i<ongoing.length; i++) {
+        showResults.add(ongoing[i]);
+      }
+
+      // add not ongoing
+      for (int i=0; i<notOngoing.length; i++) {
+        showResults.add(notOngoing[i]);
+      }
     }
     setState(() {
       _resultsList = showResults;
@@ -135,11 +155,22 @@ class _AllClassState extends State<AllClass> {
           Timestamp tEnd = _resultsList[index]["c_datetimeEnd"];
           DateTime dStart = tStart.toDate();
           DateTime dEnd = tEnd.toDate();
+          String classStatus = "";
+          Color textColor;
+
+          if (_resultsList[index]["c_ongoing"]) {
+            classStatus = "ONGOING";
+            textColor = Colors.green;
+          } else {
+            classStatus = "N/A";
+            textColor = Colors.grey;
+          }
 
           return ListTile(
             title: Text(_resultsList[index]["c_sub-name"]),
             subtitle: Text(DateFormat('d/M/y').format(dStart).toString() + ", " + DateFormat('jm').format(dStart).toString() + " - " + DateFormat('jm').format(dEnd).toString()),
-            onTap: (){
+            trailing: Text(classStatus, style: TextStyle(color: textColor)),
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ClassDetails(docID: _resultsList[index].id))
