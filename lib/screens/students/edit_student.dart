@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:student_attendance_fyp/models/checkbox_state.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
+import 'package:student_attendance_fyp/screens/class/my_class.dart';
 import 'package:student_attendance_fyp/screens/students/add_subjects.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 import 'package:student_attendance_fyp/shared/delete.dart';
@@ -100,9 +102,12 @@ class _EditStudentState extends State<EditStudent> {
 
     IconButton btnClass = IconButton(
       onPressed: () async {
-        
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyClass(docID: widget.docID))
+        );
       },
-      icon: const Icon(Icons.delete),
+      icon: const Icon(FontAwesomeIcons.chalkboardTeacher),
     );
 
     return Scaffold(
@@ -110,15 +115,7 @@ class _EditStudentState extends State<EditStudent> {
         title: const Text("Edit Student"),
         centerTitle: true,
         actions: [
-          Visibility(
-            visible: UserModel().getTeacher,
-            child: IconButton(
-              onPressed: () async {
-                await deleteDialog(context: context, docID: widget.docID, type: 1, email: studentData['email'].toString());
-              },
-              icon: const Icon(Icons.delete),
-            ),
-          )
+          visibility ? btnDelete : btnClass
         ],
       ),
       body: loading ? const Center(child: Text("Loading")) 

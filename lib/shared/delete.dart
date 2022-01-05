@@ -57,7 +57,7 @@ deleteDialog({ required BuildContext context, required String docID, required in
                 case 3:
                   await deleteClass(context, docID);
                   break;
-                // delete student
+                // delete teacher
                 case 4: {
                   if (email != null && id != null && name != null) {
                     await deleteTeacher(context, docID, email, id, name);

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/models/user_model.dart';
 import 'package:student_attendance_fyp/screens/class/all_class.dart';
+import 'package:student_attendance_fyp/screens/class/my_class.dart';
 import 'package:student_attendance_fyp/screens/students/edit_student.dart';
 import 'package:student_attendance_fyp/screens/students/student_list.dart';
 import 'package:student_attendance_fyp/screens/subjects/all_subjects.dart';
@@ -28,6 +29,7 @@ class NavigationDrawerWidget extends StatelessWidget {
             child: Text(UserModel().getName, style: const TextStyle(color: Colors.white)),
           ),
           buildMenuItem(context, text: "Profile", icon: FontAwesomeIcons.solidUserCircle),
+          buildMenuItem(context, text: "My Class Sessions", icon: FontAwesomeIcons.chalkboardTeacher),
           buildMenuItem(context, text: "My Subjects", icon: Icons.book),
           isTeacher(context),
           buildMenuItem(context, text: "Logout", icon: Icons.logout),
@@ -94,6 +96,12 @@ class NavigationDrawerWidget extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AllClass())
+            );
+            break;
+          case "My Class Sessions":
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MyClass(docID: FirebaseAuth.instance.currentUser!.uid))
             );
             break;
         }

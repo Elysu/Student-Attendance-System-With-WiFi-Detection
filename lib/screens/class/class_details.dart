@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,6 +39,7 @@ class _ClassDetailsState extends State<ClassDetails> {
     super.didChangeDependencies();
     getClass().whenComplete(() {
       getTotalAttendance(widget.docID).whenComplete(() {
+        if (!mounted) return;
         setState(() {
           classTeacher = classDetails["c_teacher"];
           loading = false;

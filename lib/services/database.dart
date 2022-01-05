@@ -702,6 +702,30 @@ class DatabaseService {
     }
   }
 
+  // get all student class sessions based on a single document
+  Future getStudentAllClass(String uid) async {
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    var data = snapshot.data() as Map;
+
+    List subjects = data['subjects'];
+    List subjectCode = [];
+
+    for (int i=0; i<subjects.length; i++) {
+      subjectCode.add(subjects[i]['sub_code']);
+    }
+
+    var docList = await classCollection
+      .where('c_sub-code', whereIn: subjectCode)
+      .orderBy("c_datetimeEnd", descending: true)
+      .get();
+    
+    if (docList.docs.isNotEmpty) {
+      return docList;
+    } else {
+      return [];
+    }
+  }
+
   // get attendance details based on single doc ID
   Future getAttendanceDetails(String classID, String uid) async {
     DocumentSnapshot snapshot = await classCollection.doc(classID).collection('students').doc(uid).get();
