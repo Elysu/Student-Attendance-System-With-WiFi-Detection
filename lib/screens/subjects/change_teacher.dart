@@ -23,7 +23,6 @@ class _ChangeTeacherState extends State<ChangeTeacher> {
     for (int i=0; i<docs.length; i++) {
       DocumentSnapshot ds = docs[i];
       teachers.add({"t_name": ds["name"].toString(), "t_id": ds["id"].toString(), "t_uid": ds.id});
-      print(ds.id);
     }
   }
 

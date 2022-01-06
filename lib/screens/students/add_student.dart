@@ -164,8 +164,6 @@ class _AddStudentState extends State<AddStudent> {
                         subjectList.add({"sub_code": selectedItems[i].subCode, "sub_name": selectedItems[i].title});
                       }
 
-                      print(subjectList);
-
                       // if everything is valid
                       if (_formKey.currentState!.validate()) {
                         bool checkID = await dbService.checkIDExist(idController.text);

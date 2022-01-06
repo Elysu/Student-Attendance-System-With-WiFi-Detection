@@ -171,6 +171,18 @@ class _EditSubjectState extends State<EditSubject> {
                   : ListTile(
                     title: Text(subjectTeacher["t_name"].toString()),
                     subtitle: Text(subjectTeacher["t_id"].toString()),
+                    trailing: Visibility(
+                      visible: visibility,
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            subjectTeacher = {};
+                          });
+                        },
+                        icon: const Icon(Icons.remove_circle),
+                        color: Colors.red,
+                      ),
+                    ),
                   )
                 ),
 
