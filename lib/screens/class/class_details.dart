@@ -29,7 +29,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   Map classTeacher = {};
   int? attendance, totalAttendance, totalStudent;
   String attendanceText = "", attendanceLabel = "", strTotalAttendance = "", strOngoingTime = "";
-  Color? attendanceColor;
+  Color? attendanceColor, classStatusColor;
   Timestamp? tStart, tEnd, tOngoingTime;
   DateTime? dStart, dEnd, dOngoingTime;
   String classStatus = "";
@@ -47,7 +47,14 @@ class _ClassDetailsState extends State<ClassDetails> {
           tEnd = classDetails['c_datetimeEnd'];
           dStart = tStart!.toDate();
           dEnd = tEnd!.toDate();
-          classStatus = classDetails['c_ongoing'] ? "Ongoing" : "Not Available";
+
+          if (classDetails['c_ongoing']) {
+            classStatus = "Ongoing";
+            classStatusColor = Colors.green;
+          } else {
+            classStatus = "Not Available";
+            classStatusColor = Colors.grey;
+          }
 
           if (classDetails["c_ongoingTime"] != null) {
             tOngoingTime = classDetails["c_ongoingTime"];
@@ -65,14 +72,6 @@ class _ClassDetailsState extends State<ClassDetails> {
               case 0: {
                 attendanceText = "N/A";
                 attendanceColor = Colors.grey;
-
-                // if (classDetails['c_ongoing']) {
-                //   attendanceText = "N/A";
-                //   attendanceColor = Colors.grey;
-                // } else {
-                //   attendanceText = "ABSENT";
-                //   attendanceColor = Colors.red;
-                // }
                 break;
               }
               case 1:
@@ -215,7 +214,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                           const SizedBox(height: 5),
                           Text(
                             classStatus,
-                            style: const TextStyle(fontSize: 20),
+                            style: TextStyle(fontSize: 20, color: classStatusColor),
                           ),
                         ],
                       ),

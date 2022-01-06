@@ -70,7 +70,7 @@ class _StudentListState extends State<StudentList> {
 
   // get all students documents first
   getStudents() async {
-    var data = await dbService.userCollection.where('isTeacher', isNotEqualTo: true).get();
+    var data = await dbService.userCollection.where('isTeacher', isEqualTo: false).orderBy("name", descending: false).get();
     setState(() {
       _allResults = data.docs;
     });

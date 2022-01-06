@@ -78,7 +78,7 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
       subjectCode.add(subjects[i]['sub_code']);
     }
 
-    var data = await dbService.subjectCollection.where('sub_code', whereIn: subjectCode).get();
+    var data = await dbService.subjectCollection.where('sub_code', whereIn: subjectCode).orderBy("sub_name", descending: false).get();
     setState(() {
       _allResults = data.docs;
     });

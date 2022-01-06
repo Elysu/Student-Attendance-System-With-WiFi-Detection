@@ -73,7 +73,7 @@ class _ClassAttendanceState extends State<ClassAttendance> {
 
   // get all students documents first
   getAttendance() async {
-    var data = await dbService.classCollection.doc(widget.classDocID).collection("students").get();
+    var data = await dbService.classCollection.doc(widget.classDocID).collection("students").orderBy("name", descending: false).get();
     setState(() {
       _allResults = data.docs;
     });
@@ -149,19 +149,23 @@ class _ClassAttendanceState extends State<ClassAttendance> {
 
   attendanceText(String attendance) {
     String strAttendance = '';
+    Color? attendanceColor;
 
     switch (attendance) {
       case 'present':
         strAttendance = "PRESENT";
+        attendanceColor = Colors.green;
         break;
       case 'late':
         strAttendance = "LATE";
+        attendanceColor = Colors.orange;
         break;
       case 'n/a':
         strAttendance = "N/A";
+        attendanceColor = Colors.grey;
         break;
     }
 
-    return Text(strAttendance);
+    return Text(strAttendance, style: TextStyle(color: attendanceColor));
   }
 }

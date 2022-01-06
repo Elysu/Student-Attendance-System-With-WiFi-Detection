@@ -70,7 +70,7 @@ class _AllSubjectsState extends State<AllSubjects> {
 
   // get all students documents first
   getSubjects() async {
-    var data = await dbService.subjectCollection.get();
+    var data = await dbService.subjectCollection.orderBy("sub_name", descending: false).get();
     setState(() {
       _allResults = data.docs;
     });
