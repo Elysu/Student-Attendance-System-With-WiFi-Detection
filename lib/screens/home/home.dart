@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:student_attendance_fyp/class_tabs/class_history_view.dart';
 import 'package:student_attendance_fyp/class_tabs/ongoing_class_view.dart';
-import 'package:student_attendance_fyp/class_tabs/upcoming_class_view.dart';
 import 'package:student_attendance_fyp/screens/class/create_class.dart';
 import 'package:student_attendance_fyp/services/database.dart';
+import 'package:student_attendance_fyp/services/network_info.dart';
 import 'package:student_attendance_fyp/widgets/drawer/navigation_drawer_widget.dart';
 
 //this is just TabBar so stateless is fine
@@ -55,7 +55,10 @@ class _HomeState extends State<Home> {
         floatingActionButton: Visibility(
           visible: isTeacher,
           child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
+              NetInfo netInfo = NetInfo();
+              await netInfo.getBSSID();
+
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CreateClass())

@@ -6,15 +6,20 @@ class NetInfo {
 
   getBSSID() async {
     var status = await Permission.locationWhenInUse.status;
-    var wifiBSSID;
+    var wifiBSSID, wifiName;
+
+    print(status);
 
     if (status.isDenied) {
       // Use location.
       await Permission.locationWhenInUse.request();
     }
 
-    wifiBSSID = await networkInfo.getWifiBSSID();
-
-    return wifiBSSID;
+    if (await Permission.locationWhenInUse.isGranted) {
+      wifiBSSID = await networkInfo.getWifiBSSID();
+      wifiName = await networkInfo.getWifiName();
+      print(wifiBSSID);
+      print(wifiName);
+    }
   }
 }

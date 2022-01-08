@@ -45,6 +45,7 @@ dependencies:
   network_info_plus: ^2.1.2
   font_awesome_flutter: ^9.2.0
   device_info_plus: ^3.2.0
+  webview_flutter: ^3.0.0
 
 dev_dependencies:
   flutter_test:
