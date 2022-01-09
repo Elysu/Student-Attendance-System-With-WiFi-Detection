@@ -118,7 +118,9 @@ class _SelectedSubjectsState extends State<SelectedSubjects> {
           ),
         ],
       ),
-      body: ListView.separated(
+      body: _allResults.isEmpty 
+      ? const Center(child: Text("You have not selected any subject."))
+      : ListView.separated(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: _resultsList.length,

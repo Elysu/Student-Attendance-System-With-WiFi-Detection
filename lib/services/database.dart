@@ -702,7 +702,7 @@ class DatabaseService {
     }
   }
 
-  // get all student class sessions based on a single document
+  // get class session of selected subject
   Future getStudentAllClass(String uid) async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     var data = snapshot.data() as Map;
@@ -720,7 +720,7 @@ class DatabaseService {
       .get();
     
     if (docList.docs.isNotEmpty) {
-      return docList;
+      return docList.docs;
     } else {
       return [];
     }

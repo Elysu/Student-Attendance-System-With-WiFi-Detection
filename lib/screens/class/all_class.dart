@@ -146,7 +146,9 @@ class _AllClassState extends State<AllClass> {
           ),
         ],
       ),
-      body: ListView.separated(
+      body: _allResults.isEmpty 
+      ? const Center(child: Text("No class sessions at the moment."))
+      : ListView.separated(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: _resultsList.length,

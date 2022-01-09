@@ -40,7 +40,7 @@ class _MyClassState extends State<MyClass> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    resultsLoaded = getSubjects();
+    resultsLoaded = getClass();
   }
 
   _onSearchChanged() {
@@ -106,10 +106,10 @@ class _MyClassState extends State<MyClass> {
   }
 
   // get all students documents first
-  getSubjects() async {
+  getClass() async {
     var data = await dbService.getStudentAllClass(widget.docID);
     setState(() {
-      _allResults = data.docs;
+      _allResults = data != [] ? data: [];
     });
     searchResultsList();
     return "Complete";
@@ -147,7 +147,9 @@ class _MyClassState extends State<MyClass> {
           ),
         ],
       ),
-      body: ListView.separated(
+      body: _allResults.isEmpty 
+      ? const Center(child: Text("No class sessions at the moment."))
+      : ListView.separated(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: _resultsList.length,
