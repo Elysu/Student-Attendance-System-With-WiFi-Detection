@@ -17,7 +17,7 @@ class _MyClassState extends State<MyClass> {
   DatabaseService dbService = DatabaseService();
   TextEditingController _searchController = TextEditingController();
   Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = const Text( 'My Class Sessions' );
+  Widget _appBarTitle = const Text( 'Class Sessions' );
 
   Future? resultsLoaded;
   List _allResults = [];
@@ -128,7 +128,7 @@ class _MyClassState extends State<MyClass> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        _appBarTitle = const Text( 'My Class Sessions' );
+        _appBarTitle = const Text( 'Class Sessions' );
         _searchController.clear();
       }
     });

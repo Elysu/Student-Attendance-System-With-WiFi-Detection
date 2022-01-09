@@ -23,6 +23,8 @@ class _EditStudentState extends State<EditStudent> {
   // TextEditingController to get text value from TextFormField
   TextEditingController nameController = TextEditingController();
   TextEditingController idController = TextEditingController();
+  TextEditingController lastDeviceController = TextEditingController();
+  TextEditingController currentDeviceController = TextEditingController();
 
   // text field state
   String name = '';
@@ -44,6 +46,8 @@ class _EditStudentState extends State<EditStudent> {
         loading = false;
         nameController = TextEditingController(text: studentData['name'].toString());
         idController = TextEditingController(text: studentData['id'].toString());
+        lastDeviceController = TextEditingController(text: studentData['last_deviceID'].toString());
+        currentDeviceController = TextEditingController(text: studentData['current_deviceID'].toString());
       });
       
       List subjects = studentData["subjects"];
@@ -78,6 +82,8 @@ class _EditStudentState extends State<EditStudent> {
             visibility = false;
             nameController = TextEditingController(text: studentData['name'].toString());
             idController = TextEditingController(text: studentData['id'].toString());
+            lastDeviceController = TextEditingController(text: studentData['last_deviceID'].toString());
+            currentDeviceController = TextEditingController(text: studentData['current_deviceID'].toString());
 
             if (selectedItems.isNotEmpty) {
               selectedItems = List.empty(growable: true);
@@ -167,6 +173,28 @@ class _EditStudentState extends State<EditStudent> {
                   ),
                   // if isValid then value is null
                   validator: (value) => value!.isEmpty ? "Enter a student ID." : null,
+                ),
+
+                // Current Device ID field
+                const SizedBox(height: 20),
+                TextFormField(
+                  readOnly: true,
+                  controller: currentDeviceController,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.badge),
+                    labelText: "Last Logged-in Device ID"
+                  ),
+                ),
+
+                // Last Device ID field
+                const SizedBox(height: 20),
+                TextFormField(
+                  readOnly: true,
+                  controller: lastDeviceController,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.badge),
+                    labelText: "Last Attendance Device ID"
+                  ),
                 ),
       
                 // add subjects
