@@ -45,6 +45,15 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: const Text("Student Attendance System"),
           centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              onPressed: () async {
+                NetInfo netInfo = NetInfo();
+                await netInfo.getBSSID(context);
+              },
+              icon: const Icon(Icons.car_rental)
+            )
+          ],
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(child: Text("Classes")),
@@ -55,10 +64,7 @@ class _HomeState extends State<Home> {
         floatingActionButton: Visibility(
           visible: isTeacher,
           child: FloatingActionButton(
-            onPressed: () async {
-              NetInfo netInfo = NetInfo();
-              await netInfo.getBSSID();
-
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CreateClass())

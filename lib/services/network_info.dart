@@ -1,14 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class NetInfo {
   NetworkInfo networkInfo = NetworkInfo();
 
-  getBSSID() async {
-    var wifiBSSID, wifiName;
-
+  getBSSID(BuildContext context) async {
     if (Platform.isIOS) { // IOS
       LocationAuthorizationStatus status = await networkInfo.getLocationServiceAuthorization();
 
@@ -17,27 +16,65 @@ class NetInfo {
       }
 
       if (status == LocationAuthorizationStatus.authorizedAlways || status == LocationAuthorizationStatus.authorizedWhenInUse) {
-        wifiBSSID = await networkInfo.getWifiBSSID();
+        bssid();
       } else {
         print('Location service is not authorized, the data might not be correct');
-        wifiBSSID = await networkInfo.getWifiBSSID();
+        bssid();
       }
     } else if (Platform.isAndroid) { // ANDROID
       var status = await Permission.locationWhenInUse.status;
-      print(status);
 
-      if (await Permission.locationWhenInUse.request().isPermanentlyDenied) {
-        openAppSettings();
-      } else if (await Permission.locationWhenInUse.request().isGranted) {
-        print("granted");
+      if (status.isGranted) {
+        bssid();
+      } else {
+        var request = await Permission.locationWhenInUse.request();
+        print(request);
 
-        if (await Permission.locationWhenInUse.isGranted) {
-          wifiBSSID = await networkInfo.getWifiBSSID();
-          wifiName = await networkInfo.getWifiName();
-          print(wifiBSSID);
-          print(wifiName);
+        if (request.isGranted) {
+          bssid();
+        } else if (request.isPermanentlyDenied) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Permission permanently denied."),
+                content: const Text("For verification purposes, you can only take attendance if location permission is granted. You need to manually grant the permission in the settings due to it being permanently denied."),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("CANCEL")
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      openAppSettings();
+                    },
+                    child: const Text("OPEN APP SETTINGS")
+                  )
+                ],
+              );
+            }
+          );
+        } else if (request.isDenied) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            duration: Duration(seconds: 5),
+            content: Text(
+              "For verification purposes, you can only take attendance if location permission is granted.",
+            ),
+          ));
         }
       }
     }
+  }
+
+  bssid() async {
+    var wifiBSSID, wifiName;
+
+    print("granted");
+
+    wifiBSSID = await networkInfo.getWifiBSSID();
+    wifiName = await networkInfo.getWifiName();
+    print(wifiBSSID);
+    print(wifiName);
   }
 }
