@@ -56,13 +56,26 @@ class DatabaseService {
     return status;
   }
   // update student data
-  Future<bool> updateUserData(String uid, String name, String id, List subjects) async {
-    bool status = await userCollection.doc(uid).update({
-      'id': id,
-      'name': name,
-      'subjects': subjects
-    }).then((value) => true)
-    .catchError((error) => false);
+  Future<bool> updateUserData(String uid, String name, String id, List subjects, [String? lastDeviceID]) async {
+    bool status;
+
+    // if lastDeviceID is not null, then its student side
+    if (lastDeviceID != null) {
+      status = await userCollection.doc(uid).update({
+        'id': id,
+        'name': name,
+        'last_deviceID': lastDeviceID != "None" ? lastDeviceID : null,
+        'subjects': subjects
+      }).then((value) => true)
+      .catchError((error) => false);
+    } else { // else its teacher side
+      status = await userCollection.doc(uid).update({
+        'id': id,
+        'name': name,
+        'subjects': subjects
+      }).then((value) => true)
+      .catchError((error) => false);
+    }
 
     return status;
   }

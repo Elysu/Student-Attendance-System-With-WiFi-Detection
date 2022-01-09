@@ -46,8 +46,8 @@ class _EditStudentState extends State<EditStudent> {
         loading = false;
         nameController = TextEditingController(text: studentData['name'].toString());
         idController = TextEditingController(text: studentData['id'].toString());
-        lastDeviceController = TextEditingController(text: studentData['last_deviceID'].toString());
-        currentDeviceController = TextEditingController(text: studentData['current_deviceID'].toString());
+        lastDeviceController = TextEditingController(text: studentData['last_deviceID'] != null ? studentData['last_deviceID'].toString() : "None");
+        currentDeviceController = TextEditingController(text: studentData['current_deviceID'] != null ? studentData['current_deviceID'].toString() : "None");
       });
       
       List subjects = studentData["subjects"];
@@ -82,8 +82,8 @@ class _EditStudentState extends State<EditStudent> {
             visibility = false;
             nameController = TextEditingController(text: studentData['name'].toString());
             idController = TextEditingController(text: studentData['id'].toString());
-            lastDeviceController = TextEditingController(text: studentData['last_deviceID'].toString());
-            currentDeviceController = TextEditingController(text: studentData['current_deviceID'].toString());
+            lastDeviceController = TextEditingController(text: studentData['last_deviceID'] != null ? studentData['last_deviceID'].toString() : "None");
+            currentDeviceController = TextEditingController(text: studentData['current_deviceID'] != null ? studentData['current_deviceID'].toString() : "None");
 
             if (selectedItems.isNotEmpty) {
               selectedItems = List.empty(growable: true);
@@ -196,6 +196,23 @@ class _EditStudentState extends State<EditStudent> {
                     labelText: "Last Attendance Device ID"
                   ),
                 ),
+
+                // Reset Device ID button
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: Visibility(
+                    visible: visibility,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          lastDeviceController.text = "None";
+                        });
+                      },
+                      child: const Text("Reset Device ID"),
+                    ),
+                  ),
+                ),
       
                 // add subjects
                 const SizedBox(height: 40),
@@ -277,7 +294,7 @@ class _EditStudentState extends State<EditStudent> {
 
                           // true = exist, false = not exist
                           if (!checkID) {
-                            bool result = await dbService.updateUserData(widget.docID, nameController.text, idController.text, subjectList);
+                            bool result = await dbService.updateUserData(widget.docID, nameController.text, idController.text, subjectList, lastDeviceController.text);
 
                             if (result) {
                               setState(() {
