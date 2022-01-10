@@ -14,6 +14,7 @@ class DatabaseService {
   final CollectionReference classCollection = FirebaseFirestore.instance.collection('class');
   final CollectionReference subjectCollection = FirebaseFirestore.instance.collection('subjects');
   final CollectionReference deviceCollection = FirebaseFirestore.instance.collection('devices');
+  final CollectionReference wifiCollection = FirebaseFirestore.instance.collection('wifi');
   UserModel userModel = UserModel();
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
@@ -888,6 +889,18 @@ class DatabaseService {
       return ds.data() as Map;
     } else {
       return 0;
+    }
+  }
+
+  // check if user's wifi BSSID exists in the DB
+  Future checkWifi(String wifiBSSID) async {
+    DocumentSnapshot ds = await wifiCollection.doc(wifiBSSID).get();
+
+    // if exists
+    if (ds.exists) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

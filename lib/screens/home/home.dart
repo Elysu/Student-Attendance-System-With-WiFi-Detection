@@ -45,15 +45,6 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: const Text("Student Attendance System"),
           centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              onPressed: () async {
-                NetInfo netInfo = NetInfo();
-                await netInfo.getBSSID(context);
-              },
-              icon: const Icon(Icons.car_rental)
-            )
-          ],
           bottom: const TabBar(
             tabs: <Widget>[
               Tab(child: Text("Classes")),

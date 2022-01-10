@@ -9,6 +9,7 @@ import 'package:student_attendance_fyp/screens/class/class_attendance/class_atte
 import 'package:student_attendance_fyp/screens/class/edit_class.dart';
 import 'package:student_attendance_fyp/services/database.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:student_attendance_fyp/services/network_info.dart';
 
 class ClassDetails extends StatefulWidget {
   const ClassDetails({ Key? key, required this.docID }) : super(key: key);
@@ -294,7 +295,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      await checkDeviceID();
+                      await checkWifiBSSID();
                     },
                     icon: const Icon(Icons.note_alt),
                     label: const Text("Mark Attendance")
@@ -307,6 +308,27 @@ class _ClassDetailsState extends State<ClassDetails> {
       }
     }
     return const SizedBox.shrink();
+  }
+
+  checkWifiBSSID() async {
+    NetInfo netInfo = NetInfo();
+    String? wifiBSSID = await netInfo.getBSSID(context);
+    bool status;
+
+    if (wifiBSSID == null) {
+      status = false;
+    } else {
+      status = await dbService.checkWifi(wifiBSSID);
+    }
+
+    if (status) {
+      checkDeviceID();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        duration: Duration(seconds: 5),
+        content: Text("Please connect to the campus wifi network to take attendance.", style: TextStyle(color: Colors.red)),
+      ));
+    }
   }
 
   checkDeviceID() async {

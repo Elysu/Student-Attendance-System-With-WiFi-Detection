@@ -16,22 +16,26 @@ class NetInfo {
       }
 
       if (status == LocationAuthorizationStatus.authorizedAlways || status == LocationAuthorizationStatus.authorizedWhenInUse) {
-        bssid();
+        var wifiBSSID = await networkInfo.getWifiBSSID();
+        return wifiBSSID;
       } else {
         print('Location service is not authorized, the data might not be correct');
-        bssid();
+        var wifiBSSID = await networkInfo.getWifiBSSID();
+        return wifiBSSID;
       }
     } else if (Platform.isAndroid) { // ANDROID
       var status = await Permission.locationWhenInUse.status;
 
       if (status.isGranted) {
-        bssid();
+        var wifiBSSID = await networkInfo.getWifiBSSID();
+        return wifiBSSID;
       } else {
         var request = await Permission.locationWhenInUse.request();
         print(request);
 
         if (request.isGranted) {
-          bssid();
+          var wifiBSSID = await networkInfo.getWifiBSSID();
+          return wifiBSSID;
         } else if (request.isPermanentlyDenied) {
           showDialog(
             context: context,
@@ -65,16 +69,5 @@ class NetInfo {
         }
       }
     }
-  }
-
-  bssid() async {
-    var wifiBSSID, wifiName;
-
-    print("granted");
-
-    wifiBSSID = await networkInfo.getWifiBSSID();
-    wifiName = await networkInfo.getWifiName();
-    print(wifiBSSID);
-    print(wifiName);
   }
 }
