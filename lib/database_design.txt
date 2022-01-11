@@ -1,0 +1,62 @@
+// class
+{
+    "c_datetimeEnd": timestamp,
+    "c_datetime": timestamp,
+    "c_ongoing": boolean,
+    "c_ongoingTime": timestamp,
+    "c_sub-code": string,
+    "c_sub-name": string,
+    "c_teacher": {
+        "t_id": string,
+        "t_name": string
+    },
+    "classroom": string
+}
+
+// devices
+{
+    "deviceID": string,
+    "last_attendance": {
+        "datetime": timestamp,
+        "id": string,
+        "name": string,
+        "uid": string
+    }
+}
+
+// subjects
+{
+    "sub_code": string,
+    "sub_name": string,
+    "sub_teacher": {
+        "t_id": string,
+        "t_name": string,
+        "t_uid": string
+    }
+}
+
+// users
+{
+    "current_deviceID": string,
+    "email": string,
+    "id": string,
+    "isTeacher": boolean,
+    "last_deviceID": string,
+    "name": string,
+    "password": string,
+    "subjects": [
+        {
+            "sub_code": string,
+            "sub_name": string
+        },
+        {
+            "sub_code": string,
+            "sub_name": string
+        },
+    ]
+}
+
+// wifi
+{
+    "name": string
+}

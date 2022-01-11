@@ -118,7 +118,7 @@ class _EditStudentState extends State<EditStudent> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Student"),
+        title: visibility ? const Text("Edit Student") : const Text("Student Profile"),
         centerTitle: true,
         actions: [
           visibility ? btnDelete : btnClass

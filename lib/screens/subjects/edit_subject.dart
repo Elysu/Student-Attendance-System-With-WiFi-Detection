@@ -87,7 +87,7 @@ class _EditSubjectState extends State<EditSubject> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Subject"),
+        title: visibility ? const Text("Edit Subject") : const Text("Subject Details"),
         centerTitle: true,
         actions: [
           Visibility(
