@@ -181,7 +181,7 @@ class _EditStudentState extends State<EditStudent> {
                   readOnly: true,
                   controller: currentDeviceController,
                   decoration: const InputDecoration(
-                    icon: Icon(Icons.badge),
+                    icon: Icon(Icons.devices),
                     labelText: "Last Logged-in Device ID"
                   ),
                 ),
@@ -192,7 +192,7 @@ class _EditStudentState extends State<EditStudent> {
                   readOnly: true,
                   controller: lastDeviceController,
                   decoration: const InputDecoration(
-                    icon: Icon(Icons.badge),
+                    icon: Icon(Icons.phone_android_sharp),
                     labelText: "Last Attendance Device ID"
                   ),
                 ),
