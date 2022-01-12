@@ -88,7 +88,7 @@ class _EditClassState extends State<EditClass> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Class Details"),
+        title: const Text("Edit Class"),
         centerTitle: true,
         actions: [
           IconButton(

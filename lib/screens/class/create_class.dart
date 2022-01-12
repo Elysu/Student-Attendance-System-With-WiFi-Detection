@@ -304,7 +304,7 @@ class _CreateClassState extends State<CreateClass> {
                           dynamic addStudent = await dbService.addStudentsIntoClass(classSubject, status);
 
                           // if status return docID and addstudent is success, everything is valid
-                          if (status is String && addStudent) {
+                          if (status is String && addStudent == true) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 duration: Duration(seconds: 5),

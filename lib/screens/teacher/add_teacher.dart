@@ -91,7 +91,7 @@ class _AddTeacherState extends State<AddTeacher> {
                   controller: idController,
                   decoration: const InputDecoration(
                     hintText: 'S12345',
-                    icon: Icon(Icons.person_pin_rounded),
+                    icon: Icon(Icons.badge),
                     labelText: "Lecturer ID"
                   ),
                   // if isValid then value is null
