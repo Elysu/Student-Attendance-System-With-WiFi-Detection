@@ -313,17 +313,19 @@ class _ClassDetailsState extends State<ClassDetails> {
   checkWifiBSSID() async {
     NetInfo netInfo = NetInfo();
     String? wifiBSSID = await netInfo.getBSSID(context);
-    bool status;
+    var status;
 
     if (wifiBSSID == null) {
       status = false;
+    } else if (wifiBSSID == "permanently-denied" || wifiBSSID == "denied") {
+      status = "denied";
     } else {
       status = await dbService.checkWifi(wifiBSSID);
     }
 
-    if (status) {
+    if (status == true) {
       checkDeviceID();
-    } else {
+    } else if (status == false) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         duration: Duration(seconds: 5),
         content: Text("Please connect to the campus wifi network to take attendance.", style: TextStyle(color: Colors.red)),

@@ -59,6 +59,7 @@ class NetInfo {
               );
             }
           );
+          return "permanently-denied";
         } else if (request.isDenied) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             duration: Duration(seconds: 5),
@@ -66,6 +67,7 @@ class NetInfo {
               "For verification purposes, you can only take attendance if location permission is granted.",
             ),
           ));
+          return "denied";
         }
       }
     }
