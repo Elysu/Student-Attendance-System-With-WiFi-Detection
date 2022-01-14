@@ -66,15 +66,15 @@ class _AddSubjectsState extends State<AddSubjects> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: ListView.separated(
+            child: loading ? const Text("Loading") : ListView.separated(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: subjects.length,
               itemBuilder: (BuildContext context, int index) {
-                if (loading) {
-                  return const Text("Loading");
-                } else {
+                if (subjects.isNotEmpty) {
                   return buildSingleCheckbox(subjects[index], index);
+                } else {
+                  return const Text("No available subjects.");
                 }
               },
               separatorBuilder: (context, index) {

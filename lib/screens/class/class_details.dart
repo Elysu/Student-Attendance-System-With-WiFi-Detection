@@ -313,6 +313,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   checkWifiBSSID() async {
     NetInfo netInfo = NetInfo();
     String? wifiBSSID = await netInfo.getBSSID(context);
+    print(wifiBSSID);
     var status;
 
     if (wifiBSSID == null) {
